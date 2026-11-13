@@ -965,6 +965,9 @@ def match_doms():
         if 'glass' in sp:
             for k in tree.query(pt.buffer(sp['glass'])): DOM_BY_ID.setdefault(idx[k].id, {**d, 'spec': {'rc': [176, 204, 214], 'r': 'flat', 'win': 14}})
             continue
+        if sp.get('maly'):                              # malá stavba (kaple, kaplička): budova pod bodem i pod 60 m²
+            small = sorted([k for k in tree.query(pt.buffer(2)) if geoms[k].buffer(1.0).contains(pt)], key=lambda k: geoms[k].area)
+            if small: DOM_BY_ID[idx[small[0]].id] = d; continue
         hit = [k for k in tree.query(pt.buffer(25)) if geoms[k].area > 60]
         inside = sorted([k for k in hit if geoms[k].buffer(1.0).contains(pt)], key=lambda k: geoms[k].area)   # překryv (kaple v rohu ambitu): nejmenší budova
         cand = inside or sorted(hit, key=lambda k: -geoms[k].area)
