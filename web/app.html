@@ -2079,9 +2079,13 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     drawBehindTrees(spr.c, base[0] + spr.x0, base[1] + spr.y0, spr.c.width, spr.c.height, cxw, cyw, h0, sx, ox, oy);
     if (night > 0.3 && !o.noLights && sx >= LIGHTS_SX) {                                    // světla jen při přiblížení; kreslí se najednou (flushLights)
       const P = (s, t, h) => { const p = toImg(cxw + fx_ * s + sxv * t, cyw + fy_ * s + syv * t, h0 + h); return [ox + p[0] * sx, oy + p[1] * sx]; };
+      const hid = (s, t, h) => { const x = cxw + fx_ * s + sxv * t, y = cyw + fy_ * s + syv * t, [ix, iy] = toImg(x, y, h0 + h); return occluded(ix, iy, depth(x, y, h0 + h)); };   // za domem
       const l = len / 2, w = wid / 2;
-      if (lights & 1) NL.beams.push([P(l, -w, 0.6), P(l + 14, -w - 4, 0.1), P(l + 14, w + 4, 0.1), P(l, w, 0.6)]);
-      for (const t of [-w * 0.7, w * 0.7]) { if (lights & 1) NL.head.push(P(l, t, 0.7)); if (lights & 2) NL.tail.push(P(-l, t, 0.7)); }
+      if (lights & 1 && !hid(l, 0, 0.6)) {                    // kužel jen po první dům v cestě (nesvítí skrz)
+        let d = 0; for (const q of [3.5, 7, 10.5, 14]) { if (hid(l + q, 0, 0.1) || hid(l + q, -w - q * 0.28, 0.1) || hid(l + q, w + q * 0.28, 0.1)) break; d = q; }
+        if (d) NL.beams.push([P(l, -w, 0.6), P(l + d, -w - d * 0.28, 0.1), P(l + d, w + d * 0.28, 0.1), P(l, w, 0.6)]);
+      }
+      for (const t of [-w * 0.7, w * 0.7]) { if (lights & 1 && !hid(l, t, 0.7)) NL.head.push(P(l, t, 0.7)); if (lights & 2 && !hid(-l, t, 0.7)) NL.tail.push(P(-l, t, 0.7)); }
     }
     return true;
   }
