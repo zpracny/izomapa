@@ -17,11 +17,8 @@ if [ "$1" != render ]; then
   [ -f assets/zabaged.json ] || { python nastroje/zabaged.py && python nastroje/pole.py; } # pole a louky
   [ -f assets/hriste.json ] || python nastroje/hriste.py || true                          # dětská a workoutová hřiště z OSM
 fi
-for c in $CH; do python prep.py $(dir $c) $c > /dev/null && echo "scéna $c"; done
-for c in $CH; do ./render_chunk.sh $c; done
 rm -rf site/tiles && mkdir -p site/tiles && rm -f site/tiles.json
-python dzi.py
-for c in $CH; do [ "$c" = "0,0" ] || python dzi.py --chunk $c; done
+./render_par.sh                                               # scény, render a dlaždice: několik čtverců najednou podle paměti (./render_par.sh 1 = po jednom)
 ./vanoce.sh > /dev/null                                       # vánoční výzdoba a led na rybnících (průhledné vrstvy)
 for s in summer autumn winter spring; do node render.mjs mpp=0.2 dir=build season=$s alpha=1 stromy=site/stromy > /dev/null; done   # kresby stromů: auta se schovají přesně za ně
 python preview.py
@@ -30,4 +27,4 @@ python mhd.py || true                                         # jízdní řády 
 python set_status.py hotovo
 python build_html.py
 echo "Hotovo. Náhled: npm run nahled  a otevři http://localhost:8000"
-echo "Izomapa je zdarma. Jestli ti ušetřila práci, kup autorovi kafe: https://donate.stripe.com/3cI6oA0PE7u65Y9cim8g000 ☕"
+echo "Izomapa je zdarma. Jestli ti ušetřila práci, kup autorovi kafe: https://donate.stripe.com/7sY7sE41Qg0C0DP5TY8g001 ☕"

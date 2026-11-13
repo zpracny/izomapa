@@ -13,8 +13,13 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png' };
 const server = http.createServer((req, res) => {
-  const p = path.join(ROOT, decodeURIComponent(new URL(req.url, 'http://x').pathname));
-  if (!p.startsWith(ROOT + path.sep)) { res.writeHead(403); res.end(); return; }   // jen soubory projektu
+  const deny = (c) => { res.writeHead(c); res.end(); };
+  // jen požadavky na tuhle adresu (cizí stránka v prohlížeči se sem přes jinou doménu nedostane)
+  if (req.headers.host !== `127.0.0.1:${server.address().port}`) return deny(403);
+  let rel; try { rel = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch { return deny(400); }
+  const p = path.join(ROOT, rel);
+  // jen soubory projektu, žádné skryté (.dev.vars, .git) a jen typy, které render potřebuje
+  if (rel.includes('\0') || !p.startsWith(ROOT + path.sep) || rel.split('/').some((s) => s.startsWith('.')) || !(path.extname(p) in MIME)) return deny(403);
   fs.readFile(p, (err, data) => {
     if (err) { res.writeHead(404); res.end(); return; }
     res.writeHead(200, { 'content-type': MIME[path.extname(p)] || 'application/octet-stream' });
@@ -57,7 +62,7 @@ page.on('console', (m) => console.log('[page]', m.text()));
 page.on('requestfailed', (r) => console.log('[rf]', r.url(), r.failure()?.errorText));
 page.on('pageerror', (e) => { console.log('[pageerror]', e.message); process.exit(1); });
 const t0 = Date.now();
-await page.goto(`http://127.0.0.1:${port}/render.html?mpp=${mpp}&tile=${tile}&season=${args.season || 'autumn'}&mode=${args.mode || 'day'}&dir=${args.dir || 'build'}&alpha=${args.alpha || '0'}${args.skirt ? `&skirt=${args.skirt}` : ''}${args.gx0 ? `&gx0=${args.gx0}&gy1=${args.gy1}` : ''}`);
+await page.goto(`http://127.0.0.1:${port}/render.html?mpp=${mpp}&tile=${tile}&season=${args.season || 'autumn'}&mode=${args.mode || 'day'}&dir=${encodeURIComponent(args.dir || 'build')}&alpha=${args.alpha || '0'}${args.skirt ? `&skirt=${args.skirt}` : ''}${args.gx0 ? `&gx0=${args.gx0}&gy1=${args.gy1}` : ''}`);
 await page.waitForFunction(() => window.READY === true, null, { timeout: 240000, polling: 1000 });
 const info = await page.evaluate(() => window.INFO);
 console.log('scéna připravena za', (Date.now() - t0) / 1000, 's', info);
@@ -69,6 +74,8 @@ if (args.stromy) {                             // jen kresby stromů pro prohlí
   delete t.url; fs.writeFileSync(path.join(ROOT, args.stromy, `${args.season}.json`), JSON.stringify(t));
   await browser.close(); server.close(); process.exit(0);
 }
+const MARK = path.join(outDir, 'rozpracovano');             // značka nedokončeného renderu (dzi.py podle ní odmítne směs starých a nových dlaždic)
+fs.writeFileSync(MARK, '');
 const only = args.only ? args.only.split(',').map(Number) : null;
 const list = args.tiles ? new Set(args.tiles.split(';')) : info.need ? new Set(info.need) : null;   // vrstvy xmas/led: jen dlaždice s obsahem
 for (let j = 0; j < info.rows; j++) for (let i = 0; i < info.cols; i++) {
@@ -79,5 +86,6 @@ for (let j = 0; j < info.rows; j++) for (let i = 0; i < info.cols; i++) {
   fs.writeFileSync(path.join(outDir, `${i}_${j}.png`), Buffer.from(url.split(',')[1], 'base64'));
   console.log(`dlaždice ${i},${j}`, (Date.now() - t) / 1000, 's');
 }
+fs.rmSync(MARK, { force: true });
 await browser.close();
 server.close();
