@@ -1024,8 +1024,9 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     if (!$('l-hover').checked || e.pointerType === 'touch') { state.hover = null; $('osd').style.cursor = ''; return; }
     const [ix, iy] = vpToImg(new OpenSeadragon.Point(mx, my));
-    state.hover = hit(ix, iy);
-    $('osd').style.cursor = state.hover || stopAt(ix, iy) ? 'pointer' : '';
+    state.hoverStop = stopAt(ix, iy);                       // zastávka má přednost před budovou (je malá)
+    state.hover = state.hoverStop ? null : hit(ix, iy);
+    $('osd').style.cursor = state.hover || state.hoverStop ? 'pointer' : '';
   });
 
 
@@ -1222,13 +1223,21 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     return true;
   }
-  const blocked = (z) => z.rb ? !ringFree(z.rb) : z.xc.closed;   // vjezd na kruhový objezd, nebo zavřený přejezd
+  const blocked = (z) => z.rb ? !ringFree(z.rb) : z.g.closed;    // vjezd na kruhový objezd, nebo zavřený přejezd
   // železniční přejezdy (z[0] metry od začátku kusu, z[1..2] svět): zavřeno ~25 s před příjezdem vlaku, dokud neprojede poslední vůz
-  const XC = new Map(), xings = [];
+  // Přejezdy přes sousední koleje (do XG_M od sebe) tvoří jeden přejezd: jedny výstražníky před první a za poslední kolejí,
+  // zavřeno, když jede vlak po kterékoli koleji (v OSM je přejezd zvlášť na každé koleji).
+  const XC = new Map(), xings = [], XG = [], XG_M = 15;
   function addXing(r, z) {
     const key = Math.round(z[1]) + ',' + Math.round(z[2]);
     if (!XC.has(key)) XC.set(key, { x: z[1], y: z[2], closed: false, on: null });
-    z.xc = XC.get(key); xings.push([r, z]);
+    z.xc = XC.get(key);
+    let g = XG.find((q) => q.pts.some(([x, y]) => Math.hypot(x - z[1], y - z[2]) < XG_M));
+    if (!g) XG.push(g = { pts: [], cs: new Set(), closed: false });
+    g.pts.push([z[1], z[2]]); g.cs.add(z.xc); z.g = g;
+    const lead = xings.find(([r2, z2]) => r2 === r && z2.g === g);       // na jednom kusu silnice jedny výstražníky pro celou skupinu
+    if (lead) { lead[1].s0 = Math.min(lead[1].s0, z[0]); lead[1].s1 = Math.max(lead[1].s1, z[0]); }
+    else { z.s0 = z.s1 = z[0]; xings.push([r, z]); }
   }
   function xingShapes(c) {                                 // na kterých tratích (tvar, metry od začátku) přejezd leží
     c.on = [];
@@ -1261,13 +1270,14 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     if (!XC.size) return;
     const trains = MHD.on ? MHD.act.filter(([i]) => MHD.routes[MHD.trips[i][0]][1] === 2) : [];
     for (const c of XC.values()) {
-      if (!trains.length) { c.closed = false; continue; }
+      if (!trains.length) { c.closed = false; continue; }      // skupiny přejezdů se přepočítají níž
       if (!c.on) xingShapes(c);
       c.closed = trains.some(([i, el]) => {
         const trip = MHD.trips[i], T = TRAINS[trainOf(MHD.routes[trip[0]][0])].cars.reduce((a, q) => a + q.len + 0.4, 0);
         return c.on.some(([sh, s]) => sh === trip[1] && trainS(trip, el + 25) + T / 2 > s - 5 && trainS(trip, el) - T / 2 < s + 8);
       });
     }
+    for (const g of XG) g.closed = [...g.cs].some((c) => c.closed);
   }
   const ek = (p) => Math.round(p[0]) + ',' + Math.round(p[1]);
   const TRUCKC = ['#c42a20|#ecebe6|box', '#eceeed|#d6a13a|tarp', '#eceeed|#3f5f8a|tarp', '#2f4f86|#e4e4de|box', '#eceeed|#9aa0a7|box'];
@@ -1369,7 +1379,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     ctx.moveTo(x - q * 1.8, y - h - q * 3.6); ctx.lineTo(x + q * 1.8, y - h - q * 1.2); ctx.moveTo(x + q * 1.8, y - h - q * 3.6); ctx.lineTo(x - q * 1.8, y - h - q * 1.2); ctx.stroke();
     ctx.strokeStyle = '#f4f4f0'; ctx.lineWidth = q * 0.45; ctx.stroke();
     ctx.fillStyle = '#26262a'; ctx.fillRect(x - q * 2, y - h - q * 0.2, q * 4, q * 1.6);
-    const lamp = z.xc.closed ? [x + (ph ? 1.05 : -1.05) * q, '#ff4438', '255,68,56'] : Math.floor(now / 900) % 2 ? [x, '#f4f4f0', '244,244,240'] : null;
+    const lamp = z.g.closed ? [x + (ph ? 1.05 : -1.05) * q, '#ff4438', '255,68,56'] : Math.floor(now / 900) % 2 ? [x, '#f4f4f0', '244,244,240'] : null;
     if (!lamp) return;
     if (night > 0.3) {
       const g = ctx.createRadialGradient(lamp[0], y - h + q * 0.6, 0, lamp[0], y - h + q * 0.6, q * 3.5);
@@ -2620,9 +2630,10 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       if (sx > 0.25) for (const [r, z] of xings) {        // výstražník před přejezdem: zavřeno střídavě červená, otevřeno bílá přerušovaná
         if (!shown(r.k)) continue;
         const dc = depth(z[1], z[2], gz(z[1], z[2]));
-        for (const d of [-6, 6]) {                         // výstražník z obou stran koleje (když kus silnice pokračuje)
-          if (z[0] + d < 0 || z[0] + d > r.L) continue;
-          const o = curbPt(along(r, z[0] + d), d < 0 ? 1 : -1, 4), dp = o.d;   // vpravo u okraje vozovky pro auta, která k přejezdu jedou
+        for (const d of [-6, 6]) {                         // výstražník z obou stran kolejí (když kus silnice pokračuje)
+          const sp = d < 0 ? z.s0 + d : z.s1 + d;
+          if (sp < 0 || sp > r.L) continue;
+          const o = curbPt(along(r, sp), d < 0 ? 1 : -1, 4), dp = o.d;   // vpravo u okraje vozovky pro auta, která k přejezdu jedou
           if (!vis(o.ix, o.iy) || occluded(o.ix, o.iy, dp) || occluded(o.ix, o.iy - 30, dp)) continue;   // za budovou (pata nebo výstražník) se nekreslí
           if (dp < dc) xFront.push([o, z]); else drawXPost(o, z, sx, ox, oy, now, night);
         }
@@ -2680,6 +2691,26 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       }
       flushLights(night, sx);
       for (const [o, z] of xFront) drawXPost(o, z, sx, ox, oy, now, night);   // až po světlech aut, ať je kužel nepřekryje
+      // označníky zastávek MHD (sloupek s cedulí, kliknutím odjezdy); po najetí myší zvýrazněná s názvem
+      if (MHD.stopPts && sx > 0.2) {
+        const mPx = toImg(0, 0, 0)[1] - toImg(0, 0, 1)[1], u = Math.max(3, Math.round(sx * 4)), lit = night > 0.3;
+        for (const st of MHD.stopPts) {
+          if (!vis(st.ix, st.iy, 60)) continue;
+          const hov = state.hoverStop === st, X = Math.round(ox + st.ix * sx), Y = Math.round(oy + st.iy * sx), ph = Math.round(2.6 * mPx * sx);
+          ctx.fillStyle = '#2a2c31'; ctx.fillRect(X - Math.ceil(u / 3), Y - ph, Math.max(1, Math.ceil(u * 0.6)), ph);
+          const pw = u * 3, phh = u * 2, py = Y - ph - phh + u;
+          ctx.fillStyle = hov ? '#f2c66d' : '#1d3f8a'; ctx.fillRect(X - pw / 2 - Math.ceil(u / 3), py - Math.ceil(u / 3), pw + 2 * Math.ceil(u / 3), phh + 2 * Math.ceil(u / 3));
+          ctx.fillStyle = lit ? '#fff4c8' : '#f4f4f0'; ctx.fillRect(X - pw / 2, py, pw, phh);
+          ctx.fillStyle = '#c42a20'; ctx.fillRect(X - pw / 2, py, pw, Math.max(1, Math.round(phh / 4)));
+          if (hov) {
+            const nm = MHD.names[st.n]; ctx.font = `bold ${Math.max(11, Math.round(12 * Math.min(1.4, sx)))}px system-ui, sans-serif`;
+            const tw = ctx.measureText(nm).width, bx = X - tw / 2 - 5, by = py - 24;
+            ctx.fillStyle = 'rgba(27,35,51,.92)'; ctx.fillRect(bx, by, tw + 10, 18);
+            ctx.fillStyle = '#f2c66d'; ctx.fillRect(bx, by + 17, tw + 10, 2);
+            ctx.fillStyle = '#e9e6dc'; ctx.textBaseline = 'middle'; ctx.fillText(nm, bx + 5, by + 9);
+          }
+        }
+      }
     }
     // lyžaři (jen v zimě)
     if (snowy && skiers.length) {

@@ -613,11 +613,15 @@ for pl in UP.get('plochy', []):
 # dětská a workoutová hřiště (assets/hriste.json z nastroje/hriste.py, OSM): 3D vybavení pro render.html (scene.play).
 # Zakreslené prvky (playground=*, fitness_station=*) na své místo, zbytek automaticky podle velikosti hřiště, pod
 # houpačkou, skluzavkou a prolézačkou písek. Poloha je deterministická (stejná i v pásu sousedního čtverce).
+HRISTE_K = 1.5      # vybavení je o polovinu větší než ve skutečnosti, aby bylo na mapě vidět (render.html K)
 HR = json.load(open('assets/hriste.json')) if os.path.exists('assets/hriste.json') else {'hriste': [], 'prvky': []}
+_RUC = [Polygon([to_local(lo, la) for la, lo in _h['q']]) for _h in UP.get('hriste', [])]
+HR['hriste'] = [h for h in HR['hriste'] if h['poly'] or not any(g_.distance(Point(*to_local(h['ll'][1], h['ll'][0]))) < 30 for g_ in _RUC)]   # ruční obrys nahradí bod z OSM
 HR['hriste'] = HR['hriste'] + [{'id': f'u{_k}', 'k': _h.get('k', 'detske'), 'poly': _h['q'], 'll': _h['q'][0]}   # ruční (chybí v OSM)
                                for _k, _h in enumerate(UP.get('hriste', []))]
 play = []
 _PRV = [(Point(*to_local(lo, la)), t) for (la, lo), t in ((q['ll'], q['t']) for q in HR['prvky'])]
+_PRV_USED = set()
 for h in HR['hriste']:
     det = h['k'] == 'detske'
     _g = Polygon([to_local(lo, la) for la, lo in h['poly']]) if h['poly'] else Point(*to_local(h['ll'][1], h['ll'][0])).buffer(7.0 if det else 5.0)
@@ -627,10 +631,10 @@ for h in HR['hriste']:
     _o = list(_g.minimum_rotated_rectangle.exterior.coords)
     _e = max(((_o[i], _o[i + 1]) for i in range(2)), key=lambda e: math.dist(*e))
     _a = math.atan2(_e[1][1] - _e[0][1], _e[1][0] - _e[0][0])
-    _in = _g.buffer(-1.8); _in = _in if not _in.is_empty and _in.area > 4 else _g
+    _in = _g.buffer(-1.8 * HRISTE_K); _in = _in if not _in.is_empty and _in.area > 4 else _g
     mine = []
-    for _p, _t in _PRV:
-        if _g.buffer(3).contains(_p): mine.append([_p.x, _p.y, _a, _t])
+    for _i, (_p, _t) in enumerate(_PRV):
+        if _g.buffer(3).contains(_p): mine.append([_p.x, _p.y, _a, _t]); _PRV_USED.add(_i)
     n = max(2, min(6, round(_g.area / 70))) if det else max(2, min(4, round(_g.area / 45)))
     seq = ['piskoviste', 'houpacka', 'skluzavka', 'prolezacka', 'houpadlo', 'kolotoc'] if det else ['hrazda', 'bradla', 'zebriny', 'lavice']
     seq = [t for t in seq if t not in {m[3] for m in mine}]
@@ -638,10 +642,12 @@ for h in HR['hriste']:
     for _t in seq[:max(0, n - len(mine))]:
         for _ in range(150):
             _x, _y = _r.uniform(x0_, x1_), _r.uniform(y0_, y1_)
-            if _in.contains(Point(_x, _y)) and all(math.hypot(_x - m[0], _y - m[1]) > 4.6 for m in mine): mine.append([_x, _y, _a, _t]); break
+            if _in.contains(Point(_x, _y)) and all(math.hypot(_x - m[0], _y - m[1]) > 4.6 * HRISTE_K for m in mine): mine.append([_x, _y, _a, _t]); break
     for _x, _y, _aa, _t in mine:
-        if _t in ('houpacka', 'skluzavka', 'prolezacka', 'kolotoc'): fill(Point(_x, _y).buffer(2.0 if _t != 'houpacka' else 2.4), C['sand'])
+        if _t in ('houpacka', 'skluzavka', 'prolezacka', 'kolotoc'): fill(Point(_x, _y).buffer((2.0 if _t != 'houpacka' else 2.4) * HRISTE_K), C['sand'])
         play.append([_x, _y, _aa, _t])
+for _i, (_p, _t) in enumerate(_PRV):                 # zakreslený prvek mimo hřiště (trampolína v parku): samostatně
+    if _i not in _PRV_USED and EXT.contains(_p): play.append([_p.x, _p.y, 0.0, _t])
 # středová přerušovaná čára
 for _, g, c, w, _n in roads:
     if c in ('trunk', 'primary', 'secondary', 'tertiary') or (c == 'motorway' and w >= 7):     # dálnice: čára mezi pruhy, ne na sjezdu
@@ -785,6 +791,25 @@ for pid, p in parkings:
             if pp.contains(Point(*c)) and crng.random() < 0.58:
                 cars.append([float(c[0]), float(c[1]), math.atan2(v[1], v[0]), crng.randrange(8)])
             s += 2.5
+# stání podél ulic (assets/upresneni.json "stani": [{"q": [[lat, lon], …] osa řady aut, "k": "kolmo" | "podel"}]), obkreslené z ortofota:
+# asfaltový pruh, u kolmých čáry stání, auta obsazená z 75 %
+for _k, _st in enumerate(UP.get('stani', [])):
+    _l = LineString([to_local(lo, la) for la, lo in _st['q']])
+    if not _l.intersects(EXT): continue
+    kolmo = _st.get('k', 'kolmo') == 'kolmo'
+    _hw, _step = (2.6, 2.5) if kolmo else (1.2, 5.8)
+    fill(_l.buffer(_hw, cap_style='flat'), C['parking'], block=True)
+    crng = random.Random(f'stani{_k}')
+    d = _step / 2
+    while d < _l.length - _step / 2:
+        a_, b_ = _l.interpolate(d - 0.5), _l.interpolate(d + 0.5)
+        ang = math.atan2(b_.y - a_.y, b_.x - a_.x); q_ = _l.interpolate(d)
+        if kolmo:
+            nx, ny = -math.sin(ang), math.cos(ang); e_ = _l.interpolate(d - _step / 2)
+            cd.line(P([(e_.x - nx * _hw, e_.y - ny * _hw), (e_.x + nx * _hw, e_.y + ny * _hw)]), fill=C['marking'], width=1)
+        if AREA.contains(q_) and crng.random() < 0.75:
+            cars.append([q_.x, q_.y, ang + (math.pi / 2 if kolmo else 0) + (math.pi if crng.random() < 0.5 else 0), crng.randrange(8)])
+        d += _step
 # auta podél ulic (ne na kolejích u přejezdu)
 _rail_park = shapely.STRtree([l for _, g, c, _w, _n in roads if c == 'rail' for l in lines(g)] or [Point(1e9, 1e9)])
 for l, w, c, n in drive_lines:
@@ -2089,8 +2114,11 @@ def _road(p3, l, c, n):
         if t_: o['t'] = t_
         if lk_: o['x'] = 1                    # rampa: pomaleji
     return o
+# neprůjezdné úseky (assets/upresneni.json "neprujezdne": [[lat, lon], …], bod na úseku): kreslí se, ale auta po nich nejezdí
+_NEPR = [Point(*to_local(lo, la)) for la, lo in UP.get('neprujezdne', [])]
 graph = [_road([[round(x, 1), round(y, 1), round(float(z), 1)] for (x, y), z in zip(l.coords, ground(*np.array(l.coords).T))], l, c, n)
-         for l0, w, c, n in drive_lines for l in lines(l0.intersection(AREA.intersection(CLIP.buffer(-4)))) if l.length > 2]   # auta jen uvnitř mapy, přes šev ano
+         for l0, w, c, n in drive_lines if not any(l0.distance(q_) < 4 for q_ in _NEPR)
+         for l in lines(l0.intersection(AREA.intersection(CLIP.buffer(-4)))) if l.length > 2]   # auta jen uvnitř mapy, přes šev ano
 for D in DECKS:                               # po mostech ve výšce mostovky
     if D[6] in DRIVE and AREA.intersects(D[0]):
         p3 = deck_line(D)

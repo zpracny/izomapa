@@ -9,13 +9,13 @@ import geo
 # OSM playground=* / fitness_station=* -> typ modelu v render.html
 PRVKY = {'swing': 'houpacka', 'basketswing': 'houpacka', 'slide': 'skluzavka', 'structure': 'skluzavka', 'climbingframe': 'prolezacka',
          'climbingwall': 'prolezacka', 'sandpit': 'piskoviste', 'springy': 'houpadlo', 'seesaw': 'houpadlo', 'roundabout': 'kolotoc',
-         'horizontal_bar': 'hrazda', 'parallel_bars': 'bradla', 'wall_bars': 'zebriny', 'sit-up': 'lavice', 'box': 'lavice', 'rings': 'hrazda'}
+         'trampoline': 'trampolina', 'horizontal_bar': 'hrazda', 'parallel_bars': 'bradla', 'wall_bars': 'zebriny', 'sit-up': 'lavice', 'box': 'lavice', 'rings': 'hrazda'}
 
 if __name__ == '__main__':
     x0, y0, x1, y1 = geo.extent(geo.MARGIN + 20)
     lo0, la0 = geo.to_lonlat(x0, y0); lo1, la1 = geo.to_lonlat(x1, y1); b = f'{la0},{lo0},{la1},{lo1}'
     q = (f'[out:json][timeout:90];(nwr["leisure"="playground"]({b});nwr["leisure"="fitness_station"]({b});'
-         f'node["playground"]({b});node["fitness_station"]({b}););out tags geom;')
+         f'nwr["playground"]({b});nwr["fitness_station"]({b}););out tags geom;')
     URL = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter']
     for pokus in range(6):                      # Overpass bývá přetížený: střídat hlavní a záložní server
         try:
@@ -38,8 +38,10 @@ if __name__ == '__main__':
             elif e.get('bounds'):                       # relace (multipolygon): bod uprostřed
                 bb = e['bounds']
                 hriste.append({'id': f'r{e["id"]}', 'k': k, 'poly': None, 'll': [round((bb['minlat'] + bb['maxlat']) / 2, 6), round((bb['minlon'] + bb['maxlon']) / 2, 6)]})
-        elif e['type'] == 'node':
+        else:                                           # prvek jako bod, nebo jako plocha (trampolína): bod uprostřed
             t_ = PRVKY.get(tg.get('playground') or tg.get('fitness_station'))
-            if t_: prvky.append({'ll': [round(e['lat'], 6), round(e['lon'], 6)], 't': t_})
+            g = e.get('geometry') or []
+            ll = [e['lat'], e['lon']] if e['type'] == 'node' else [sum(p['lat'] for p in g) / len(g), sum(p['lon'] for p in g) / len(g)] if g else None
+            if t_ and ll: prvky.append({'ll': [round(ll[0], 6), round(ll[1], 6)], 't': t_})
     json.dump({'hriste': hriste, 'prvky': prvky}, open('assets/hriste.json', 'w'), ensure_ascii=False, indent=0)
     print('dětská', sum(h['k'] == 'detske' for h in hriste), 'workout', sum(h['k'] == 'workout' for h in hriste), 'prvků', len(prvky))

@@ -1366,12 +1366,21 @@ function roofDeco(b, X, eave, rc) {
         for (const s of [-0.5, 0.5]) post(f, s, 0, 2.5, wood, 0.1);
         for (let z = 0.3; z < 2.5; z += 0.3) bar(f, -0.5, 0.5, -0.03, 0.03, z - 0.03, z + 0.03, wood);
       },
+      trampolina(f) {                                          // nafukovací polštář / trampolína: žlutý nízký ovál
+        const n = 12;
+        for (let k = 0; k < n; k++) {
+          const a0 = (k / n) * 2 * Math.PI, a1 = ((k + 1) / n) * 2 * Math.PI, P0 = [Math.cos(a0) * 2.6, Math.sin(a0) * 1.8], P1 = [Math.cos(a1) * 2.6, Math.sin(a1) * 1.8];
+          pushQuad(PL, f(P0[0], P0[1], -0.1), f(P1[0], P1[1], -0.1), f(P1[0] * 0.85, P1[1] * 0.85, 0.45), f(P0[0] * 0.85, P0[1] * 0.85, 0.45), yel, SN);
+          pushTri(PL, f(P0[0] * 0.85, P0[1] * 0.85, 0.45), f(P1[0] * 0.85, P1[1] * 0.85, 0.45), f(0, 0, 0.6), [0.98, 0.84, 0.30], SN);
+        }
+      },
       lavice(f) {                                              // šikmá lavice na sedy-lehy
         post(f, -0.7, 0, 0.35, steel, 0.08); post(f, 0.7, 0, 0.7, steel, 0.08);
         pushQuad(PL, f(-0.8, -0.25, 0.4), f(0.8, -0.25, 0.75), f(0.8, 0.25, 0.75), f(-0.8, 0.25, 0.4), blue, SN);
       },
     };
-    for (const [x, y, z, a, t] of scene.play || []) if (M[t]) M[t](frameAt(x, y, z, a));
+    const K = 1.5;                                             // zvětšení proti skutečnosti, aby bylo vybavení na mapě vidět (prep.py HRISTE_K)
+    for (const [x, y, z, a, t] of scene.play || []) if (M[t]) { const f = frameAt(x, y, z, a); M[t]((s, q, h) => f(s * K, q * K, h * K)); }
     if (PL.p.length) world.add(new THREE.Mesh(geom(PL), solidMat));
   }
   // vánoční výzdoba (assets/vanoce.json): jen ve vrstvě mode=xmas (zimní varianta se sněhem, podzimní bez);
