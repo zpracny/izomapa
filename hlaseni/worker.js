@@ -123,12 +123,37 @@ async function adminStav(req, env) {
   return json({ ok: true, ...v });
 }
 
+// zpoždění MHD v reálném čase (volitelné, "polohy": true v mesto.json + secret GOLEMIO_TOKEN z api.golemio.cz):
+// GET /api/polohy?bbox=sever,západ,jih,východ -> {"t": čas, "v": [[gtfs_trip_id, zpoždění s, stav], …]}
+// Golemio se ptá jednou za 20 s pro všechny návštěvníky (cache), klíč zůstává na serveru.
+async function polohy(req, env, ctx) {
+  if (!env.GOLEMIO_TOKEN) return json({ v: [], err: 'off' }, 404);
+  const bb = (new URL(req.url).searchParams.get('bbox') || '').split(',').map(Number);
+  if (bb.length !== 4 || bb.some((v) => !Number.isFinite(v)) || bb[0] <= bb[2] || bb[3] <= bb[1] || bb[0] - bb[2] > 1 || bb[3] - bb[1] > 1.5)
+    return json({ v: [], err: 'bbox' }, 400);
+  const q = bb.map((v) => v.toFixed(3)).join(',');
+  const key = new Request('https://polohy.cache/?' + q), cache = caches.default;
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  let v = [], err = null;
+  try {
+    const r = await fetch(`https://api.golemio.cz/v2/public/vehiclepositions?boundingBox=${q}`, { headers: { 'X-Access-Token': env.GOLEMIO_TOKEN } });
+    if (r.ok) v = ((await r.json()).features || []).map((f) => f.properties || {}).filter((p) => p.gtfs_trip_id).map((p) => [p.gtfs_trip_id, p.delay ?? null, p.state_position || '']);
+    else err = r.status;
+  } catch (e) { err = 'fetch'; }
+  const res = new Response(JSON.stringify({ t: Date.now(), v, ...(err ? { err } : {}) }),
+    { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': `public, max-age=${err ? 60 : 20}` } });
+  ctx.waitUntil(cache.put(key, res.clone()));
+  return res;
+}
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const p = new URL(req.url).pathname;
     if (p === '/api/flights') return flights({ request: req });
     if (p === '/api/report' && req.method === 'POST') return report(req, env);
     if (p === '/api/stav' && req.method === 'GET') return stav(env);
+    if (p === '/api/polohy' && req.method === 'GET') return polohy(req, env, ctx);
     if (p.startsWith('/api/admin/') || p === '/admin' || p === '/admin.html') {
       if (!isAdmin(req, env)) return new Response('Přihlášení do administrace', { status: 401, headers: { 'www-authenticate': 'Basic realm="izomapa admin", charset="UTF-8"' } });
       if (p === '/api/admin/list') return adminList(req, env);

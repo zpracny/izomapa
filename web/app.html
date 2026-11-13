@@ -1228,13 +1228,25 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   // Přejezdy přes sousední koleje (do XG_M od sebe) tvoří jeden přejezd: jedny výstražníky před první a za poslední kolejí,
   // zavřeno, když jede vlak po kterékoli koleji (v OSM je přejezd zvlášť na každé koleji).
   const XC = new Map(), xings = [], XG = [], XG_M = 15;
+  // závory a přechody pro pěší přes trať (assets/prejezdy_info.json z nastroje/prejezdy.py): {"zavory": [[lat, lon]], "pesi": [[lat, lon, závory]]}
+  const PJI = {{PREJEZDY_INFO}} || {}, llW = ([la, lo]) => [(lo - cam.lon0) * cam.kx, (la - cam.lat0) * cam.ky];
+  const ZAV = (PJI.zavory || []).map(llW);
+  function xGroup(x, y, c) {
+    let g = XG.find((q) => q.pts.some(([a, b]) => Math.hypot(a - x, b - y) < XG_M));
+    if (!g) XG.push(g = { pts: [], cs: new Set(), closed: false });
+    g.pts.push([x, y]); g.cs.add(c); return g;
+  }
+  const pedX = (PJI.pesi || []).filter((q) => q[2]).map((q) => {     // přechod pro pěší se závorami: výstražníky u cesty, zavírá se s vlaky
+    const [x, y] = llW(q), key = Math.round(x) + ',' + Math.round(y);
+    if (!XC.has(key)) XC.set(key, { x, y, closed: false, on: null });
+    const c = XC.get(key); return { x, y, c, g: xGroup(x, y, c), zav: 1 };
+  });
   function addXing(r, z) {
     const key = Math.round(z[1]) + ',' + Math.round(z[2]);
     if (!XC.has(key)) XC.set(key, { x: z[1], y: z[2], closed: false, on: null });
     z.xc = XC.get(key);
-    let g = XG.find((q) => q.pts.some(([x, y]) => Math.hypot(x - z[1], y - z[2]) < XG_M));
-    if (!g) XG.push(g = { pts: [], cs: new Set(), closed: false });
-    g.pts.push([z[1], z[2]]); g.cs.add(z.xc); z.g = g;
+    const g = z.g = xGroup(z[1], z[2], z.xc);
+    z.zav = ZAV.some(([x, y]) => Math.hypot(x - z[1], y - z[2]) < 10);
     const lead = xings.find(([r2, z2]) => r2 === r && z2.g === g);       // na jednom kusu silnice jedny výstražníky pro celou skupinu
     if (lead) { lead[1].s0 = Math.min(lead[1].s0, z[0]); lead[1].s1 = Math.max(lead[1].s1, z[0]); }
     else { z.s0 = z.s1 = z[0]; xings.push([r, z]); }
@@ -1379,6 +1391,16 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     ctx.moveTo(x - q * 1.8, y - h - q * 3.6); ctx.lineTo(x + q * 1.8, y - h - q * 1.2); ctx.moveTo(x + q * 1.8, y - h - q * 3.6); ctx.lineTo(x - q * 1.8, y - h - q * 1.2); ctx.stroke();
     ctx.strokeStyle = '#f4f4f0'; ctx.lineWidth = q * 0.45; ctx.stroke();
     ctx.fillStyle = '#26262a'; ctx.fillRect(x - q * 2, y - h - q * 0.2, q * 4, q * 1.6);
+    if (z.zav && o.arm) {                                    // závora: zavřeno vodorovně přes cestu, otevřeno svisle nahoru
+      const px = x, py = y - h * 0.32, len = Math.hypot(o.arm[0], o.arm[1]) * sx;
+      const [ux, uy] = z.g.closed ? [o.arm[0] * sx / len, o.arm[1] * sx / len] : [0.08, -1];
+      ctx.lineWidth = Math.max(2, q * 0.55);
+      for (let k = 0; k < 6; k++) {
+        ctx.strokeStyle = k % 2 ? '#f4f4f0' : '#d23a2e'; ctx.beginPath();
+        ctx.moveTo(px + ux * len * k / 6, py + uy * len * k / 6); ctx.lineTo(px + ux * len * (k + 1) / 6, py + uy * len * (k + 1) / 6); ctx.stroke();
+      }
+      ctx.fillStyle = '#26262a'; ctx.fillRect(px - q * 0.7, py - q * 0.5, q * 1.4, q * 1.2);
+    }
     const lamp = z.g.closed ? [x + (ph ? 1.05 : -1.05) * q, '#ff4438', '255,68,56'] : Math.floor(now / 900) % 2 ? [x, '#f4f4f0', '244,244,240'] : null;
     if (!lamp) return;
     if (night > 0.3) {
@@ -1445,9 +1467,29 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     m.dur = m.trips.map((t) => t[4][t[4].length - 2]);
     m.maxDur = Math.max(...m.dur);
     m.maxWait = m.trips.reduce((x, t) => Math.max(x, t[7] || 0), 0);   // čekání na konečné před odjezdem (mhd.py)
-    Object.assign(MHD, m, { on: true });
+    m.tidIx = new Map((m.tid || []).map((id, i) => [id, i]).filter(([id]) => id)); m.ix = new Map(m.trips.map((t, i) => [t, i]));
+    Object.assign(MHD, m, { on: true, dly: new Map(), zrus: new Set(), maxDelay: 0, rt: 0 });
     stopsReady();
+    if ({{POLOHY}}) { mhdRealtime(); setInterval(mhdRealtime, 20000); }
   }).catch(() => {});
+  // zpoždění v reálném čase (PID přes Golemio, hlaseni/worker.js /api/polohy): spoj jede po své trase o zpoždění později;
+  // bez odpovědi (výpadek, zastaralá data přes 3 min) zůstává jízdní řád
+  function mhdRealtime() {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const q of cam.grounds) { x0 = Math.min(x0, q.cx - cam.half); x1 = Math.max(x1, q.cx + cam.half); y0 = Math.min(y0, q.cy - cam.half); y1 = Math.max(y1, q.cy + cam.half); }
+    const M_ = 12000, lat = (y) => (y / cam.ky + cam.lat0).toFixed(3), lon = (x) => (x / cam.kx + cam.lon0).toFixed(3);   // okolí 12 km: vlaky a linky už před vjezdem do mapy
+    fetch(`/api/polohy?bbox=${lat(y1 + M_)},${lon(x0 - M_)},${lat(y0 - M_)},${lon(x1 + M_)}`).then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (!d || !d.v || d.err) { if (Date.now() - MHD.rt > 180000) { MHD.dly = new Map(); MHD.zrus = new Set(); MHD.maxDelay = 0; } return; }
+      const dl = new Map(), zr = new Set(); let mx = 0;
+      for (const [id, dy, st] of d.v) {
+        const i = MHD.tidIx.get(id); if (i === undefined) continue;
+        if (st === 'canceled') { zr.add(i); continue; }
+        if (dy !== null && Number.isFinite(dy)) { const v = Math.max(-300, Math.min(3600, dy)); dl.set(i, v); mx = Math.max(mx, v); }
+      }
+      MHD.dly = dl; MHD.zrus = zr; MHD.maxDelay = mx; MHD.rt = Date.now();
+    }).catch(() => {});
+  }
+  const mhdDelay = (i) => (MHD.dly && MHD.dly.get(i)) || 0;
   const pragueNow = () => {                                // datum, den v týdnu (po = 0) a sekundy od půlnoci (čas v Česku)
     const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Prague', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', weekday: 'short', hour12: false })
       .formatToParts(new Date()).map((q) => [q.type, q.value]));
@@ -1469,10 +1511,10 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     const yest = mhdServices(ymd(y), (n.wd + 6) % 7, false), out = [];
     for (const [svc, t] of [[today, n.s], [yest, n.s + 86400]]) {
       const T = MHD.trips; let lo = 0, hi = T.length;
-      while (lo < hi) { const m = (lo + hi) >> 1; if (T[m][3] < t - MHD.maxDur) lo = m + 1; else hi = m; }
-      for (let i = lo; i < T.length && T[i][3] <= t + (MHD.maxWait || 0); i++) {
-        if (!svc.has(T[i][2])) continue;
-        const el = t - T[i][3];
+      while (lo < hi) { const m = (lo + hi) >> 1; if (T[m][3] < t - MHD.maxDur - (MHD.maxDelay || 0)) lo = m + 1; else hi = m; }
+      for (let i = lo; i < T.length && T[i][3] <= t + (MHD.maxWait || 0) + 300; i++) {
+        if (!svc.has(T[i][2]) || (MHD.zrus && MHD.zrus.has(i))) continue;
+        const el = t - T[i][3] - mhdDelay(i);                // se zpožděním v reálném čase
         if (el <= MHD.dur[i] && el >= -(T[i][7] || 0)) out.push(el >= 0 ? [i, el] : [i, 0, -el]);   // [i, s od odjezdu, s do odjezdu když stojí na konečné]
       }
     }
@@ -1493,7 +1535,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     for (let k = 0; k < z.length; k += 2) if (z[k + 1] >= a[1]) { next = MHD.names[z[k]]; break; }
     const b = document.createElement('b'); b.textContent = `${typ === 0 ? 'Tramvaj' : typ === 2 ? 'Vlak' : 'Autobus'} ${line}`;
     const odj = a[2] ? ` · stojí na konečné, odjezd za ${Math.max(1, Math.round(a[2] / 60))} min` : next ? ` · další zastávka ${next}` : '';
-    $('followTxt').replaceChildren(b, ` → ${MHD.names[t[5]]}`, odj);
+    const dz = mhdDelay(i), zp = Date.now() - MHD.rt < 180000 && MHD.dly.has(i) ? (dz >= 60 ? ` · zpoždění ${Math.round(dz / 60)} min` : ' · jede včas') : '';
+    $('followTxt').replaceChildren(b, ` → ${MHD.names[t[5]]}`, odj, zp);
   }
   $('followStop').addEventListener('click', () => { MHD.follow = null; if (typeof PLANES !== 'undefined') PLANES.follow = null; $('follow').hidden = true; });
   viewer.addHandler('canvas-drag', () => {
@@ -1530,7 +1573,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     for (const [svc, base] of [[today, 0], [yest, -86400], [tom, 86400]]) for (const t of MHD.trips) {
       if (!svc.has(t[2]) || MHD.routes[t[0]][1] === 2) continue;
       const z = t[6];
-      for (let k = 0; k < z.length - 2; k += 2) if (z[k] === nid) { const dt = base + t[3] + z[k + 1] - p.s; if (dt >= -20 && dt <= 3600) out.push([dt, t]); }
+      const dz = base === 0 ? mhdDelay(MHD.ix.get(t)) : 0;   // dnešní spoje i se zpožděním v reálném čase
+      for (let k = 0; k < z.length - 2; k += 2) if (z[k] === nid) { const dt = base + t[3] + z[k + 1] + dz - p.s; if (dt >= -20 && dt <= 3600) out.push([dt, t, dz]); }
     }
     return out.sort((a, b) => a[0] - b[0]);
   }
@@ -1544,7 +1588,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       if (groups.get(key).length < 3) groups.get(key).push(dt);
     }
     const rows = [...groups.entries()].sort((a, b) => a[1][0] - b[1][0]).slice(0, 10).map(([k, v]) => [k, `${hm(v[0])} (${za(v[0])})` + v.slice(1).map((d) => ', ' + hm(d)).join('')]);
-    showCard({ title: `Zastávka ${MHD.names[s.n]}`, text: rows.length ? 'Odjezdy podle jízdního řádu, bez zpoždění.' : 'V příští hodině odtud podle jízdního řádu nic nejede.',
+    const rt = Date.now() - MHD.rt < 180000;
+    showCard({ title: `Zastávka ${MHD.names[s.n]}`, text: rows.length ? (rt ? 'Odjezdy podle jízdního řádu včetně aktuálního zpoždění (PID).' : 'Odjezdy podle jízdního řádu, bez zpoždění.') : 'V příští hodině odtud podle jízdního řádu nic nejede.',
       rows, lon: s.x / cam.kx + cam.lon0, lat: s.y / cam.ky + cam.lat0 });
   }
   const stopAt = (ix, iy) => {                              // zastávka pod kliknutím (do ~20 px na obrazovce, nejméně 6 m)
@@ -2633,9 +2678,22 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
         for (const d of [-6, 6]) {                         // výstražník z obou stran kolejí (když kus silnice pokračuje)
           const sp = d < 0 ? z.s0 + d : z.s1 + d;
           if (sp < 0 || sp > r.L) continue;
-          const o = curbPt(along(r, sp), d < 0 ? 1 : -1, 4), dp = o.d;   // vpravo u okraje vozovky pro auta, která k přejezdu jedou
+          const cen = along(r, sp), o = curbPt(cen, d < 0 ? 1 : -1, 4), dp = o.d;
+          if (z.zav) o.arm = [(cen.ix - o.ix) * 1.1, (cen.iy - o.iy) * 1.1];    // závora přes svůj pruh   // vpravo u okraje vozovky pro auta, která k přejezdu jedou
           if (!vis(o.ix, o.iy) || occluded(o.ix, o.iy, dp) || occluded(o.ix, o.iy - 30, dp)) continue;   // za budovou (pata nebo výstražník) se nekreslí
           if (dp < dc) xFront.push([o, z]); else drawXPost(o, z, sx, ox, oy, now, night);
+        }
+      }
+      if (sx > 0.25) for (const pq of pedX) {               // přechod pro pěší přes trať: výstražník se závorou z obou stran koleje
+        const on = pq.c.on && pq.c.on[0]; if (!on) continue;
+        const sh = MHD.shapes[on[0]], L = sh.len; let k = 1; while (k < L.length - 1 && L[k] < on[1]) k++;
+        const tx0 = sh.w[k][0] - sh.w[k - 1][0], ty0 = sh.w[k][1] - sh.w[k - 1][1], tl = Math.hypot(tx0, ty0) || 1, tx = tx0 / tl, ty = ty0 / tl;
+        const dc = depth(pq.x, pq.y, gz(pq.x, pq.y));
+        for (const sd of [-1, 1]) {
+          const x = pq.x - ty * 4.5 * sd + tx * 1.6 * sd, y = pq.y + tx * 4.5 * sd + ty * 1.6 * sd, h = gz(x, y), [ix, iy] = toImg(x, y, h);
+          if (!vis(ix, iy)) continue;
+          const [ex, ey] = toImg(x - tx * 3.2 * sd, y - ty * 3.2 * sd, h), o = { ix, iy, d: depth(x, y, h), arm: [ex - ix, ey - iy] };
+          if (o.d < dc) xFront.push([o, pq]); else drawXPost(o, pq, sx, ox, oy, now, night);
         }
       }
       if (sx > 0.12) for (const c of cars) {
@@ -2670,11 +2728,12 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
           if (shown_) for (const q of typ === 2 ? drawTrain.pts : [o]) MHD.drawn.push([Math.round(ox + q.ix * sx), Math.round(oy + q.iy * sx) - Math.round(8 * sx), i]);
           if (shown_ && (sx > 0.55 || i === MHD.follow)) {     // číslo linky nad vozidlem
             const h = gz(o.x, o.y), [tx, ty] = toImg(o.x, o.y, h + 6), X_ = Math.round(ox + tx * sx), Y_ = Math.round(oy + ty * sx);
-            ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; const tw = Math.ceil(ctx.measureText(line).width) + 10;
+            const dz_ = mhdDelay(i), lab = dz_ >= 60 ? `${line} +${Math.round(dz_ / 60)}` : line;   // zpoždění v minutách
+            ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; const tw = Math.ceil(ctx.measureText(lab).width) + 10;
             ctx.fillStyle = '#16191f'; ctx.fillRect(X_ - tw / 2 - 1, Y_ - 10, tw + 2, 19);
             ctx.fillStyle = typ === 0 ? '#c4352b' : typ === 2 ? '#2f7d4f' : '#1f6fb2'; ctx.fillRect(X_ - tw / 2, Y_ - 9, tw, 17);
             if (i === MHD.follow) { ctx.strokeStyle = '#f2c66d'; ctx.lineWidth = 2; ctx.strokeRect(X_ - tw / 2 - 2, Y_ - 11, tw + 4, 21); }
-            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(line, X_, Y_); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(lab, X_, Y_); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
           }
         }
       }

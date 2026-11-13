@@ -1297,6 +1297,7 @@ for _, r in bld.iterrows():
             rs = 'flat'; tenement = False
         if lm == 'radnice': rs = 'hipped'
         if URBAN and not lm and rs not in (None, 'flat') and area > 2500: rs = 'flat'
+        if SAT['b'].get(r.id, {}).get('pristresek'): c = 'roof'   # upresneni.json b: {"pristresek": 1} = budova z OSM je jen střecha na sloupech (myčka, altán)
         if c == 'roof': rs = 'flat'                     # přístřešek (nástupiště, zastávka): střecha na sloupech
         so = SAT['b'].get(r.id, {})
         dom = DOM_BY_ID.get(r.id); dsp = dom['spec'] if dom else None
@@ -1357,7 +1358,9 @@ for _, r in bld.iterrows():
             else: total = max(top, med + 1); eave = max(2.2, total - roofh)
         # tvar střechy proložený měřením DMP OK (nastroje/strechy_tvar.py): typ, okap, výška a směr hřebene každého dílu
         _tv = TVAR.get(r.id)
-        if _tv and not dsp and not lm and len(pieces) == 1 and c != 'roof':
+        if _tv and not dsp and not lm and len(pieces) == 1 and c != 'roof' and so.get('r') == 'flat':   # ruční plochá střecha: výška okapu z měření
+            rs = 'flat'; parts = []; roofh = 0.0; eave = max(2.2, _tv['e'] - HREF - gnd); total = eave; tenement = False
+        elif _tv and not dsp and not lm and len(pieces) == 1 and c != 'roof':
             rs = _tv['r']; parts = [[round(q[0] - CX, 2), round(q[1] - CY, 2), q[2], q[3], q[4]] for q in _tv['parts']] if rs != 'flat' else []
             roofh = _tv['rh'] if parts else 0.0; eave = max(2.2, _tv['e'] - HREF - gnd); total = eave + roofh
             tenement = tenement and rs != 'flat'
