@@ -59,6 +59,7 @@ OBL = json.load(open('assets/oblasti.json')) if os.path.exists('assets/oblasti.j
 for _o in OBL.values():
     for _k, _v in list(_o['b_auto'].items()) + list(_o['b'].items()): SAT['b'][_k] = {**SAT['b'].get(_k, {}), **_v}
 HREBENY = json.load(open('assets/hrebeny.json')) if os.path.exists('assets/hrebeny.json') else {}   # nastroje/hrebeny.py
+VYSOKY_PLOCHA = 22.0   # m okapu: výš je střecha rovná (paneláky), viz pravidlo u tvaru střechy
 TVAR = json.load(open('assets/strechy_tvar.json')) if os.path.exists('assets/strechy_tvar.json') else {}   # nastroje/strechy_tvar.py
 # změřené výšky z DMP 1G (ČÚZK, CC BY 4.0): id -> [medián, p90] nad terénem. Nerozhodují o typu ani tvaru střechy, jen o výšce
 DMP = json.load(open('assets/dmp_vysky.json')) if os.path.exists('assets/dmp_vysky.json') else {}
@@ -1364,6 +1365,11 @@ for _, r in bld.iterrows():
             rs = _tv['r']; parts = [[round(q[0] - CX, 2), round(q[1] - CY, 2), q[2], q[3], q[4]] for q in _tv['parts']] if rs != 'flat' else []
             roofh = _tv['rh'] if parts else 0.0; eave = max(2.2, _tv['e'] - HREF - gnd); total = eave + roofh
             tenement = tenement and rs != 'flat'
+        # vysoký dům (okap nad VYSOKY_PLOCHA m, u nás panelák od ~8 pater) má rovnou střechu: strojovnu výtahu na střeše
+        # proložení DMP OK i pravidla jinak berou jako vrchol valby nebo hřeben. Kostely a dominanty ne.
+        if not dsp and not lm and rs not in (None, 'flat') and eave > VYSOKY_PLOCHA and c not in ('church', 'chapel', 'cathedral', 'religious', 'roof') \
+                and so.get('r') in (None, 'flat'):
+            rs = 'flat'; parts = []; roofh = 0.0; total = eave; tenement = False
         if c == 'roof': style = 12; total = hgt if hgt and hgt < 12 else 4.5; eave = total
         if c in ('retail', 'commercial') and area > 1500 and not tenement: style = 3     # obchodní centra: pásy oken
         pal = TEN_WALLS if style == 11 else PANEL if style == 1 else WALLS
