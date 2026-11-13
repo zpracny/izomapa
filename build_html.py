@@ -1,3 +1,4 @@
+import numpy as np
 """Z web/app.html a mesto.json vyrobí site/index.html (texty, meta, sitemap).
 Pokud existuje složka obce/*.json, vyrobí pro každou obec i site/index_<obec>.html a site/obce/<obec>/og.jpg."""
 import html, json, os, re
@@ -10,23 +11,23 @@ from geo import MESTO
 def og_obrazek(out='site/og.jpg', W=1200, H=630, dolu=1, latlon=None):
     """náhled pro sdílení (og:image) 1200×630: výřez středu města z letních dlaždic (o úroveň menší než plné rozlišení)"""
     t = json.load(open('site/tiles.json')); base = t['base']
-    x, y = geo.to_local(latlon[1], latlon[0]) if latlon else (0, 0)
-    c = geo.chunk_of(float(x), float(y)) if latlon else (0, 0)
-    s = (t.get('chunks') or {}).get(f'c{c[0]}_{c[1]}', {}).get('summer') if c != (0, 0) else None
-    s = s or t['summer']; I = s['Image']
-    url = 'site/' + I['Url'].rstrip('/')
-    T = int(I['TileSize']); SW, SH = int(I['Size']['Width']), int(I['Size']['Height'])
-    lv = max(int(n) for n in os.listdir(url) if n.isdigit()) - dolu; k = 2 ** dolu
-    vx, vy, _ = geo.view(x, y, 0)
-    cx, cy = (vx - s.get('x0', base['x0'])) / base['mpp'] / k, (s.get('y1', base['y1']) - vy) / base['mpp'] / k
-    lw, lh = -(-SW // k), -(-SH // k)
-    x0 = int(min(max(cx - W / 2, 0), max(lw - W, 0))); y0 = int(min(max(cy - H / 2, 0), max(lh - H, 0)))
+    x, y = geo.to_local(float(latlon[1]), float(latlon[0])) if latlon else (0, 0)
+    x, y = float(np.ravel(x)[0]), float(np.ravel(y)[0])        # to_local vrací pole i pro jeden bod
+    k = 2 ** dolu; vx, vy, _ = geo.view(x, y, 0)
     img = Image.new('RGB', (W, H), (27, 33, 48))
-    for i in range(x0 // T, (x0 + W) // T + 1):
-        for j in range(y0 // T, (y0 + H) // T + 1):
-            f = f'{url}/{lv}/{i}_{j}.webp'
-            if os.path.exists(f):
-                q = Image.open(f).convert('RGBA'); img.paste(q, (i * T - x0, j * T - y0), q)
+    # výřez se skládá ze všech čtverců (střed může ležet u hrany čtverce); vzdálenější čtverce se kreslí dřív
+    sady = [t['summer']] + [c['summer'] for c in (t.get('chunks') or {}).values() if c.get('summer')]
+    for s in sorted(sady, key=lambda q: q.get('y1', base['y1']), reverse=True):
+        I = s['Image']; url = 'site/' + I['Url'].rstrip('/'); T = int(I['TileSize'])
+        if not os.path.isdir(url): continue
+        lv = max(int(n) for n in os.listdir(url) if n.isdigit()) - dolu
+        cx, cy = (vx - s.get('x0', base['x0'])) / base['mpp'] / k, (s.get('y1', base['y1']) - vy) / base['mpp'] / k
+        x0, y0 = int(round(cx - W / 2)), int(round(cy - H / 2))
+        for i in range(max(0, x0 // T), (x0 + W) // T + 1):
+            for j in range(max(0, y0 // T), (y0 + H) // T + 1):
+                f = f'{url}/{lv}/{i}_{j}.webp'
+                if os.path.exists(f):
+                    q = Image.open(f).convert('RGBA'); img.paste(q, (i * T - x0, j * T - y0), q)
     os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
     img.save(out, quality=85)
 
@@ -42,15 +43,24 @@ def postav_stranku(M, html_out='site/index.html', og_cesta='og.jpg', je_obec=Fal
     mhd = M.get('mhd') or {}
     pohled = M.get('pohled')
     strom = M.get('vanocni_strom')
+    if isinstance(strom, list) and strom and isinstance(strom[0], list): strom = strom[0]      # víc stromů: náhled podle prvního
     fill = {
         'TITULEK': E(M['titulek']), 'POPIS': E(M['popis']), 'MESTO': E(M['nazev']), 'H1_A': E(M['h1'][0]), 'H1_B': E(M['h1'][1]),
         'PODTITUL': E(M['podtitul']),
         'HLASENI': 'true' if M.get('hlaseni') else 'false',
+        'FOTKY': 'true' if M.get('hlaseni') and M.get('fotky') else 'false',   # fotky k hlášení (R2, hlaseni/worker.js)
         'VITR': 'true' if M.get('vitr') else 'false',
         'POCASI': 'true' if M.get('pocasi') else 'false',
         'POHLED': json.dumps(pohled if isinstance(pohled, list) and len(pohled) >= 2 else None),
+        # autor mapy města: "autor": {"jmeno", "url" (nepovinně), "text" (nepovinně, např. „Mapu Příbrami připravil“)}
+        'AUTOR': (lambda a: f'<p>{E(a.get("text") or "Mapu připravil")} ' + (f'<a href="{E(a["url"])}" target="_blank" rel="noopener">{E(a["jmeno"])}</a>' if a.get('url') else E(a['jmeno'])) + '.</p>')(M['autor']) if isinstance(M.get('autor'), dict) and M['autor'].get('jmeno') else '',
         'DOMU_CELEK': 'true' if M.get('domu_celek') else 'false',
-        'STROM': json.dumps(strom if isinstance(strom, list) and len(strom) == 2 else None),
+        'STROM': json.dumps(strom if isinstance(strom, list) and len(strom) == 2 and all(isinstance(v, (int, float)) for v in strom) else None),   # seznam stromů kreslí overlay.json
+        'XMAS_LL': json.dumps((lambda v: v if v and isinstance(v[0], list) else [v] if v else [])(M.get('vanocni_strom'))),   # vánoční stromy [[lat, lon], ...]
+        'KLUZISTE': json.dumps(M.get('kluziste') or []),
+        'STANKY': json.dumps(M.get('vanocni_stanky') or []),
+        'VANOCE': json.dumps(M.get('vanoce') or None),                 # termín vánoční vrstvy {"od": "11-11", "do": "01-06"} (assets/vanoce.json)
+        'RYBNIKY': json.dumps([{'nazev': r['nazev'], 'lat': r['lat'], 'lon': r['lon']} for r in M.get('rybniky') or []], ensure_ascii=False),
         'OBEC': json.dumps(M.get('nazev') if je_obec else None, ensure_ascii=False),
         'VLAK': json.dumps({'vychozi': (M.get('vlak') or {}).get('vychozi', 'regionova') if isinstance(M.get('vlak'), dict) else M.get('vlak', 'regionova'), 'linky': M['vlak'].get('linky', {}) if isinstance(M.get('vlak'), dict) else {}}),
         'DOPRAVA_ZDROJ': ', intenzity dopravy © <a href="https://www.rsd.cz/silnice-a-dalnice/scitani-dopravy" target="_blank" rel="noopener">ŘSD ČR</a> (Celostátní sčítání dopravy)' if M.get('doprava') else '',
@@ -101,7 +111,9 @@ open('site/robots.txt', 'w').write('User-agent: *\nAllow: /\n' + (f'Sitemap: {SI
 if SITE_URL:
     open('site/sitemap.xml', 'w').write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/</loc></url></urlset>\n')
 if MESTO.get('hlaseni'):                              # volitelná administrace hlášení (server v hlaseni/)
-    open('site/admin.html', 'w', encoding='utf-8').write(open('hlaseni/admin.html', encoding='utf-8').read())
+    open('site/admin.html', 'w', encoding='utf-8').write(open('hlaseni/admin.html', encoding='utf-8').read()
+        .replace('{{RYBNIKY}}', json.dumps([r['nazev'] for r in MESTO.get('rybniky') or []], ensure_ascii=False))
+        .replace('{{VANOCE}}', json.dumps(MESTO.get('vanoce') or None)))
 
 if os.path.isdir('obce'):
     for f in sorted(os.listdir('obce')):

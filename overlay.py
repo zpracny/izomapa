@@ -237,7 +237,8 @@ cam = {'x0': info['x0'], 'y1': info['y1'], 'mpp': info['mpp'], 'X': list(map(flo
        'half': HALF, 'grounds': grounds}
 # vánoční strom na náměstí (zima): mesto.json vanocni_strom = [lat, lon] (příp. více stromů z obce/*.json)
 stromy = []
-for s in [MESTO.get('vanocni_strom')] + [o.get('vanocni_strom') for o in OBCE]:
+_vs = lambda v: v if isinstance(v, list) and v and isinstance(v[0], list) else [v]      # jeden strom [lat, lon] nebo seznam stromů
+for s in _vs(MESTO.get('vanocni_strom')) + [q for o in OBCE for q in _vs(o.get('vanocni_strom'))]:
     if isinstance(s, list) and len(s) == 2 and all(isinstance(v, (int, float)) for v in s):
         _x, _y = to_local(s[1], s[0]); OFF = (0.0, 0.0)
         pt = list(px(float(_x), float(_y), gz(_x, _y))[:2])

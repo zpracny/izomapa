@@ -49,16 +49,30 @@ Automaticky z dat vyjde celé město. Ručně je potřeba:
     `to` výška špičky, `tc` barva, `clock`, `round`, `stone`, `ruin`}], `chimneys`, `blocks` (nástavby), `canopy`, `skylights`,
   - `lm` vlastní model z `render.html` (`radnice` je ukázka, jak model napsat),
   - `only`: samostatná stavba bez budovy v datech (zřícenina, rozhledna).
+  - `dily`: stavba složená z kvádrů se střechou místo půdorysu z dat (členité stavby: klášter, zámek s dvorem, nádraží).
+    `{"ll": [lat, lon] kotva, "a": úhel osy ve stupních, "p": [díly], "v": [věže]}`; díl má `s`, `t` (m od kotvy) nebo `ll`,
+    `l`, `w`, `a`, `e` (okap m n. m.), `rh`, `r` (gabled/hipped/flat/pyramid), `g` (nula oken m n. m.), `win`, `wini` (styl strany
+    k nádvoří, 18 = arkády); věž má `e` a `to` v m n. m. Výšky a polohy změř z DMP OK (`nastroje/dmpok.py`, `odlitek.dsm`),
+    tvar ber z fotek (`nastroje/commons.py` stáhne fotky z Wikimedia Commons i s licencí). Automatický `"odlitek": true`
+    (tvar přímo z DMP OK) se hodí jen na velké jednoduché haly, členité stavby z něj vycházejí rozbitě.
   Napárování na budovu: bod uvnitř půdorysu, jinak největší budova do 25 m (`match_doms` v `prep.py`).
   Ukázka je v `priklady/dominanty.json`.
 - **Příběhy míst** → `mista.json`: `[{"nazev", "lat", "lon", "text"}]`. Texty piš jen z ověřených zdrojů (web obce,
   Památkový katalog, Wikipedie s odkazem). Když si nejsi jistý, zeptej se uživatele. Nic si nevymýšlej.
   Ukázka je v `priklady/mista.json`.
+- **Vánoční výzdoba a zamrzlé rybníky** (samostatné průhledné vrstvy): výzdoba v `assets/vanoce.json` (`od`/`do` = termín
+  „MM-DD“, `stromy`, `kluziste`, `stanky`), rybníky v `mesto.json` `"rybniky": [{nazev, lat, lon}]`. Po změně `./vanoce.sh`
+  (přerenderuje jen dotčené čtverce, vrstvy `xmas_winter`, `xmas_autumn`, `led`). Prohlížeč výzdobu zapíná podle data,
+  administrace (/admin, „Stav mapy“) ji umí vynutit a zapíná zamrzlé rybníky (`/api/stav` v `hlaseni/worker.js`).
 - **Chyby v datech:** špatná výška → zkontroluj `build/dmp_kontrola.csv`; chybějící nebo nesmyslná budova → nejlepší
   je opravit ji v OpenStreetMap (a za pár týdnů se propíše do Overture), jinak pravidlo v `prep.py`.
 - **Vlaky:** `"vlak"` v `mesto.json` vybírá model z katalogu `TRAINS` ve `web/app.html`: `regiopanter`, `regioshark`, `regionova`, `vuz810`, `cityelefant`, `rychlik`. Buď text, nebo `{"vychozi": "regionova", "linky": {"číslo linky": "rychlik"}}`, když na mapě jezdí víc druhů. Bez této volby se vlaky nekreslí, potřebují tvary tras v GTFS. Výchozí model je `regionova`. Nový model je jeden řádek v katalogu.
 - **Barvy střech:** `.venv/bin/python nastroje/strechy.py` (ortofoto po 0,4 m/px, 7 km čtverec ~10 min) vyrobí `assets/strechy_orto.json`, `prep.py` je pak použije u všech budov místo náhodných. Dominanty mají přednost.
 - **Zeleň na zpevněných plochách:** po `nastroje/strechy.py` spusť `nastroje/povrchy.py` (`build/zelen_maska.png`). Zpevněné a průmyslové plochy, které jsou na ortofotu zelené, se změní na trávu a náměstí, které je z více než poloviny zelené, na park se stromy.
+- **Hřiště:** `.venv/bin/python nastroje/hriste.py` stáhne z OSM dětská a workoutová hřiště (`assets/hriste.json`), `prep.py` na ně
+  rozmístí 3D vybavení (houpačka, skluzavka, prolézačka, pískoviště, houpadla, kolotoč / hrazdy, bradla, žebřiny, lavice; modely
+  v `render.html`). Chybějící v OSM: `assets/upresneni.json` `"hriste": [{"k": "detske" | "workout", "q": [[lat, lon], …]}]`.
+  Chybějící parkoviště: `"parkoviste": [{"q": [[lat, lon], …]}]` (asfalt, stání, auta). Obkreslovat jen z ortofota ČÚZK.
 - **Ruční povrchy** → `assets/upresneni.json`: `"plochy": [{"k": "plaza", "q": [[lat, lon], …]}]` (třídy `plaza`, `plaza2`, `deck`, `park`; kreslí se přes cesty). Stromy podle ortofota: `assets/oblasti.json`, `{"název": {"poly": [[lat, lon], …], "trees": [[lat, lon, výška, jehličnan]], "b": {}, "b_auto": {}, "skryt": true}}` (náhodné stromy v polygonu zmizí, `skryt` zachová pořadí ostatních, takže se nemění jejich barvy ani švy).
 - **Směr hřebene:** `.venv/bin/python nastroje/hrebeny.py` (po `dmp_fetch.py`) zapíše do `assets/hrebeny.json` jen jisté případy, kde laser ukazuje hřeben podél kratší strany.
 - **Hustota aut (volitelné):** `.venv/bin/python nastroje/scitani.py` a v `mesto.json` `"doprava": {"kraj": "Název kraje"}`. Volitelně `"useky": {"číslo silnice": ["úsek sčítání", …]}` vybere přesné úseky, jinak se bere medián silnice v kraji. Počet aut na mapě je ilustrace poměrů, ne skutečný počet. Na silnici jezdí 40 % špičkové hustoty (`CAR_DENS` v `web/app.html`), na telefonu, při pomalém připojení a v úsporném režimu z toho jen třetina. Pojistka pro velká města: na celé mapě nejvýš 1 000 aut, na slabších zařízeních 300 (`MAX_CARS`). Rampy (`subclass` link) mají pětinu intenzity a nejvýš 50 km/h.

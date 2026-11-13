@@ -6,7 +6,10 @@ C=$1; shift; V=${*:-"autumn winter spring summer lights"}
 if [ "$C" = "0,0" ]; then D=build; else D=build/c$(echo $C | tr ',' '_'); fi
 G="gx0=-1646.34559672906 gy1=988.7958500237901"
 for s in $V; do
-  if [ "$s" = lights ]; then
+  if [ "$s" = xmas_winter ] || [ "$s" = xmas_autumn ] || [ "$s" = led ]; then     # průhledné vrstvy (vanoce.sh)
+    rm -rf $D/tiles_$s
+    node render.mjs mpp=0.2 dir=$D out=$D/tiles_$s season=$( [ "$s" = xmas_autumn ] && echo autumn || echo winter ) mode=${s%%_*} alpha=1 $G | grep -c dlaždice || true
+  elif [ "$s" = lights ]; then
     node render.mjs mpp=0.2 dir=$D out=$D/tiles_lights season=autumn mode=lights alpha=1 $G | grep -c dlaždice
   else
     node render.mjs mpp=0.2 dir=$D out=$D/tiles_$s season=$s alpha=1 $G | grep -c dlaždice

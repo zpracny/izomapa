@@ -26,7 +26,9 @@ def build(variant, chunk=None):
     img = Image.new('RGBA' if alpha else 'RGB', (info['width'], info['height']), (0, 0, 0, 0) if alpha else (0, 0, 0))
     for j in range(info['rows']):
         for i in range(info['cols']):
-            t = Image.open(f'{src}/{i}_{j}.png')
+            f = f'{src}/{i}_{j}.png'
+            if not os.path.exists(f) and variant.startswith(('xmas', 'led')): continue     # vrstvy xmas/led: prázdné dlaždice se nerenderují
+            t = Image.open(f)
             img.paste(t.convert('RGBA' if alpha else 'RGB'), (i * T, j * T))
     if alpha: return build_alpha(variant, chunk, img, info)
     # jednotná paleta pro celou mapu; paleta se hledá na zmenšenině, pak se aplikuje na celek

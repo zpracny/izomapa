@@ -52,8 +52,10 @@ OBL = json.load(open('assets/oblasti.json')) if os.path.exists('assets/oblasti.j
 for _o in OBL.values():
     for _k, _v in list(_o['b_auto'].items()) + list(_o['b'].items()): SAT['b'][_k] = {**SAT['b'].get(_k, {}), **_v}
 HREBENY = json.load(open('assets/hrebeny.json')) if os.path.exists('assets/hrebeny.json') else {}   # nastroje/hrebeny.py
+TVAR = json.load(open('assets/strechy_tvar.json')) if os.path.exists('assets/strechy_tvar.json') else {}   # nastroje/strechy_tvar.py
 # změřené výšky z DMP 1G (ČÚZK, CC BY 4.0): id -> [medián, p90] nad terénem. Nerozhodují o typu ani tvaru střechy, jen o výšce
 DMP = json.load(open('assets/dmp_vysky.json')) if os.path.exists('assets/dmp_vysky.json') else {}
+if os.path.exists('assets/dmp_ok.json'): DMP.update(json.load(open('assets/dmp_ok.json')))   # doplněk z DMP OK (nastroje/vysky_ok.py): bez laseru nebo výrazně jinak
 if os.path.exists('assets/dmp_rucne.json'): DMP.update({k: v for k, v in json.load(open('assets/dmp_rucne.json')).items() if not k.startswith('_')})   # ověřená měření z kontrolního seznamu
 DMP.update(UP.get('dmp', {}))                                 # ruční doplnění měření
 
@@ -143,6 +145,20 @@ def dem_sampler():
 
 
 dem = dem_sampler()
+# přesný terén z DMR 5G (nastroje/dmr.py, laserové body terénu ČÚZK); Terrarium zůstává jen mimo pokrytí
+if os.path.exists('build/dmr_grid.npz'):
+    from pyproj import Transformer as _Tr
+    _Z = np.load('build/dmr_grid.npz'); _G, _gx0, _gy0, _gr = _Z['g'].astype(np.float64), float(_Z['x0']), float(_Z['y0']), float(_Z['res'])
+    _TK = _Tr.from_crs(4326, 5514, always_xy=True); _dem_t = dem
+
+    def dem(px, py):
+        lon, lat = to_lonlat(px, py); X, Y = _TK.transform(lon, lat)
+        fi = (np.asarray(X) - _gx0) / _gr - 0.5; fj = (np.asarray(Y) - _gy0) / _gr - 0.5
+        ok = (fi >= 0) & (fi < _G.shape[1] - 1) & (fj >= 0) & (fj < _G.shape[0] - 1)
+        i0 = np.clip(np.floor(fi).astype(int), 0, _G.shape[1] - 2); j0 = np.clip(np.floor(fj).astype(int), 0, _G.shape[0] - 2)
+        tx = np.clip(fi - i0, 0, 1); ty = np.clip(fj - j0, 0, 1)
+        v = (_G[j0, i0] * (1 - tx) * (1 - ty) + _G[j0, i0 + 1] * tx * (1 - ty) + _G[j0 + 1, i0] * (1 - tx) * ty + _G[j0 + 1, i0 + 1] * tx * ty)
+        return np.where(ok, v, _dem_t(px, py))
 STEP = 5.0
 N = int(2 * HALF / STEP) + 1
 # mřížka výšek i s pásem sousedů (MS kroků); body leží na společné světové mřížce, takže se sousedé shodují
@@ -174,7 +190,7 @@ C = dict(grass=0, garden=1, park=2, meadow=3, forest=4, scrub=5, pitch=6, track=
          rail=19, cemetery=20, wetland=21, rock=22, construction=23, footway=24, pool_edge=25, farmland=26,
          cobble=27, grave=28, manhole=29, court_blue=30, zone=31, zone2=32, piste=33, skijump=34,
          wheat=35, wheat2=36, rape=37, rape2=38, maize=39, maize2=40, soil=41, soil2=42,
-         plaza=43, plaza2=44, deck=45)    # pole: plodina + řádky
+         plaza=43, plaza2=44, deck=45, spoil=46)    # pole: plodina + řádky
 TW = int(2 * HALF / TEX_RES)
 TWE = TW + 2 * MPX                          # rastry včetně pásu sousedů
 cls = Image.new('L', (TWE, TWE), C['grass'])
@@ -325,6 +341,12 @@ for _, r in inf.iterrows():
     if r['class'] == 'parking' and r.geom.geom_type in ('Polygon', 'MultiPolygon'):
         fill(r.geom, C['parking'], block=True)
         parkings += [(r.id, p) for p in polys(r.geom.intersection(AREA))]
+# ruční parkoviště (assets/upresneni.json "parkoviste": [{"q": [[lat, lon], …]}]): chybí v OSM, obkreslená z ortofota ČÚZK
+for _k, _pl in enumerate(UP.get('parkoviste', [])):
+    _g = Polygon([to_local(lo, la) for la, lo in _pl['q']])
+    if not _g.intersects(EXT): continue
+    fill(_g, C['parking'], block=True)
+    parkings += [(f'rucni{_k}', p) for p in polys(_g.intersection(AREA))]
 for _, r in inf.iterrows():                             # autobusové nádraží: asfalt bez stání, nástupiště dlážděná
     if r['class'] == 'bus_station' and r.geom.geom_type in ('Polygon', 'MultiPolygon'): fill(r.geom, C['parking'], block=True)
 for _, r in inf.iterrows():
@@ -339,6 +361,10 @@ for _, r in wat.iterrows():
         else: fill(g, C['water'], block=True)
     elif r['class'] == 'river':          # jen řeky; potoky v datech často vedou pod domy (zatrubněné) a ve skutečnosti nejsou vidět
         line(g, C['stream'], 6, block=True)
+for _, r in inf.iterrows():                             # kašny a fontány: voda s kamennou obrubou (bod = kruhová kašna 4,5 m)
+    if r['class'] != 'fountain': continue
+    g = r.geom if r.geom.geom_type in ('Polygon', 'MultiPolygon') else r.geom.buffer(2.2) if r.geom.geom_type == 'Point' else None
+    if g is not None: fill(g, C['water'], outline=C['pool_edge'], block=True)
 
 seg = load('segment')
 # dálnice ve výstavbě se nekreslí (staveniště je vidět ve využití území)
@@ -557,6 +583,38 @@ for _, g, c, w, _n in roads:
 for pl in UP.get('plochy', []):
     g_ = Polygon([to_local(lo, la) for la, lo in pl['q']])
     fill(g_, C[pl['k']])
+# dětská a workoutová hřiště (assets/hriste.json z nastroje/hriste.py, OSM): 3D vybavení pro render.html (scene.play).
+# Zakreslené prvky (playground=*, fitness_station=*) na své místo, zbytek automaticky podle velikosti hřiště, pod
+# houpačkou, skluzavkou a prolézačkou písek. Poloha je deterministická (stejná i v pásu sousedního čtverce).
+HR = json.load(open('assets/hriste.json')) if os.path.exists('assets/hriste.json') else {'hriste': [], 'prvky': []}
+HR['hriste'] = HR['hriste'] + [{'id': f'u{_k}', 'k': _h.get('k', 'detske'), 'poly': _h['q'], 'll': _h['q'][0]}   # ruční (chybí v OSM)
+                               for _k, _h in enumerate(UP.get('hriste', []))]
+play = []
+_PRV = [(Point(*to_local(lo, la)), t) for (la, lo), t in ((q['ll'], q['t']) for q in HR['prvky'])]
+for h in HR['hriste']:
+    det = h['k'] == 'detske'
+    _g = Polygon([to_local(lo, la) for la, lo in h['poly']]) if h['poly'] else Point(*to_local(h['ll'][1], h['ll'][0])).buffer(7.0 if det else 5.0)
+    if not _g.is_valid: _g = _g.buffer(0)
+    if _g.is_empty or not _g.intersects(EXT) or _g.area < 12: continue
+    _r = random.Random(h['id'])
+    _o = list(_g.minimum_rotated_rectangle.exterior.coords)
+    _e = max(((_o[i], _o[i + 1]) for i in range(2)), key=lambda e: math.dist(*e))
+    _a = math.atan2(_e[1][1] - _e[0][1], _e[1][0] - _e[0][0])
+    _in = _g.buffer(-1.8); _in = _in if not _in.is_empty and _in.area > 4 else _g
+    mine = []
+    for _p, _t in _PRV:
+        if _g.buffer(3).contains(_p): mine.append([_p.x, _p.y, _a, _t])
+    n = max(2, min(6, round(_g.area / 70))) if det else max(2, min(4, round(_g.area / 45)))
+    seq = ['piskoviste', 'houpacka', 'skluzavka', 'prolezacka', 'houpadlo', 'kolotoc'] if det else ['hrazda', 'bradla', 'zebriny', 'lavice']
+    seq = [t for t in seq if t not in {m[3] for m in mine}]
+    x0_, y0_, x1_, y1_ = _in.bounds
+    for _t in seq[:max(0, n - len(mine))]:
+        for _ in range(150):
+            _x, _y = _r.uniform(x0_, x1_), _r.uniform(y0_, y1_)
+            if _in.contains(Point(_x, _y)) and all(math.hypot(_x - m[0], _y - m[1]) > 4.6 for m in mine): mine.append([_x, _y, _a, _t]); break
+    for _x, _y, _aa, _t in mine:
+        if _t in ('houpacka', 'skluzavka', 'prolezacka', 'kolotoc'): fill(Point(_x, _y).buffer(2.0 if _t != 'houpacka' else 2.4), C['sand'])
+        play.append([_x, _y, _aa, _t])
 # středová přerušovaná čára
 for _, g, c, w, _n in roads:
     if c in ('trunk', 'primary', 'secondary', 'tertiary') or (c == 'motorway' and w >= 7):     # dálnice: čára mezi pruhy, ne na sjezdu
@@ -672,6 +730,9 @@ for l, w, c, n in drive_lines:
 bld = load('building')
 # jen budovy z OpenStreetMap: samotné odhady Microsoft ML Buildings jsou hlavně kůlny a garáže, často posunuté nebo zdvojené
 bld = bld[bld.sources.map(lambda s: s is not None and any(x['dataset'] == 'OpenStreetMap' for x in s))].reset_index(drop=True)
+# budovy, které podle ortofota ČÚZK už nestojí (laser DMP ukazuje terén, ortofoto les, parkoviště nebo holý pozemek)
+_SMAZ = set(json.load(open('assets/smazane_budovy.json'))) if os.path.exists('assets/smazane_budovy.json') else set()
+if _SMAZ: bld = bld[~bld.id.isin(_SMAZ)].reset_index(drop=True)
 for i, r in bld.iterrows():                             # výšky z upřesnění mají přednost před daty
     if 'h' in UP['b'].get(r.id, {}): bld.at[i, 'height'] = UP['b'][r.id]['h']
 if len(bld) and UP['roofs']:                            # přístřešky nástupišť (nejsou v OSM jako budovy)
@@ -795,7 +856,7 @@ def match_doms():
             for k in tree.query(pt.buffer(sp['glass'])): DOM_BY_ID.setdefault(idx[k].id, {**d, 'spec': {'rc': [176, 204, 214], 'r': 'flat', 'win': 14}})
             continue
         hit = [k for k in tree.query(pt.buffer(25)) if geoms[k].area > 60]
-        inside = [k for k in hit if geoms[k].buffer(1.0).contains(pt)]
+        inside = sorted([k for k in hit if geoms[k].buffer(1.0).contains(pt)], key=lambda k: geoms[k].area)   # překryv (kaple v rohu ambitu): nejmenší budova
         cand = inside or sorted(hit, key=lambda k: -geoms[k].area)
         if cand: DOM_BY_ID[idx[cand[0]].id] = d
 
@@ -929,6 +990,20 @@ def garage_row(p):
         seen.add(i); q = bpolys[i].buffer(0.8)
         todo += [j for j in btree.query(q) if j not in seen and barea[j] < 45 and bpolys[j].intersects(q)]
     return len(seen) >= 3
+def slice_long(p, step):
+    """dlouhá úzká stavba na svahu (kryté schodiště) -> úseky po 'step' m napříč delší osou; každý úsek pak sedí na svém terénu"""
+    o = p.minimum_rotated_rectangle; cs = list(o.exterior.coords)[:3]
+    e1 = np.subtract(cs[1], cs[0]); e2 = np.subtract(cs[2], cs[1])
+    if np.linalg.norm(e1) < np.linalg.norm(e2): e1, e2 = e2, e1
+    L, Wd = float(np.linalg.norm(e1)), float(np.linalg.norm(e2)); u, v = e1 / L, e2 / Wd
+    c = np.array(o.centroid.coords[0]); n = max(1, round(L / step)); out = []
+    for k in range(n):
+        a, b = -L / 2 + k * L / n - 0.05, -L / 2 + (k + 1) * L / n + 0.05
+        strip = Polygon([tuple(c + u * a - v * Wd), tuple(c + u * b - v * Wd), tuple(c + u * b + v * Wd), tuple(c + u * a + v * Wd)])
+        out += [q for q in polys(p.intersection(strip)) if q.area > 2]
+    return out
+
+
 def zone_split(pieces, zones):
     """části dominanty podle zón ze satelitu (pořadí = priorita) -> (díly, zóna dílu nebo None)"""
     out, zof = [], []
@@ -1016,6 +1091,34 @@ TEN_WALLS = [(232, 206, 150), (226, 186, 160), (206, 214, 180), (236, 226, 200),
 TEN_ROOFS = [(70, 72, 80), (96, 64, 52), (150, 62, 44), (60, 64, 72), (128, 60, 46), (84, 88, 96)]
 squares = [r.geom for _, r in lu.iterrows() if (sname(r) or '').startswith('náměstí doktora Edvarda Beneše')]
 GND_DOM = {}
+import odlitek, shapely.affinity
+
+
+def dily(D, wc, rc, style, base, own):
+    """spec.dily = {"ll": [lat, lon] kotva, "a": úhel osy s ve stupních (0 = východ, proti směru hodin), "p": díly, "v": věže}.
+    Díl: s, t (m od kotvy v osách) nebo ll; l, w (délka podél osy dílu, šířka); a (pootočení vůči ose); e = okap m n. m.;
+    rh = výška střechy; r = gabled / hipped / flat / pyramid; g = nula oken m n. m. (jinak 5,5 m pod okapem); wc, rc, win;
+    wini = styl oken dlouhé strany přivrácené ke kotvě (arkády do nádvoří). Věž: s, t nebo ll; w; e = vršek dříku m n. m.;
+    to = vršek střechy m n. m.; top, tc, wc, clock, round."""
+    ax, ay = (float(v) for v in to_local(D['ll'][1], D['ll'][0])); A = math.radians(D.get('a', 0)); ca, sa = math.cos(A), math.sin(A)
+    def pos(q):
+        if 'll' in q: return tuple(float(v) for v in to_local(q['ll'][1], q['ll'][0]))
+        return ax + ca * q['s'] - sa * q['t'], ay + sa * q['s'] + ca * q['t']
+    out, tw = [], []
+    for q in D.get('p', []):
+        x, y = pos(q); ang = A + math.radians(q.get('a', 0)); c2, s2 = math.cos(ang), math.sin(ang); l, w = q['l'], q['w']
+        g = min(float(ground(x + c2 * i * l / 2 - s2 * j * w / 2, y + s2 * i * l / 2 + c2 * j * w / 2)) for i, j in ((-1, -1), (1, -1), (1, 1), (-1, 1), (0, 0)))
+        io = 0
+        if 'wini' in q: io = 1 if (ax - x) * (-s2) + (ay - y) * c2 > 0 else -1
+        out.append([round(x, 2), round(y, 2), round(ang, 5), l, w, round(g - 0.6, 2), round(q.get('g', q['e'] - 5.5) - HREF, 2), round(q['e'] - HREF, 2),
+                    q.get('rh', 0), q.get('r', 'gabled'), list(q.get('wc', wc)), list(q.get('rc', rc)), q.get('win', style), q.get('wini', -1), io])
+    for q in D.get('v', []):
+        x, y = pos(q); g = float(ground(x, y))
+        tw.append({'x': round(x, 2), 'y': round(y, 2), 'a': round(A + math.radians(q.get('a', 0)), 4), 'w': q['w'], 'h': round(q['e'] - HREF, 2),
+                   'to': round(q.get('to', q['e']) - HREF, 2), 'top': q.get('top', 'none'), 'tc': q.get('tc', [96, 146, 128]), 'wc': list(q.get('wc', wc)),
+                   'clock': q.get('clock', 0), 'round': q.get('round', 0), 'stone': 0, 'ruin': 0, 'b': round(g - 0.6, 2)})
+    return out, tw
+_ODL = set(); _BG = list(bld.geom); _BT = shapely.STRtree(_BG)
 for _, r in bld.iterrows():
     if r.is_underground is True: continue
     pieces = [u for g in polys(r.geom) for u in unhole(g)]
@@ -1025,6 +1128,8 @@ for _, r in bld.iterrows():
         xy_ = np.array([c for q in pieces for c in q.exterior.coords]); gnd_dom = float(ground(xy_[:, 0], xy_[:, 1]).mean())   # jedna úroveň pro všechny díly
         GND_DOM[dom0['name']] = gnd_dom
         pieces, zof = zone_split(pieces, dom0['spec']['zones'])
+    if dom0 and dom0['spec'].get('slice'):      # např. Svatohorské schody: jinak jeden kvádr v jedné výšce přes celý svah
+        pieces = [q for p_ in pieces for q in slice_long(p_, dom0['spec']['slice'])]; zof = [None] * len(pieces)
     tw_piece = None
     if dom0 and pieces:
         pt0 = Point(*dom0['xy']); inside = [k for k, q in enumerate(pieces) if q.buffer(2).contains(pt0)]
@@ -1049,6 +1154,8 @@ for _, r in bld.iterrows():
             # třída apartments znamená plochou střechu, ale bytový dům může mít šikmou: bez potvrzení laserem zůstane obytný
             c = 'residential' if _ru[0] == 'apartments' and not (r.id in DMP and DMP[r.id][1] - DMP[r.id][0] < 0.4) else _ru[0]
         if not c and area < 45 and garage_row(p): c = 'garages'
+        # dvorní stavby bez typu (kůlny, dílny, garáže): malé, nebo do 150 m² a laserem nízké -> bez řad oken, nízká střecha
+        kulna = not c and r.id not in DOM_BY_ID and (area < 25 or (area < 150 and r.id in DMP and DMP[r.id][0] < 3.2))
         floors = r.num_floors if r.num_floors == r.num_floors and r.num_floors else None
         if not floors and _ru and _ru[1] and r.id not in DMP: floors = _ru[1]      # laser má přednost
         hgt = r.height if r.height == r.height and r.height else None
@@ -1096,6 +1203,7 @@ for _, r in bld.iterrows():
             if c in FLAT_CLS or area > 650: rs = 'flat'
             elif c in PITCHED_CLS or (not c and 25 < area < 400): rs = 'gabled' if h01(key) < 0.62 else 'hipped'
             else: rs = 'flat'
+        if kulna and (area < 25 or (r.id in DMP and DMP[r.id][1] - DMP[r.id][0] < 0.5)): rs = 'flat'
         if not lm and so.get('r'): rs = so['r']; tenement = panel = False
         obb = p.minimum_rotated_rectangle
         oc = list(obb.exterior.coords)[:4]
@@ -1110,6 +1218,7 @@ for _, r in bld.iterrows():
                 if area / max(obb.area, 1) > 0.9 else roof_parts(p, ang)
             if not parts: rs = 'flat'
         roofh = min(max(pp[4] for pp in parts) / 2 * math.tan(math.radians(40)), 7.0) if parts else 0.0
+        if kulna: roofh = min(roofh, 1.4)
         if tenement:
             roofh = min(roofh, 6.5)
             total = (hgt if hgt and hgt > 9 else (floors or (2 if area < 130 else 4)) * 3.2 + 0.6) + roofh * 0.6   # malé řadovky 2 patra
@@ -1131,16 +1240,24 @@ for _, r in bld.iterrows():
         else: style = 0
         if tenement: style = 11
         if panel: style = 1
+        if kulna: style = 17
         if r.id in DMP and not dsp and not lm and c not in ('garage', 'garages', 'carport', 'shed', 'roof'):
             med, top = DMP[r.id]
             if panel: med = group_med(p.buffer(0.8), med)   # sekce jednoho paneláku stejně vysoké
             if rs == 'flat': total = eave = med
             else: total = max(top, med + 1); eave = max(2.2, total - roofh)
+        # tvar střechy proložený měřením DMP OK (nastroje/strechy_tvar.py): typ, okap, výška a směr hřebene každého dílu
+        _tv = TVAR.get(r.id)
+        if _tv and not dsp and not lm and len(pieces) == 1 and c != 'roof':
+            rs = _tv['r']; parts = [[round(q[0] - CX, 2), round(q[1] - CY, 2), q[2], q[3], q[4]] for q in _tv['parts']] if rs != 'flat' else []
+            roofh = _tv['rh'] if parts else 0.0; eave = max(2.2, _tv['e'] - HREF - gnd); total = eave + roofh
+            tenement = tenement and rs != 'flat'
         if c == 'roof': style = 12; total = hgt if hgt and hgt < 12 else 4.5; eave = total
         if c in ('retail', 'commercial') and area > 1500 and not tenement: style = 3     # obchodní centra: pásy oken
         pal = TEN_WALLS if style == 11 else PANEL if style == 1 else WALLS
         wc = hexcol(r.facade_color, pal[int(h01((group_key(p.buffer(0.8)) if panel else key) + 'w') * 1000) % len(pal)])
         if style == 2: wc = (196, 190, 178)
+        if style == 17: wc = [(196, 190, 178), (214, 206, 190), (158, 122, 88), (176, 150, 116), (186, 186, 182)][int(h01(key + 'k') * 1000) % 5]   # omítka, plech, dřevo
         rp = ROOF_F if rs == 'flat' else TEN_ROOFS if tenement else ROOF_P
         rc = hexcol(r.roof_color, rp[int(h01(key + 'r') * 1000) % len(rp)])
         if 'rc' in so and not lm: rc = tuple(so['rc'])
@@ -1165,10 +1282,13 @@ for _, r in bld.iterrows():
                                                 round(bl, 2), round(bw, 2), round(gnd + blk['h'], 2), list(blk.get('rc', rc))])
             for tw in (dsp.get('towers', []) if pi == tw_piece else []):
                 x, y, a = dom_pos(pieces[pi], tw['at'], dsp, dom, tw['w'], tw.get('side', 0.0), tw.get('t', 0.5))
+                if 'll' in tw:                       # přesná poloha věže (změřená z DMP OK / ortofota)
+                    x, y = (float(v) for v in to_local(tw['ll'][1], tw['ll'][0]))
+                    if 'a' in tw: a = math.radians(tw['a'])
                 if not own and not AREA.contains(Point(x, y)) and not EXT.contains(Point(x, y)): continue
                 b.setdefault('tw', []).append({'x': round(x, 2), 'y': round(y, 2), 'a': round(a, 4), 'w': tw['w'], 'h': round(gnd + tw['h'], 2),
-                    'to': round(gnd + tw.get('to', tw['h']), 2), 'top': tw['top'], 'tc': tw.get('tc', [90, 96, 104]), 'wc': list(wc),
-                    'clock': tw.get('clock', 0), 'round': tw.get('round', 0), 'stone': tw.get('stone', 0), 'ruin': tw.get('ruin', 0), 'b': round(base, 2)})
+                    'to': round(gnd + tw.get('to', tw['h']), 2), 'top': tw['top'], 'tc': tw.get('tc', [90, 96, 104]), 'wc': list(tw.get('wc', wc)),
+                    'clock': tw.get('clock', 0), 'round': tw.get('round', 0), 'stone': tw.get('stone', 0), 'ruin': tw.get('ruin', 0), 'b': round(base, 2), 'cut': tw.get('cut', 0)})
             if dsp.get('skylights') and pi == tw_piece:          # světlíky na ploché střeše
                 inner = p.buffer(-6.0)
                 if not inner.is_empty:
@@ -1225,6 +1345,20 @@ for _, r in bld.iterrows():
             if z: b['r'] = 'flat'; b['parts'] = []; b['rh'] = 0.0; b.pop('rt', None)
             deco = zs.get('deco') if z else dsp.get('deco')
             if deco: b['dz'] = roof_deco(p, deco, b['e'], key + str(pi))
+        if dsp and dsp.get('dily'):              # dominanta postavená z dílů (kvádry se střechou a věže s přesnou polohou a výškou m n. m.)
+            if key in _ODL: b['ds0'] = 1
+            else: _ODL.add(key); b['lm'] = 'dom'; b['dl'], b['tw'] = dily(dsp['dily'], wc, rc, style, base, own)
+        if dsp and dsp.get('odlitek'):           # skutečný tvar z DMP OK (odlitek.py): celá budova najednou, ostatní díly se nekreslí
+            if key in _ODL: b['ds0'] = 1
+            else:
+                _ODL.add(key)
+                gq = max(polys(r.geom), key=lambda q_: q_.area)
+                cut_ = [o_ for o_ in (_BG[k_] for k_ in _BT.query(gq)) if o_ is not r.geom and o_.area < gq.area and o_.intersection(gq).area > 2]
+                for tw_ in b.get('tw', []):          # ručně kreslená věž nahrazuje nepřesný vršek z měření
+                    if tw_.get('cut'): cut_.append(shapely.affinity.rotate(box(tw_['x'] - tw_['w'] / 2, tw_['y'] - tw_['w'] / 2, tw_['x'] + tw_['w'] / 2, tw_['y'] + tw_['w'] / 2), tw_['a'], origin=(tw_['x'], tw_['y']), use_radians=True))
+                ds_ = odlitek.scene(gq, ground, HREF, (CX, CY), rc, cut_)
+                if ds_: b['ds'] = ds_; b['lm'] = 'dom'
+                else: print('odlitek: chybí data DMP OK pro', dom['name'])
         if not own: b['gh'] = 1                  # budova sousedního čtverce (jen kvůli švu)
         buildings.append(b)
         bmd.polygon(P(p.exterior.coords), fill=255)
@@ -1234,6 +1368,7 @@ for _, r in bld.iterrows():
         top_, ring_ = gnd + eave + roofh, ring
         if dsp:
             top_ = b['e'] + (b['rh'] if b['r'] != 'flat' else 0.0)
+            if b.get('ds'): top_ = b['ds']['top']
             if b.get('dz'): top_ = max(top_, b['e'] + max(q[6] for q in b['dz']))
         binfo.append({'id': bid, 'oid': key, 'name': nm, 'cls': CLS_CZ.get(c, 'budova' if not c else c), 'floors': floors,
                       'h': round(total, 1), 'roof': rs, 'addr': adrs, 'lon': round(float(lon), 6), 'lat': round(float(lat), 6),
@@ -1258,18 +1393,19 @@ for d in DOMS:
     buildings.append(b)
     r_ = 14 + sp['towers'][0]['w']; nd.ellipse([*P([(x - r_, y + r_)])[0], *P([(x + r_, y - r_)])[0]], fill=255)   # bez stromů kolem
 # komíny a chladicí věže z OSM (nastroje/kominy.py), vzhled jednotlivých v assets/upresneni.json: "kominy": [{"lat", "lon", "wc", "pr"}]
-for k_ in (json.load(open('assets/kominy.json')) if os.path.exists('assets/kominy.json') else []):
+for k_ in (json.load(open('assets/kominy.json')) if os.path.exists('assets/kominy.json') else []) \
+        + [{**v, 'k': 'tezni'} for v in (json.load(open('assets/tezni_veze.json', encoding='utf-8')) if os.path.exists('assets/tezni_veze.json') else [])]:   # těžní věže dolů
     x, y = to_local(k_['lon'], k_['lat'])
     if not EXT_P.contains(Point(x, y)): continue
     own = AREA.contains(Point(x, y)); g = float(ground(x, y)); h_ = float(k_['h'])
     vz = next((q for q in UP.get('kominy', []) if math.dist((x, y), to_local(q['lon'], q['lat'])) < 20), {})
-    vez = k_['k'] == 'vez'; dr = {'vez': 'v', 'stozar': 'm', 'nadrz': 't', 'rozhledna': 'r'}.get(k_['k'], 'c')
-    rp = k_.get('r') or {'v': 10.0, 'm': 2.5, 't': 5.0, 'r': 3.2, 'c': max(2.5, h_ * 0.045)}[dr]
-    wc = list(vz.get('wc', {'v': [176, 172, 160], 'm': [150, 152, 156], 't': [186, 184, 176], 'r': [176, 112, 62]}.get(dr, [168, 162, 150])))
+    vez = k_['k'] == 'vez'; dr = {'vez': 'v', 'stozar': 'm', 'nadrz': 't', 'rozhledna': 'r', 'tezni': 'h'}.get(k_['k'], 'c')
+    rp = k_.get('r') or {'v': 10.0, 'm': 2.5, 't': 5.0, 'r': 3.2, 'h': 4.0, 'c': max(2.5, h_ * 0.045)}[dr]
+    wc = list(vz.get('wc', k_.get('wc') or {'v': [176, 172, 160], 'm': [150, 152, 156], 't': [186, 184, 176], 'r': [176, 112, 62], 'h': [126, 66, 46]}.get(dr, [168, 162, 150])))
     b = {'p': [[round(x - 0.1, 2), round(y - 0.1, 2)], [round(x + 0.1, 2), round(y - 0.1, 2)], [round(x + 0.1, 2), round(y + 0.1, 2)]],
          'b': round(g - 0.6, 2), 'g': round(g, 2), 'e': round(g + h_, 2), 'r': 'flat', 'rh': 0.0, 'parts': [], 'wc': tuple(wc), 'rc': tuple(wc),
-         's': 4, 'id': len(buildings), 'lm': 'dom', 'dn': 'komín', 'only': 1, 'tw': [],
-         'stk': {'k': dr, 'x': round(x, 2), 'y': round(y, 2), 'r': round(rp, 2), 'wc': wc, 'pr': vz.get('pr', 1 if h_ >= 100 and dr == 'c' else 0)}}   # vysoké komíny mívají výstražné pruhy
+         's': 4, 'id': len(buildings), 'lm': 'dom', 'dn': k_.get('nazev', 'komín'), 'only': 1, 'tw': [],
+         'stk': {'k': dr, 'x': round(x, 2), 'y': round(y, 2), 'r': round(rp, 2), 'wc': wc, 'a': round(math.radians(k_.get('a', 0)), 3), 'pr': vz.get('pr', 1 if h_ >= 100 and dr == 'c' else 0)}}   # vysoké komíny mívají výstražné pruhy
     if not own: b['gh'] = 1
     elif dr == 'c': chimneys.append([x, y, g + h_, b['id']])
     buildings.append(b)
@@ -1555,8 +1691,11 @@ for _, r in lu.iterrows():
 for _, r in inf.iterrows():
     g = r.geom
     if r['class'] == 'artwork' and g.geom_type == 'Point' and AREA.contains(g):
-        if any(r2['class'] == 'cemetery' and r2.geom.buffer(3).contains(g) for _, r2 in lu.iterrows()):
+        if True:                                        # sochy na hřbitovech i ve městě (OSM artwork)
             statues.append([round(g.x, 2), round(g.y, 2), round(float(ground(g.x, g.y)), 2), 0.0])
+for _la, _lo in geo.MESTO.get('sochy', []):              # sochy doplněné ručně (mesto.json "sochy": [[lat, lon], ...])
+    _x, _y = to_local(_lo, _la)
+    if AREA.contains(Point(_x, _y)): statues.append([round(_x, 2), round(_y, 2), round(float(ground(_x, _y)), 2), 0.0])
 props['planter'] = props['slab'] = props['pavilion'] = props['shed'] = []
 props['grave'] = graves
 props['statue'] = statues
@@ -1564,6 +1703,22 @@ props['wheelie'] = [[round(v, 3) for v in q] for q in props['wheelie']]
 print('hrobů', len(graves), 'soch', len(statues))
 
 # ---------------- textury podle ročního období ----------------
+# haldy po těžbě uranu (OSM man_made=spoil_heap, assets/haldy.json): holá tmavá hornina, kde na ortofotu není zeleň ani les
+if os.path.exists('assets/haldy.json'):
+    _hm = Image.new('L', (TWE, TWE), 0); _hd = ImageDraw.Draw(_hm)
+    for _h in json.load(open('assets/haldy.json', encoding='utf-8')):
+        _g = Polygon([to_local(lo, la) for la, lo in _h['poly']])
+        for _p in polys(_g.intersection(DRAWBOX)): _hd.polygon(P(_p.exterior.coords), fill=255)
+    _hmask = np.asarray(_hm) > 0
+    if _hmask.any():
+        if _GZ is not None:
+            _zm_, (_x0, _y1, _m) = _GZ
+            _c = (np.arange(TWE) + 0.5) * TEX_RES - HE
+            _mx = np.clip(((_c + CX - _x0) / _m).astype(int), 0, _zm_.shape[1] - 1); _my = np.clip(((_y1 - (-_c + CY)) / _m).astype(int), 0, _zm_.shape[0] - 1)
+            _hmask &= ~_zm_[np.ix_(_my, _mx)]
+        if LESM is not None: _hmask &= ~LESM
+        _a = np.array(cls); _hmask &= np.isin(_a, [C[k] for k in ('grass', 'meadow', 'scrub', 'farmland', 'dirt', 'industrial', 'rock', 'construction')])
+        _a[_hmask] = C['spoil']; cls.paste(Image.fromarray(_a)); print('haldy: texelů', int(_hmask.sum()))
 SEASON_PAL = {
     'summer': {'grass': (106, 160, 74), 'garden': (118, 168, 80), 'park': (104, 164, 72), 'meadow': (140, 172, 86),
                'forest': (66, 112, 56), 'scrub': (92, 128, 62), 'pitch': (80, 156, 72), 'track': (178, 92, 72),
@@ -1576,7 +1731,7 @@ SEASON_PAL = {
                'piste': (150, 178, 92), 'skijump': (98, 160, 150),
                'wheat': (214, 186, 106), 'wheat2': (194, 162, 86), 'rape': (150, 148, 82), 'rape2': (128, 126, 70),
                'maize': (80, 134, 58), 'maize2': (58, 106, 44), 'soil': (110, 142, 66), 'soil2': (128, 104, 70),
-               'plaza': (186, 186, 184), 'plaza2': (206, 206, 200), 'deck': (146, 104, 88)},
+               'plaza': (186, 186, 184), 'plaza2': (206, 206, 200), 'deck': (146, 104, 88), 'spoil': (118, 106, 100)},
 }
 sp = dict(SEASON_PAL['summer'])
 sp.update({'grass': (122, 176, 80), 'garden': (132, 184, 86), 'park': (118, 180, 78), 'meadow': (150, 188, 90),
@@ -1599,7 +1754,7 @@ wi.update({'forest': (214, 222, 232), 'scrub': (220, 226, 234), 'paved': (222, 2
            'parking': (176, 180, 188), 'road': (104, 106, 114), 'marking': (190, 192, 196), 'curb': (226, 230, 236),
            'dirt': (214, 214, 218), 'water': (186, 210, 228), 'pool': (150, 168, 184), 'stream': (58, 96, 136),
            'footway': (226, 230, 236), 'cobble': (206, 210, 218), 'pool_edge': (230, 234, 238), 'grave': (222, 226, 232), 'manhole': (90, 92, 98)})
-wi.update({'plaza': (208, 212, 220), 'plaza2': (222, 226, 232), 'deck': (176, 160, 160)})
+wi.update({'plaza': (208, 212, 220), 'plaza2': (222, 226, 232), 'deck': (176, 160, 160), 'spoil': (196, 200, 210)})
 SEASON_PAL['winter'] = wi
 
 # kontrolní ohraničení zón upřesněných podle snímků (geo.SAT_OUTLINE, po kontrole vypnout)
@@ -1652,12 +1807,46 @@ for x, y, *_r in props['lamp']:
     lm_img[ys0:ys1, xs0:xs1] += blob[ys0 - y0:ys1 - y0, xs0 - x0:xs1 - x0]
 Image.fromarray((np.clip(lm_img, 0, 1) * 255).astype(np.uint8)).save(f'{OUT}/lightmap.png')
 
+# vánoční stromy a kluziště (mesto.json "vanocni_strom", "kluziste"): v zimním renderu jako 3D stavba, prohlížeč nad ně kreslí
+# jen blikající světýlka a bruslaře. Do scény patří i v pásu sousedů (kvůli švům a stínům).
+_vs_ = geo.MESTO.get('vanocni_strom') or []
+if _vs_ and not isinstance(_vs_[0], list): _vs_ = [_vs_]
+xmas = []
+for _la, _lo in _vs_:
+    _x, _y = to_local(_lo, _la)
+    if AREA.contains(Point(_x, _y)): xmas.append([round(float(_x), 2), round(float(_y), 2), round(float(ground(_x, _y)), 2)])
+rinks = []
+for _k in geo.MESTO.get('kluziste') or []:
+    _x, _y = to_local(_k['lon'], _k['lat']); _a = math.radians(_k.get('a', 0)); _L, _W = _k.get('d', 40), _k.get('s', 20)
+    if not AREA.contains(Point(_x, _y)): continue
+    _zs = [float(ground(_x + math.cos(_a) * i * _L / 2 - math.sin(_a) * j * _W / 2, _y + math.sin(_a) * i * _L / 2 + math.cos(_a) * j * _W / 2)) for i in (-1, 0, 1) for j in (-1, 0, 1)]
+    rinks.append([round(float(_x), 2), round(float(_y), 2), round(min(_zs), 2), round(max(_zs), 2), round(_a, 4), _L, _W])
+# vánoční stánky (mesto.json "vanocni_stanky": [{lat, lon: střed řady, a: směr řady ve ° od východu, n: počet, w: šířka stánku m, m: mezera m}]),
+# pult je na pravé straně od směru řady (lokální −t); jen v zimním renderu
+stalls = []
+for _k in geo.MESTO.get('vanocni_stanky') or []:
+    _x, _y = to_local(_k['lon'], _k['lat']); _a = math.radians(_k.get('a', 0)); _n, _w, _m = _k.get('n', 5), _k.get('w', 3.0), _k.get('m', 1.2)
+    for _i in range(_n):
+        _s = (_i - (_n - 1) / 2) * (_w + _m); _sx, _sy = _x + math.cos(_a) * _s, _y + math.sin(_a) * _s
+        if AREA.contains(Point(_sx, _sy)): stalls.append([round(float(_sx), 2), round(float(_sy), 2), round(float(ground(_sx, _sy)), 2), round(_a, 4), _w, _i])
+# zamrzlé rybníky (mesto.json "rybniky": [{nazev, lat, lon}]): plocha rybníka (vodní polygon s bodem uvnitř) pro vrstvu led;
+# zapíná se ručně v administraci (hlaseni/worker.js, /api/stav)
+ice = []
+for _k in geo.MESTO.get('rybniky') or []:
+    _pt = Point(*to_local(_k['lon'], _k['lat']))
+    for _, r in wat.iterrows():
+        if r.geom.geom_type not in ('Polygon', 'MultiPolygon') or not r.geom.contains(_pt): continue
+        for _p in getattr(r.geom, 'geoms', [r.geom]):
+            if _p.intersects(AREA): ice.append([[[round(float(a), 2), round(float(b), 2)] for a, b in list(_ri.coords)] for _ri in [_p.exterior, *_p.interiors]])
+        break
 TOP = max([b['e'] + b['rh'] for b in buildings] + [t[2] + t[3] for t in trees] + [float(H.max())])
 json.dump({'chunk': CHUNK, 'center': [CX, CY], 'half': HALF, 'step': STEP, 'n': N, 'hmin': HMIN, 'heights': [round(float(v), 2) for v in H.ravel()],
            'ms': MS, 'hext': [round(float(v), 2) for v in HX.ravel()], 'nb': NB, 'margin': geo.MARGIN, 'skirt': geo.skirt_edges(CHUNK),
            'floor': geo.FLOOR, 'top': round(TOP, 1),
            'buildings': buildings, 'trees': trees, 'props': props, 'cars': cars, 'buses': buses, 'portals': portals, 'lines': lines_out,
-           'bridges': [{'p': [[*q, round(float(g_), 2)] for q, g_ in zip(deck_line(D), D[3])], 'w': D[4], 'k': D[5], 'c': D[6]} for D in DECKS if D[0].intersects(EXT)]},
+           'bridges': [{'p': [[*q, round(float(g_), 2)] for q, g_ in zip(deck_line(D), D[3])], 'w': D[4], 'k': D[5], 'c': D[6]} for D in DECKS if D[0].intersects(EXT)],
+           'xmas': xmas, 'rinks': rinks, 'stalls': stalls, 'ice': ice,
+           'play': [[round(float(x), 2), round(float(y), 2), round(float(ground(x, y)), 2), round(a, 3), t] for x, y, a, t in play]},
           open(f'{OUT}/scene.json', 'w'), separators=(',', ':'))
 
 # podklady pro interaktivní vrstvu prohlížeče

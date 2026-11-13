@@ -30,6 +30,17 @@
 </head>
 <body>
 <main>
+  <section id="secStav">
+  <h1>Stav mapy</h1>
+  <p class="sub">Změna se na mapě projeví do minuty, bez renderu a nasazení.</p>
+  <div class="bar" id="vanoceBar">
+    <label>Vánoční výzdoba <select id="vanoce"><option value="auto">podle data</option><option value="on">zapnutá</option><option value="off">vypnutá</option></select></label>
+    <span class="kinds" id="vanoceInfo"></span>
+  </div>
+  <div class="bar" id="ryb"><span>Zamrzlé rybníky (bruslaři):</span></div>
+  <p class="kinds" id="stavMsg"></p>
+  </section>
+
   <section id="secRep">
   <h1>Hlášení nepřesností</h1>
   <p class="sub">Seskupeno podle budovy nebo místa, seřazeno podle počtu hlášení. Jedno zařízení může nahlásit jeden objekt jednou za den.</p>
@@ -60,7 +71,7 @@ async function load() {
     const map = g.lat ? `/#@${(+g.lat).toFixed(6)},${(+g.lon).toFixed(6)},0.15,1` : null;   // blízko + značka na místě
     tr.innerHTML = `<td class="n"></td><td><b></b><div class="kinds"></div></td><td class="kinds"></td><td class="when"></td><td></td>`;
     tr.children[0].textContent = g.n; tr.children[1].querySelector('b').textContent = g.title || g.target;
-    tr.children[1].querySelector('div').textContent = g.target; tr.children[2].textContent = kinds; tr.children[3].textContent = g.last;
+    tr.children[1].querySelector('div').textContent = g.target; tr.children[2].textContent = (g.fotek ? `📷 ${g.fotek} · ` : '') + kinds; tr.children[3].textContent = g.last;
     const act = tr.children[4];
     if (map) { const a = document.createElement('a'); a.href = map; a.target = '_blank'; a.textContent = 'Na mapě'; act.append(a, ' '); }
     const det = document.createElement('button'); det.type = 'button'; det.textContent = 'Detail'; act.append(det, ' ');
@@ -75,7 +86,15 @@ async function load() {
       const d = await fetch(`/api/admin/detail?target=${encodeURIComponent(g.target)}`).then((x) => x.json());
       const row = document.createElement('tr'); row.className = 'detail'; const td = document.createElement('td'); td.colSpan = 5;
       const ul = document.createElement('ul');
-      for (const it of d.items) { const li = document.createElement('li'); li.textContent = `${it.created} · ${it.note || ''}`; ul.append(li); }
+      for (const it of d.items) {
+        const li = document.createElement('li'); li.textContent = `${it.created} · ${it.note || ''}`;
+        if (it.photo) {                                   // fotka od člověka: náhled, odkaz na plnou velikost, autor a licence
+          const src = `/api/admin/foto?k=${encodeURIComponent(it.photo)}`, a = document.createElement('a'); a.href = src; a.target = '_blank';
+          const im = document.createElement('img'); im.src = src; im.loading = 'lazy'; im.style.cssText = 'display:block;max-width:320px;max-height:240px;margin:4px 0';
+          a.append(im); li.append(a, `📷 ${it.author || 'bez jména'} · ${it.license || ''}`);
+        }
+        ul.append(li);
+      }
       td.append(ul); row.append(td); tr.after(row);
     };
     tb.append(tr);
@@ -84,6 +103,27 @@ async function load() {
 $('reload').onclick = load; $('min').onchange = load; $('status').onchange = load;
 $('ten').onclick = () => { $('min').value = 10; load(); };
 load();
+
+// stav mapy: vánoční výzdoba a zamrzlé rybníky (hlaseni/worker.js /api/stav)
+const RYBNIKY = {{RYBNIKY}}, VANOCE = {{VANOCE}};
+async function loadStav() {
+  const st = await fetch('/api/stav', { cache: 'no-store' }).then((x) => x.json()).catch(() => ({ vanoce: 'auto', zamrzle: [] }));
+  $('vanoceBar').hidden = !VANOCE;
+  if (VANOCE) { $('vanoce').value = st.vanoce || 'auto'; $('vanoceInfo').textContent = `podle data: ${VANOCE.od.split('-').reverse().join('. ')}. – ${VANOCE.do.split('-').reverse().join('. ')}.`; }
+  $('ryb').hidden = !RYBNIKY.length;
+  $('ryb').querySelectorAll('label').forEach((l) => l.remove());
+  for (const n of RYBNIKY) {
+    const l = document.createElement('label'), c = document.createElement('input'); c.type = 'checkbox'; c.dataset.n = n; c.checked = (st.zamrzle || []).includes(n);
+    c.onchange = saveStav; l.append(c, ' ' + n); $('ryb').append(l);
+  }
+}
+async function saveStav() {
+  const body = { vanoce: $('vanoce').value, zamrzle: [...document.querySelectorAll('#ryb input:checked')].map((c) => c.dataset.n) };
+  const r = await fetch('/api/admin/stav', { method: 'POST', body: JSON.stringify(body) });
+  $('stavMsg').textContent = r.ok ? 'Uloženo ' + new Date().toLocaleTimeString('cs') : 'Uložení se nepovedlo';
+}
+$('vanoce').onchange = saveStav;
+loadStav();
 
 </script>
 </body>

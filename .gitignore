@@ -27,3 +27,8 @@ assets/hrebeny.json
 assets/ruian_budovy.json
 assets/kominy.json
 assets/potrubi.json
+
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example

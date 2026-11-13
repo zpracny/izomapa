@@ -70,7 +70,7 @@ if (args.stromy) {                             // jen kresby stromů pro prohlí
   await browser.close(); server.close(); process.exit(0);
 }
 const only = args.only ? args.only.split(',').map(Number) : null;
-const list = args.tiles ? new Set(args.tiles.split(';')) : null;
+const list = args.tiles ? new Set(args.tiles.split(';')) : info.need ? new Set(info.need) : null;   // vrstvy xmas/led: jen dlaždice s obsahem
 for (let j = 0; j < info.rows; j++) for (let i = 0; i < info.cols; i++) {
   if (only && (only[0] !== i || only[1] !== j)) continue;
   if (list && !list.has(`${i}_${j}`)) continue;

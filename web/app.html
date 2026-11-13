@@ -153,6 +153,11 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
 .card .report form { display: grid; gap: 6px; margin-top: 6px; }
 .card .report textarea { font: inherit; font-size: .86rem; background: var(--panel-2); color: var(--ink); border: 2px solid var(--edge); padding: 4px 6px; }
 .card .report #repMsg { font-size: .86rem; color: var(--muted); }
+.card .report .rep-file, .card .report .rep-ok-lic { font-size: .8rem; color: var(--muted); display: grid; gap: 3px; }
+.card .report .rep-ok-lic { display: flex; gap: 6px; align-items: flex-start; }
+.card .report #repFotoBox { display: grid; gap: 6px; }
+.card .report #repFotoBox[hidden] { display: none; }
+.card .report #repAutor { font: inherit; font-size: .86rem; background: var(--panel-2); color: var(--ink); border: 2px solid var(--edge); padding: 3px 6px; }
 .card .report #repMsg.rep-ok { color: #ff9a3c; font-weight: 700; font-size: .95rem; }
 .card .report #repMsg.rep-err { color: #ff7a5c; font-weight: 700; }
 .card .links { display: flex; gap: 12px; flex-wrap: wrap; font-size: .86rem; }
@@ -177,6 +182,14 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
 .pin.need { background: var(--lamp); color: var(--night); border-color: var(--night); transform: translate(-50%, -260%); }
 .pin.need::after { background: var(--night); }
 .nolabels .pin, .far .pin:not(.need) { display: none !important; }
+/* místa s příběhem: malá značka, aby popisek nezakrýval stavbu; název po najetí, klik / klepnutí otevře kartu */
+.pin.mk { background: none; border: 0; box-shadow: none; padding: 0; width: 18px; height: 18px; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; }
+.pin.mk::before { content: ""; position: absolute; inset: 3px; background: var(--lamp); border: 2px solid var(--night); transform: rotate(45deg); box-shadow: 1px 1px 0 rgba(0, 0, 0, .45); }
+.pin.mk::after { display: none; }
+.pin.mk .lab { display: none; position: absolute; left: 50%; bottom: calc(100% + 4px); transform: translateX(-50%); background: var(--panel); border: 2px solid var(--tile);
+  padding: 2px 6px; white-space: nowrap; box-shadow: 2px 2px 0 rgba(0, 0, 0, .4); pointer-events: none; }
+.pin.mk:hover .lab, .pin.mk:focus-visible .lab { display: block; }
+.pin.mk:hover::before { background: var(--ink); }
 .loading { position: fixed; inset: 0; display: grid; place-items: center; font-family: var(--display); color: var(--muted); z-index: 1; pointer-events: none; }
 .mbar { display: none; }
 
@@ -277,6 +290,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       <label><input type="checkbox" id="l-labels" checked> Popisky</label>
       <label><input type="checkbox" id="l-traffic" checked> Doprava</label>
       <label><input type="checkbox" id="l-smoke" checked> Kouř z komínů</label>
+      <label><input type="checkbox" id="l-xmas"> Vánoční výzdoba</label>
       <label><input type="checkbox" id="l-hover" checked> Zvýraznit budovy</label>
     </div>
   </div>
@@ -288,6 +302,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
 
   <details class="about">
     <summary>O projektu</summary>
+    {{AUTOR}}
     <p>Mapa vznikla nástrojem <a href="https://github.com/adamklatovsky/izomapa" target="_blank" rel="noopener">izomapa</a> z otevřených dat. Budovy, adresy, silnice, voda a zeleň pochází z Overture Maps (OpenStreetMap), terén z modelu Terrarium, výšky budov, les a pole z dat ČÚZK. Lampy podél ulic, zaparkovaná auta, popelnice, hroby a část stromů v zahradách jsou doplněné podle typu území, nejde o přesné polohy.</p>
     <p><strong>Co je izometrie?</strong><br>Pohled shora a šikmo bez perspektivy: čáry se do dálky nesbíhají a věci si drží svou skutečnou velikost bez ohledu na to, jak daleko jsou od pozorovatele. Dům na kraji mapy je stejně velký jako ten uprostřed. Tenhle styl si pamatuje každý, kdo koncem 90. let trávil hodiny u SimCity a podobných budovatelských her.</p>
   </details>
@@ -302,9 +317,14 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   <dl id="cardDl"></dl>
   <div class="links" id="cardLinks"></div>
   <details class="report" id="report" hidden>
-    <summary>Nahlásit nepřesnost</summary>
+    <summary>Nahlásit nepřesnost nebo poslat fotku</summary>
     <form id="reportForm">
-      <textarea id="repNote" rows="3" maxlength="500" required placeholder="Co tu nesedí se skutečností?"></textarea>
+      <textarea id="repNote" rows="3" maxlength="500" placeholder="Co tu nesedí se skutečností?"></textarea>
+      <div id="repFotoBox" hidden>
+        <label class="rep-file">Fotka domu (nepovinně) <input id="repFoto" type="file" accept="image/*"></label>
+        <input id="repAutor" type="text" maxlength="80" placeholder="Jméno autora fotky (nepovinně)">
+        <label class="rep-ok-lic"><input id="repSouhlas" type="checkbox"> Fotku jsem pořídil(a) sám/sama, nejsou na ní poznat lidé ani SPZ a souhlasím s jejím použitím pro opravu mapy pod licencí <a href="https://creativecommons.org/licenses/by/4.0/deed.cs" target="_blank" rel="noopener">CC BY 4.0</a>.</label>
+      </div>
       <button class="px-btn" type="submit">Odeslat</button>
       <span id="repMsg" role="status"></span>
     </form>
@@ -334,6 +354,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     <li><b>Hledání</b> zná ulice, adresy, budovy i zajímavá místa.</li>
     <li><b>Sdílet</b> <span class="ico-inline"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11M8 7l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/><path d="M8 10H5v11h14V10h-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg></span> zkopíruje odkaz přesně na to, co právě vidíte, včetně ročního období a denní doby.</li>
   </ul>
+  {{AUTOR}}
   <p class="muted">Vytvořeno nástrojem <a href="https://github.com/adamklatovsky/izomapa" target="_blank" rel="noopener">izomapa</a> od <a href="https://www.adamklatovsky.cz/" target="_blank" rel="noopener">Adama Klatovského</a> (původní mapa: <a href="https://izomapa.fun" target="_blank" rel="noopener">izometrický Liberec</a>).<br>
   Mapová data © přispěvatelé <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL) a Overture Maps, terén Terrarium (AWS Open Data), výšky budov a stromů, ortofoto a ZABAGED{{RUIAN_ZDROJ}} © <a href="https://geoportal.cuzk.cz/" target="_blank" rel="noopener">ČÚZK</a> (CC BY 4.0){{MHD_ZDROJ}}{{VITR_ZDROJ}}{{DOPRAVA_ZDROJ}}.</p>
 </dialog>
@@ -352,12 +373,18 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
 
   const [TILES, OV] = await Promise.all([fetch('tiles.json').then((r) => r.json()), fetch('overlay.json').then((r) => r.json())]);
   // real wind for chimney smoke; the map camera looks from the south-west, so east is right and up, north is left and up
-  let realWind = null, realWeather = null, applyRealWeather = () => {};
+  let realWind = null, realWeather = null, realSnow = null, applyRealWeather = () => {};
+  // roční období podle kalendáře; v zimních měsících bez sněhu podzim (zimní mapa je celá pod sněhem)
+  const calSeason = () => ['autumn', 'autumn', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'autumn'][new Date().getMonth()];
   // model hlásí kód srážek i při 0 mm: padat smí jen to, co opravdu padá
   const wmoWeather = (c, mm) => mm === 0 && ((c >= 51 && c <= 67) || (c >= 71 && c <= 77) || (c >= 80 && c <= 86) || c >= 95) ? 'clear' : (c >= 51 && c <= 67) || (c >= 80 && c <= 82) || c >= 95 ? 'rain' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow' : c === 45 || c === 48 ? 'fog' : 'clear';
-  const loadWind = () => fetch(`https://api.open-meteo.com/v1/forecast?latitude=${OV.cam.lat0}&longitude=${OV.cam.lon0}&current=precipitation,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=ms`)
+  const loadWind = () => fetch(`https://api.open-meteo.com/v1/forecast?latitude=${OV.cam.lat0}&longitude=${OV.cam.lon0}&current=precipitation,wind_speed_10m,wind_direction_10m,weather_code,temperature_2m,snow_depth,snowfall&wind_speed_unit=ms`)
     .then((r) => r.json()).then(({ current: c }) => {
-      if ({{POCASI}}) { realWeather = wmoWeather(c.weather_code, c.precipitation); applyRealWeather(); }
+      if ({{POCASI}}) {
+        realWeather = wmoWeather(c.weather_code, c.precipitation);
+        realSnow = c.snow_depth >= 0.02 || (c.temperature_2m <= 0.5 && c.snowfall > 0);      // leží aspoň 2 cm sněhu, nebo právě sněží při mrazu
+        applyRealWeather();
+      }
       if (!{{VITR}}) return;
       const from = c.wind_direction_10m * Math.PI / 180, e = -Math.sin(from), n = -Math.cos(from);
       realWind = { dx: 0.7071 * (e - n), dy: -0.3536 * (e + n), strength: Math.min(2.2, Math.max(0.15, c.wind_speed_10m / 3)) };
@@ -424,8 +451,48 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     for (const l of LAYERS) {
       if (l.base && l.base !== l.day && viewer.world.getIndexOfItem(l.base) >= 0) viewer.world.setItemIndex(l.base, k++);
       if (l.day) viewer.world.setItemIndex(l.day, k++);
+      for (const e of Object.values(l.extra || {})) if (e.it && viewer.world.getIndexOfItem(e.it) >= 0) viewer.world.setItemIndex(e.it, k++);   // výzdoba a led hned nad svým čtvercem
     }
   };
+  // ---------- přídavné vrstvy čtverců: vánoční výzdoba (podle data, assets/vanoce.json) a led na rybnících (podle administrace) ----------
+  // varianta výzdoby: v zimě se sněhem, jinak bez (listopad bývá podzimní). Led je jedna varianta.
+  const VANOCE = {{VANOCE}}, RYBNIKY = {{RYBNIKY}};
+  const STAV = { vanoce: 'auto', zamrzle: [] };              // z administrace (/api/stav), jinak výchozí
+  const inXmasDates = (d = new Date()) => {
+    if (!VANOCE) return false;
+    const md = (d.getMonth() + 1) * 100 + d.getDate(), p = (v) => { const [m, dd] = v.split('-').map(Number); return m * 100 + dd; };
+    const a = p(VANOCE.od), b = p(VANOCE.do);
+    return a <= b ? md >= a && md <= b : md >= a || md <= b;       // přes Nový rok
+  };
+  const xmasDefault = () => STAV.vanoce === 'on' || (STAV.vanoce !== 'off' && inXmasDates());
+  let xmasUser = null;                                         // ruční přepnutí v menu (jen v tomto prohlížeči)
+  const xmasOn = () => !!VANOCE && (xmasUser ?? xmasDefault());
+  const frozen = () => RYBNIKY.filter((r) => STAV.zamrzle.includes(r.nazev));
+  function applyExtras() {
+    if (!ready && !LAYERS.some((l) => l.day)) return;
+    $('l-xmas').checked = xmasOn();
+    $('l-xmas').closest('label').hidden = !VANOCE;
+    const want = (l) => {
+      const w = {};
+      if (xmasOn()) { const v = state.season === 'winter' ? 'xmas_winter' : 'xmas_autumn'; if (l.src(v)) w.xmas = v; }
+      if (frozen().length && l.src('led')) w.led = 'led';
+      return w;
+    };
+    for (const l of LAYERS) {
+      l.extra = l.extra || {};
+      const w = want(l);
+      for (const [k, e] of Object.entries(l.extra)) if (w[k] !== e.v) { if (e.it) viewer.world.removeItem(e.it); e.dead = true; delete l.extra[k]; }
+      for (const [k, v] of Object.entries(w)) if (!l.extra[k]) {
+        const e = l.extra[k] = { v };
+        viewer.addTiledImage({ tileSource: l.src(v), x: l.x, y: l.y, width: l.w, opacity: layerOpacity(l), success: (ev) => {
+          if (e.dead) { viewer.world.removeItem(ev.item); return; }
+          e.it = ev.item; reorder();
+        } });
+      }
+    }
+  }
+  $('l-xmas').addEventListener('change', (e) => { xmasUser = e.target.checked; applyExtras(); });
+  if ({{HLASENI}}) fetch('/api/stav').then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) { Object.assign(STAV, d); applyExtras(); } }).catch(() => {});
   async function initLayers() {
     await addPreview(state.season);
     $('loading').hidden = true;
@@ -435,12 +502,17 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     warmItem = await add({ tileSource: { type: 'image', url: solid(255, 160, 90) }, x: -60, y: -60, width: 200, opacity: 0, compositeOperation: 'source-atop' });
     darkItem = await add({ tileSource: { type: 'image', url: solid(14, 20, 52) }, x: -60, y: -60, width: 200, opacity: 0, compositeOperation: 'source-atop' });
     for (const l of LAYERS) if (l.src('lights')) l.light = await add({ tileSource: l.src('lights'), x: l.x, y: l.y, width: l.w, opacity: 0, compositeOperation: 'lighter', preload: false });
+    applyExtras();
     for (const n of OV.needs || []) {
       const el = document.createElement('div'); el.className = 'pin need'; el.textContent = '📷 ' + n.name; el.title = n.text; n.el = el;
       viewer.addOverlay({ element: el, location: new OpenSeadragon.Point(n.xy[0] / W, n.xy[1] / W), placement: OpenSeadragon.Placement.CENTER, checkResize: false });
     }
     for (const p of OV.places) {
-      const el = document.createElement('div'); el.className = 'pin'; el.textContent = p.name; p.el = el;
+      const el = document.createElement('div'); el.className = 'pin mk'; el.tabIndex = 0; el.title = ''; el.setAttribute('role', 'button'); el.setAttribute('aria-label', p.name); p.el = el;
+      const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = p.name; el.append(lab);
+      const open = (e) => { e.stopPropagation(); e.preventDefault(); showCard({ title: p.name, text: p.text, lon: p.lon, lat: p.lat, k: p.k, rows: [] }); };
+      for (const ev of ['pointerdown', 'mousedown', 'touchstart']) el.addEventListener(ev, (e) => e.stopPropagation(), { passive: true });
+      el.addEventListener('click', open); el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
       viewer.addOverlay({ element: el, location: new OpenSeadragon.Point(p.xy[0] / W, p.xy[1] / W), placement: OpenSeadragon.Placement.CENTER, checkResize: false });
     }
     ready = true; applyVisibility(); applyTime(); loadMini(); tickReal();
@@ -516,6 +588,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   }
   function applyVisibility() {
     for (const l of LAYERS) if (l.day) l.day.setOpacity(layerOpacity(l));
+    for (const l of LAYERS) for (const e of Object.values(l.extra || {})) if (e.it) e.it.setOpacity(layerOpacity(l));
     for (const p of OV.places) if (p.el) p.el.hidden = !shown(p.k);
     for (const n of OV.needs || []) if (n.el) n.el.hidden = !state.wip;
     document.querySelectorAll('[data-wip]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.wip === '1') === state.wip)));
@@ -551,6 +624,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       } });
     });
     loadMini();
+    applyExtras();
   }
   const snowAllowed = () => state.season === 'autumn' || state.season === 'winter';
   function setWeather(w) {
@@ -563,12 +637,17 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   document.querySelectorAll('[data-s]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.s !== state.season) $('realWeather').checked = false; setSeason(b.dataset.s); }));
   const saveRW = (v) => { try { localStorage.setItem('izo-realweather', v ? '1' : '0'); } catch {} };
   document.querySelectorAll('[data-w]').forEach((b) => b.addEventListener('click', () => { $('realWeather').checked = false; saveRW(false); setWeather(b.dataset.w); }));
-  applyRealWeather = () => { if ($('realWeather').checked && realWeather) setWeather(realWeather); };
+  applyRealWeather = () => {
+    if (!$('realWeather').checked || !realWeather) return;
+    setSeason(realSnow ? 'winter' : calSeason());                     // sníh na zemi = zimní mapa, jinak podle kalendáře
+    setWeather(realWeather);
+  };
   $('realWeather').addEventListener('change', (e) => { saveRW(e.target.checked); applyRealWeather(); });
   if ({{POCASI}}) {
     $('realWeatherRow').hidden = false;
     let rwOff = false; try { rwOff = localStorage.getItem('izo-realweather') === '0'; } catch {}
     $('realWeather').checked = !rwOff && !hashTokens.some((t) => SEASON_TOKEN[t] || t === 'noc' || t === 'soumrak');   // sdílený odkaz si drží svůj vzhled
+    if ($('realWeather').checked) state.season = calSeason();         // než dorazí počasí: podle kalendáře, ať se mapa nenačítá dvakrát zbytečně
   }
   document.querySelectorAll('[data-wip]').forEach((b) => b.addEventListener('click', () => { state.wip = b.dataset.wip === '1'; applyVisibility(); viewer.viewport.fitBounds(homeBounds()); }));
   document.querySelectorAll('[data-wip]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.wip === '1') === state.wip)));
@@ -700,26 +779,45 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     setReport(`pt:${lat.toFixed(5)},${lon.toFixed(5)}`, title, lon, lat);     // výchozí cíl hlášení = místo, budova ho přepíše
   }
   // hlášení nepřesností: jen když je zapnuté v mesto.json ("hlaseni": true) a běží server z hlaseni/
-  const HLASENI = {{HLASENI}};
+  const HLASENI = {{HLASENI}}, FOTKY = {{FOTKY}};
   $('report').hidden = !HLASENI;
+  $('repFotoBox').hidden = !FOTKY;
   let repTarget = null;
   const repMsg = (t, cls) => { $('repMsg').textContent = t; $('repMsg').className = cls ? 'rep-' + cls : ''; };
   function setReport(target, title, lon, lat) {
     repTarget = { target, title, lon, lat };
-    $('report').open = false; repMsg('', ''); $('repNote').value = '';
+    $('report').open = false; repMsg('', ''); $('repNote').value = ''; $('repFoto').value = ''; $('repSouhlas').checked = false;
+  }
+  // fotka se před odesláním zmenší (nejvýš 1600 px) a znovu uloží jako JPEG: tím zmizí poloha GPS a údaje o fotoaparátu (EXIF)
+  async function shrink(file) {
+    const bm = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const s = Math.min(1, 1600 / Math.max(bm.width, bm.height)), c = document.createElement('canvas');
+    c.width = Math.round(bm.width * s); c.height = Math.round(bm.height * s);
+    c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
+    return new Promise((ok, bad) => c.toBlob((b) => (b ? ok(b) : bad()), 'image/jpeg', 0.85));
   }
   $('reportForm').addEventListener('submit', async (e) => {
     e.preventDefault(); if (!repTarget) return;
-    if ($('repNote').value.trim().length < 3) { repMsg('Napište prosím, co tu nesedí (aspoň pár slov).', 'err'); return; }
+    const note = $('repNote').value.trim(), file = FOTKY && $('repFoto').files[0];
+    if (!file && note.length < 3) { repMsg(FOTKY ? 'Napište prosím, co tu nesedí, nebo přiložte fotku.' : 'Napište prosím, co tu nesedí (aspoň pár slov).', 'err'); return; }
+    if (file && !$('repSouhlas').checked) { repMsg('Pro odeslání fotky je potřeba souhlas s podmínkami.', 'err'); return; }
     $('reportForm').querySelector('button').disabled = true;
     repMsg('Odesílám…', '');
     try {
-      const r = await fetch('api/report', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...repTarget, note: $('repNote').value.trim() }) });
+      let r;
+      if (file) {
+        const fd = new FormData();
+        for (const [k, v] of Object.entries(repTarget)) fd.append(k, v ?? '');
+        fd.append('note', note); fd.append('author', $('repAutor').value.trim()); fd.append('souhlas', '1');
+        fd.append('foto', await shrink(file), 'foto.jpg');
+        r = await fetch('api/report', { method: 'POST', body: fd });
+      } else {
+        r = await fetch('api/report', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...repTarget, note }) });
+      }
       const d = await r.json().catch(() => ({}));
-      if (d.ok) { $('repNote').value = ''; repMsg('Díky! Hlášení je odeslané.', 'ok'); }
+      if (d.ok) { $('repNote').value = ''; $('repFoto').value = ''; repMsg(file ? 'Díky! Fotka je odeslaná.' : 'Díky! Hlášení je odeslané.', 'ok'); }
       else repMsg(d.msg || 'Hlášení se nepovedlo odeslat. Zkuste to prosím za chvíli.', 'err');
-    } catch { repMsg('Hlášení teď nejde odeslat (bez připojení?). Zkuste to prosím později.', 'err'); }
+    } catch { repMsg('Hlášení teď nejde odeslat (bez připojení nebo nepodporovaný formát fotky?). Zkuste to prosím později.', 'err'); }
     $('reportForm').querySelector('button').disabled = false;
   });
   // speciální místo k budově: špendlík místa leží v obrysu budovy a budova je do 35 m (OSM má jiné názvy, „sv. Jan Křtitel“)
@@ -1136,6 +1234,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     vuz810: { h: 3.7, ...CDW, nose: 0.7, cars: [{ len: 13.97, f: 1, r: 1 }] },                                    // řada 810, 13,97 m
     cityelefant: { h: 4.6, ...CDW, nose: 1.6, deck: 2, top: 'panto', cars: [{ len: 26.2, f: 1 }, { len: 26.2 }, { len: 26.2, r: 1 }] },   // řada 471, 79,2 m
     rychlik: { h: 4.1, ...CD, nose: 1.4, cars: [{ len: 18, f: 1, loco: 1, top: 'panto' }, { len: 26.4 }, { len: 26.4 }, { len: 26.4 }] },   // lokomotiva 380 (18 m) a vozy
+    arriva845: { h: 4.0, low: [52, 56, 62], body: [0, 160, 176], band: [236, 240, 242], roof: [140, 146, 152], nose: 1.5, top: 'box', cars: [{ len: 22.7, f: 1 }, { len: 22.7, r: 1 }] },   // Arriva vlaky, řada 845 (ex DB 628), 45,4 m; barvy ověřit
   };
   const VLAK = {{VLAK}};
   const trainOf = (line) => TRAINS[VLAK.linky[line]] ? VLAK.linky[line] : TRAINS[VLAK.vychozi] ? VLAK.vychozi : 'regionova';
@@ -1275,10 +1374,10 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       box(-0.5, 0.4, -0.06, 0.06, rz + 0.15, rz + 0.75, YE); box(-0.05, 0.35, -0.06, 0.06, rz + 0.6, rz + 1.05, YE); box(0.15, 0.3, -0.75, 0.75, rz + 1.0, rz + 1.08, YE);
     } else if (isBus === 3) {
       truckFaces({ R, box, faces, fx_, fy_, sxv, syv, vis, sun, l, w, col, snow });
-    } else if (isBus) {                                                     // autobus: bílý, zelený a žlutý pruh, tmavá okna, žluté čelo
-      const WH = [238, 238, 234], GR = [30, 140, 84], YL = [244, 196, 28], GL = [40, 44, 52], DOOR = [54, 58, 66], ROOF = snow || [222, 224, 220];
+    } else if (isBus) {                                                     // autobus v barvách PID: světle šedý, tmavý pás oken, svislé červené pruhy kolem dveří
+      const WH = [214, 216, 217], GR = [200, 202, 204], YL = [214, 216, 217], RD = [214, 28, 32], GL = [40, 44, 52], DOOR = [54, 58, 66], ROOF = snow || [206, 208, 210];
       const ch = 0.45, fp = [[-l + ch, -w], [l - ch, -w], [l, -w + ch], [l, w - ch], [l - ch, w], [-l + ch, w], [-l, w - ch], [-l, -w + ch]];
-      const bands = [[0.3, 0.55, GR], [0.55, 0.95, YL], [0.95, 1.15, WH], [1.15, 2.7, null], [2.7, 3.0, WH]];
+      const bands = [[0.3, 0.42, [70, 72, 76]], [0.42, 1.15, WH], [1.15, 2.7, null], [2.7, 3.0, WH]];
       const Q = (A, B, z0, z1, rgb, d) => faces.push([[R(A[0], A[1], z0), R(B[0], B[1], z0), R(B[0], B[1], z1), R(A[0], A[1], z1)], lit(rgb, d)]);
       for (let i = 0; i < fp.length; i++) {
         const A = fp[i], B = fp[(i + 1) % fp.length], es = B[0] - A[0], et = B[1] - A[1], el = Math.hypot(es, et), ns = et / el, nt = -es / el;
@@ -1286,15 +1385,17 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
         if (!vis(nx, ny)) continue;
         const d = sun(nx, ny, 0), front = ns > 0.9, back = ns < -0.9, corner = Math.abs(ns) < 0.9 && Math.abs(nt) < 0.9;
         for (const [z0, z1, col] of bands) {
-          if (col) { Q(A, B, z0, z1, front && z0 < 1 ? GR : col, d); continue; }
+          if (col) { Q(A, B, z0, z1, col, d); continue; }
           if (front) { Q(A, B, 0.95, 2.85, GL, d); continue; }                // čelní sklo
           if (back) { Q(A, B, z0, z1, WH, d); Q(A, B, 1.6, 2.6, GL, d); continue; }
           if (corner) { Q(A, B, z0, z1, ns > 0 ? YL : WH, d); continue; }      // žlutý roh čela
           Q(A, B, z0, z1, GL, d);
-          for (const ds of [-3.6, 0.2, 3.9]) {                               // dveře
-            const q0 = (ds - A[0]) / es, q1 = (ds + 1.2 - A[0]) / es, P = (q) => [A[0] + es * q, A[1] + et * q];
-            if (q0 > 0 && q1 < 1) Q(P(Math.min(q0, q1)), P(Math.max(q0, q1)), 0.35, 2.7, DOOR, d);
-          }
+        }
+        if (!front && !back && !corner) for (const ds of [-3.6, 0.2, 3.9]) {  // dveře v červeném pruhu přes celou výšku
+          const P = (q) => [A[0] + es * q, A[1] + et * q], qq = (s_) => (s_ - A[0]) / es;
+          const r0 = qq(ds - 0.35), r1 = qq(ds + 1.55), q0 = qq(ds), q1 = qq(ds + 1.2);
+          if (Math.min(r0, r1) > 0 && Math.max(r0, r1) < 1) Q(P(Math.min(r0, r1)), P(Math.max(r0, r1)), 0.3, 2.98, RD, d);
+          if (Math.min(q0, q1) > 0 && Math.max(q0, q1) < 1) Q(P(Math.min(q0, q1)), P(Math.max(q0, q1)), 0.35, 2.7, DOOR, d);
         }
       }
       const rz = 3.0, ip = fp.map(([s_, t_]) => [s_ * 0.97, t_ * 0.86]);
@@ -1463,6 +1564,16 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     NL.beams.length = NL.head.length = NL.tail.length = 0;
   }
+  // vlak MHD: články soupravy podle katalogu TRAINS, každý na svém místě trasy (čelo vpředu ve směru jízdy)
+  function drawTrain(trip, el, line, sx, ox, oy, night) {
+    const name = trainOf(line), M = TRAINS[name], G = 0.6;
+    const T = M.cars.reduce((a, c) => a + c.len, 0) + G * (M.cars.length - 1);
+    let s = T / 2, any = false;
+    const cars = M.cars.map((car, ci) => { const o = mhdPos(trip, el, T, s - car.len / 2); s -= car.len + G; o.lane = 0; o.noLights = car.f !== 1; return [o, car, ci]; });
+    cars.sort((a, b) => a[0].iy - b[0].iy);                                   // vzdálenější článek dřív
+    for (const [o, car, ci] of cars) if (drawVehicle(o, car.len, 3.0, `t|${name}|${ci}`, sx, ox, oy, night, 4)) any = true;
+    return any;
+  }
   function drawVehicle(o, len, wid, col, sx, ox, oy, night, isBus) {
     const L = Math.hypot(o.dx, o.dy) || 1, fx_ = o.dx / L * (o.dirSign || 1), fy_ = o.dy / L * (o.dirSign || 1);
     const sxv = -fy_, syv = fx_;
@@ -1480,28 +1591,62 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     return true;
   }
-  // vánoční strom na náměstí Míru (v zimě, večer svítí)
-  const xmas = (() => {
-    const c = document.createElement('canvas'); c.width = 30; c.height = 48; const g = c.getContext('2d');
-    g.fillStyle = '#4a3020'; g.fillRect(13, 41, 4, 6);
-    const lights = [];
+  // vánoční stromy (mesto.json "vanocni_strom"): strom samotný je ve vrstvě výzdoby (render.html mode=xmas), tady jen blikající světýlka
+  // na jeho patrech. Tvar pater musí odpovídat render.html: patro i má spodek 1,2 + 1,75 i m, výšku 3 m a poloměr 3,7 − 0,56 i m.
+  const xmasTrees = ({{XMAS_LL}} || []).map(([lat, lon], n) => {
+    const x = (lon - cam.lon0) * cam.kx, y = (lat - cam.lat0) * cam.ky, g = gz(x, y), lights = [];
     for (let i = 0; i < 6; i++) {
-      const top = 6 + i * 6, hw = 4 + i * 2.2;
-      for (let y = 0; y < 9; y++) { const w_ = Math.round(hw * (y + 1) / 9); g.fillStyle = y < 2 ? '#2f6a42' : '#1f4f30'; g.fillRect(15 - w_, top + y, w_ * 2, 1); g.fillStyle = '#e8eef5'; if (y === 0) g.fillRect(15 - w_, top, w_ * 2, 1); }
-      for (let k = 0; k < 3 + i; k++) lights.push([15 - hw + rnd(i * 10 + k) * hw * 2, top + 4 + rnd(i * 7 + k) * 4]);
+      const z0 = 1.2 + i * 1.75, r = 3.7 - i * 0.56;
+      for (let k = 0; k < 7 - i; k++) {
+        const u = 0.12 + rnd(n * 100 + i * 10 + k) * 0.6, a = (225 + (rnd(n * 100 + i * 10 + k + 5) - 0.5) * 150) * Math.PI / 180;   // přivrácená strana (pohled od JZ)
+        lights.push(toImg(x + Math.cos(a) * r * (1 - u), y + Math.sin(a) * r * (1 - u), g + z0 + 3.0 * u));
+      }
     }
-    g.fillStyle = '#f6d34a'; g.fillRect(13, 1, 4, 4); g.fillRect(14, 0, 2, 6); g.fillRect(12, 2, 6, 2);
-    return { c, lights };
-  })();
-  const xmasPts = (() => {
-    const pts = Array.isArray(OV.xmas?.[0]) ? [...OV.xmas] : OV.xmas ? [OV.xmas] : [];
-    const s = {{STROM}};
-    if (s && s.length === 2) {
-      const x = (s[1] - cam.lon0) * cam.kx, y = (s[0] - cam.lat0) * cam.ky, p = toImg(x, y, gz(x, y));
-      if (!pts.some((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) < 5)) pts.push(p);
+    return { c: toImg(x, y, g + 7), lights };
+  });
+  // kluziště (mesto.json "kluziste": [{lat, lon, d: délka m, s: šířka m, a: natočení delší strany ve ° od východu}]): jen v zimě
+  const rinks = ({{KLUZISTE}} || []).map((k, i) => {
+    const cx = (k.lon - cam.lon0) * cam.kx, cy = (k.lat - cam.lat0) * cam.ky, a = (k.a || 0) * Math.PI / 180, L = k.d || 40, W = k.s || 20;
+    const ux = Math.cos(a), uy = Math.sin(a);
+    const at = (s, t) => [cx + ux * s - uy * t, cy + uy * s + ux * t];
+    const h = Math.max(...[-1, 0, 1].flatMap((i) => [-1, 0, 1].map((j) => gz(...at(i * L / 2, j * W / 2))))) + 0.12;   // vršek ledu jako v render.html
+    const sk = Array.from({ length: Math.max(4, Math.round(L * W / 70)) }, (_, j) => ({ r: 0.3 + rnd(i * 50 + j) * 0.65, ph: rnd(i * 50 + j + 7) * 6.283,
+      v: (0.18 + rnd(i * 50 + j + 3) * 0.2) * (j % 6 ? 1 : -1), col: SKIC[j % SKIC.length], hat: SKIC[(j * 3 + 1) % SKIC.length] }));
+    return { at, ring: [at(-L / 2, -W / 2), at(L / 2, -W / 2), at(L / 2, W / 2), at(-L / 2, W / 2)], h, L, W, sk };
+  });
+  // vánoční stánky (mesto.json "vanocni_stanky"): stánky jsou ve vrstvě výzdoby (render.html mode=xmas), tady jen noční osvětlení.
+  // Rozměry musí odpovídat render.html: stánek w × 2,4 m, okap 2,2 m, pult na straně −t, okénko 0,95–1,95 m.
+  const stalls = [];
+  for (const k of {{STANKY}} || []) {
+    const n = k.n || 5, wS = k.w || 3.0, m = k.m ?? 1.2, a = (k.a || 0) * Math.PI / 180, ux = Math.cos(a), uy = Math.sin(a);
+    const x0 = (k.lon - cam.lon0) * cam.kx, y0 = (k.lat - cam.lat0) * cam.ky;
+    for (let i = 0; i < n; i++) {
+      const sc = (i - (n - 1) / 2) * (wS + m), cx = x0 + ux * sc, cy = y0 + uy * sc, g = gz(cx, cy);
+      const P = (s, t, h) => toImg(cx + ux * s - uy * t, cy + uy * s + ux * t, g + h), l = wS / 2;
+      stalls.push({ c: P(0, 0, 1),
+        win: [P(-l + 0.25, -1.23, 0.95), P(l - 0.25, -1.23, 0.95), P(l - 0.25, -1.23, 1.95), P(-l + 0.25, -1.23, 1.95)],
+        pool: [P(-l - 0.8, -1.3, 0), P(l + 0.8, -1.3, 0), P(l + 2.2, -5.5, 0), P(-l - 2.2, -5.5, 0)],
+        bulbs: Array.from({ length: 6 }, (_, j) => P(-l + 0.25 + j * (wS - 0.5) / 5, -1.45, 1.9)) });
     }
-    return pts;
-  })();
+  }
+  // bruslaři na zamrzlých rybnících (mesto.json "rybniky", zapíná administrace): elipsy uvnitř vodní plochy rybníka
+  const pondSk = {};                                            // název rybníka -> bruslaři [cx, cy, rx, ph, v, col, hat] v pixelech obrázku
+  const skH = toImg(0, 0, 1.7)[1] - toImg(0, 0, 0)[1];          // výška postavy 1,7 m v pixelech obrázku (záporná)
+  onChunk.push((wk, d) => {
+    for (const r of RYBNIKY) {
+      if (pondSk[r.nazev]) continue;
+      const x = (r.lon - cam.lon0) * cam.kx, y = (r.lat - cam.lat0) * cam.ky, [px, py] = toImg(x, y, gz(x, y));
+      const P = d.water.ponds.find((p) => inPoly(px, py, p)); if (!P) continue;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const [a, b] of P) { x0 = Math.min(x0, a); y0 = Math.min(y0, b); x1 = Math.max(x1, a); y1 = Math.max(y1, b); }
+      const n = Math.min(40, Math.max(6, Math.round((x1 - x0) * (y1 - y0) * cam.mpp * cam.mpp / 900))), out = [];
+      for (let k = 0; out.length < n && k < n * 30; k++) {
+        const cx = x0 + rnd(k * 7 + 1) * (x1 - x0), cy = y0 + rnd(k * 11 + 2) * (y1 - y0), rx = (4 + rnd(k * 13 + 3) * 14) / cam.mpp;
+        if ([0, 1, 2, 3, 4, 5, 6, 7].every((q) => inPoly(cx + Math.cos(q * 0.785) * rx, cy + Math.sin(q * 0.785) * rx * 0.5, P)))
+          out.push([cx, cy, rx, rnd(k * 17) * 6.283, (0.25 + rnd(k * 19) * 0.3) * (k % 5 ? 1 : -1), SKIC[k % SKIC.length], SKIC[(k * 3 + 1) % SKIC.length], wk]);
+      }
+      pondSk[r.nazev] = out;
+    }
+  });
   // vodní třpytky: body na potocích a uvnitř rybníků
   const sparkles = [];
   onChunk.push((wk, d) => {
@@ -1658,16 +1803,52 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
         drawSkier(q, sx, ox, oy);
       }
     }
-    // vánoční strom
-    if (snowy && sx > 0.15) for (const pt of xmasPts) if (vis(pt[0], pt[1], 100)) {
-      const k = Math.max(1, Math.round(sx * 1.2)), X0 = Math.round(ox + (pt[0] + 30) * sx - 15 * k), Y0 = Math.round(oy + (pt[1] - 4) * sx - 48 * k);
-      ctx.drawImage(xmas.c, X0, Y0, 30 * k, 48 * k);
-      const on = night > 0.3 ? 1 : 0.55;
-      xmas.lights.forEach(([lx, ly], i) => {
-        const ph = (Math.floor(t * 2) + i) % 4;
-        ctx.fillStyle = ['#ff4a3a', '#ffd23a', '#4ab0ff', '#ffffff'][ph];
-        ctx.globalAlpha = on; ctx.fillRect(X0 + Math.round(lx * k), Y0 + Math.round(ly * k), k, k); ctx.globalAlpha = 1;
+    // kluziště: led s mantinelem je ve vrstvě výzdoby, tady jen bruslaři krouží po elipsách
+    const xm = xmasOn();
+    if (xm && sx > 0.25) for (const R of rinks) {
+      const c0 = toImg(...R.at(0, 0), R.h); if (!vis(c0[0], c0[1], 60 * sx + 300)) continue;
+      for (const q of R.sk.map((q) => [q, q.ph + t * q.v]).sort((m, n) => Math.sin(n[1]) - Math.sin(m[1]))) {
+        const [k, ang] = q, [x, y] = R.at(Math.cos(ang) * (R.L / 2 - 2.5) * k.r, Math.sin(ang) * (R.W / 2 - 2.5) * k.r);
+        const p = toImg(x, y, R.h), top = toImg(x, y, R.h + 1.7), u = Math.max(1, Math.round((p[1] - top[1]) * sx / 8));
+        const X = Math.round(ox + p[0] * sx), Y = Math.round(oy + p[1] * sx);
+        const B = (bx, by, w, hh, c) => { ctx.fillStyle = c; ctx.fillRect(X + bx * u, Y - by * u, w * u, hh * u); };
+        B(-1, 1, 3, 1, '#9aa0a8'); B(-1, 4, 2, 3, '#2a2c31'); B(-1, 7, 2, 3, k.col); B(-1, 8, 2, 1, '#e8c6a4'); B(-1, 9, 2, 1, k.hat);
+      }
+    }
+    // bruslaři na zamrzlých rybnících
+    if (sx > 0.25) for (const r of frozen()) for (const [cx, cy, rx, ph, v, col, hat, wk] of pondSk[r.nazev] || []) {
+      if (!shown(wk)) continue;
+      const a = ph + t * v, x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * rx * 0.5;
+      if (!vis(x, y, 20)) continue;
+      const u = Math.max(1, Math.round(-skH * sx / 8)), X = Math.round(ox + x * sx), Y = Math.round(oy + y * sx);
+      const B = (bx, by, w, hh, c) => { ctx.fillStyle = c; ctx.fillRect(X + bx * u, Y - by * u, w * u, hh * u); };
+      B(-1, 1, 3, 1, '#9aa0a8'); B(-1, 4, 2, 3, '#2a2c31'); B(-1, 7, 2, 3, col); B(-1, 8, 2, 1, '#e8c6a4'); B(-1, 9, 2, 1, hat);
+    }
+    // vánoční stánky večer: teplá záře před pultem, rozsvícené okénko, blikající žárovky pod okapem
+    if (xm && night > 0.25 && sx > 0.15) {
+      const a = Math.min(1, (night - 0.25) / 0.35), k = Math.max(1, Math.round(sx * 1.2));
+      const poly = (pts) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(ox + x * sx, oy + y * sx) : ctx.moveTo(ox + x * sx, oy + y * sx))); ctx.closePath(); ctx.fill(); };
+      for (const S of stalls) {
+        if (!vis(S.c[0], S.c[1], 60)) continue;
+        ctx.globalAlpha = a * 0.28; ctx.fillStyle = '#ffc870'; poly(S.pool);
+        ctx.globalAlpha = a * 0.9; ctx.fillStyle = '#ffd98a'; poly(S.win);
+        S.bulbs.forEach(([bx, by], i) => {
+          ctx.globalAlpha = a * ((Math.floor(t * 1.5) + i) % 3 ? 1 : 0.45);
+          ctx.fillStyle = i % 2 ? '#fff0b0' : '#ff5a40';
+          ctx.fillRect(Math.round(ox + bx * sx - k / 2), Math.round(oy + by * sx - k / 2), k, k);
+        });
+      }
+      ctx.globalAlpha = 1;
+    }
+    // vánoční strom: blikající světýlka (strom je ve vrstvě výzdoby)
+    if (xm && sx > 0.15) for (const T of xmasTrees) if (vis(T.c[0], T.c[1], 100)) {
+      const k = Math.max(1, Math.round(sx * 1.4)), on = night > 0.3 ? 1 : 0.55;
+      ctx.globalAlpha = on;
+      T.lights.forEach(([lx, ly], i) => {
+        ctx.fillStyle = ['#ff4a3a', '#ffd23a', '#4ab0ff', '#ffffff'][(Math.floor(t * 2) + i) % 4];
+        ctx.fillRect(Math.round(ox + lx * sx - k / 2), Math.round(oy + ly * sx - k / 2), k, k);
       });
+      ctx.globalAlpha = 1;
     }
     // kouř z komínů
     if ($('l-smoke').checked && sx > 0.3) {

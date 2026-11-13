@@ -4,7 +4,9 @@
   "description": "Izometrická pixel-art mapa českého města z otevřených dat",
   "type": "module",
   "scripts": {
-    "nahled": "python3 -m http.server -d site 8000 || python -m http.server -d site 8000"
+    "nahled": "python3 -m http.server -d site 8000 || python -m http.server -d site 8000",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "author": "Adam Klatovský",
   "license": "AGPL-3.0-or-later",
@@ -14,7 +16,7 @@
     "three": "^0.170.0"
   },
   "devDependencies": {
-    "wrangler": "^4.152.0"
+    "wrangler": "^4.160.1"
   },
   "private": true
 }
