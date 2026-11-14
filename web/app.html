@@ -1012,6 +1012,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     const [ix, iy] = vpToImg(e.position);
     const st = stopAt(ix, iy);
     if (st) { showStop(st); return; }
+    const rz = rozcAt(ix, iy);
+    if (rz) { showCard({ title: rz.n, text: 'Turistický rozcestník' + (rz.e ? `, ${rz.e} m n. m.` : '.'), lon: rz.lon, lat: rz.lat, rows: [] }); return; }
     const b = hit(ix, iy);
     if (b) showBuilding(b); else showPoint(ix, iy);
   });
@@ -1024,9 +1026,10 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     if (!$('l-hover').checked || e.pointerType === 'touch') { state.hover = null; $('osd').style.cursor = ''; return; }
     const [ix, iy] = vpToImg(new OpenSeadragon.Point(mx, my));
-    state.hoverStop = stopAt(ix, iy);                       // zastávka má přednost před budovou (je malá)
-    state.hover = state.hoverStop ? null : hit(ix, iy);
-    $('osd').style.cursor = state.hover || state.hoverStop ? 'pointer' : '';
+    state.hoverStop = stopAt(ix, iy);                       // zastávka a rozcestník mají přednost před budovou (jsou malé)
+    state.hoverRozc = state.hoverStop ? null : rozcAt(ix, iy);
+    state.hover = state.hoverStop || state.hoverRozc ? null : hit(ix, iy);
+    $('osd').style.cursor = state.hover || state.hoverStop || state.hoverRozc ? 'pointer' : '';
   });
 
 
@@ -1621,6 +1624,18 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     showCard({ title: `Zastávka ${MHD.names[s.n]}`, text: rows.length ? (rt ? 'Odjezdy podle jízdního řádu včetně aktuálního zpoždění (PID).' : 'Odjezdy podle jízdního řádu, bez zpoždění.') : 'V příští hodině odtud podle jízdního řádu nic nejede.',
       rows, lon: s.x / cam.kx + cam.lon0, lat: s.y / cam.ky + cam.lat0 });
   }
+  // turistické rozcestníky (assets/rozcestniky.json): [lat, lon, název, výška] -> poloha v obrázku; jen v čtvercích mapy
+  const ROZC = ({{ROZCESTNIKY}} || []).map(([lat, lon, n, e]) => {
+    const x = (lon - cam.lon0) * cam.kx, y = (lat - cam.lat0) * cam.ky, g = gz(x, y), [ix, iy] = toImg(x, y, g);
+    return { lat, lon, n, e, ix, iy, d: depth(x, y, g), h: (toImg(x, y, g)[1] - toImg(x, y, g + 2.6)[1]), x, y };
+  }).filter((r) => cam.grounds.some((q) => Math.abs(r.x - q.cx) <= cam.half && Math.abs(r.y - q.cy) <= cam.half));
+  const rozcAt = (ix, iy) => {                              // rozcestník pod kurzorem (do ~16 px na obrazovce)
+    const scr = viewer.viewport.getContainerSize().x / (viewer.viewport.getBounds(true).width * W);
+    if (scr < 0.3) return null;
+    const r_ = Math.max(16 / scr, 20); let best = null, bd = r_;
+    for (const r of ROZC) { const d = Math.hypot(r.ix - ix, (r.iy - r.h * 0.6) - iy); if (d < bd) { bd = d; best = r; } }
+    return best;
+  };
   const stopAt = (ix, iy) => {                              // zastávka pod kliknutím (do ~20 px na obrazovce, nejméně 6 m)
     if (!MHD.stopPts) return null;
     const scr = viewer.viewport.getContainerSize().x / (viewer.viewport.getBounds(true).width * W);
@@ -2799,6 +2814,22 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       flushLights(night, sx);
       for (const [o, z] of xFront) drawXPost(o, z, sx, ox, oy, now, night);   // až po světlech aut, ať je kužel nepřekryje
       // označníky zastávek MHD (sloupek s cedulí, kliknutím odjezdy); po najetí myší zvýrazněná s názvem
+      if (sx > 0.3) for (const r of ROZC) {                // turistické rozcestníky: šedý sloupek, žluté tabulky se šipkami, nahoře bílo-červený pruh
+        if (!vis(r.ix, r.iy, 40) || occluded(r.ix, r.iy, r.d)) continue;
+        const X = Math.round(ox + r.ix * sx), Y = Math.round(oy + r.iy * sx), u = Math.max(2, Math.round(sx * 2.4)), H = Math.round(r.h * sx);
+        ctx.fillStyle = '#7a7d82'; ctx.fillRect(X - Math.ceil(u / 3), Y - H, Math.max(1, Math.ceil(u * 0.6)), H);
+        ctx.fillStyle = '#f4f4f0'; ctx.fillRect(X - Math.ceil(u / 3), Y - H - u, Math.max(1, Math.ceil(u * 0.6)), u);
+        ctx.fillStyle = '#d23a2e'; ctx.fillRect(X - Math.ceil(u / 3), Y - H - Math.ceil(u / 2), Math.max(1, Math.ceil(u * 0.6)), Math.ceil(u / 3));
+        ctx.fillStyle = '#f2c230';
+        ctx.beginPath(); ctx.moveTo(X, Y - H + u * 0.6); ctx.lineTo(X + u * 3, Y - H + u * 0.6); ctx.lineTo(X + u * 3.7, Y - H + u * 1.2); ctx.lineTo(X + u * 3, Y - H + u * 1.8); ctx.lineTo(X, Y - H + u * 1.8); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(X, Y - H + u * 2.2); ctx.lineTo(X - u * 3, Y - H + u * 2.2); ctx.lineTo(X - u * 3.7, Y - H + u * 2.8); ctx.lineTo(X - u * 3, Y - H + u * 3.4); ctx.lineTo(X, Y - H + u * 3.4); ctx.fill();
+        if (state.hoverRozc === r) {
+          ctx.font = `bold ${Math.max(11, Math.round(12 * Math.min(1.4, sx)))}px system-ui, sans-serif`;
+          const lab = r.n + (r.e ? ` · ${r.e} m` : ''), tw = ctx.measureText(lab).width, bx = X - tw / 2 - 5, by = Y - H - u - 24;
+          ctx.fillStyle = 'rgba(27,35,51,.92)'; ctx.fillRect(bx, by, tw + 10, 18); ctx.fillStyle = '#f2c230'; ctx.fillRect(bx, by + 17, tw + 10, 2);
+          ctx.fillStyle = '#e9e6dc'; ctx.textBaseline = 'middle'; ctx.fillText(lab, bx + 5, by + 9); ctx.textBaseline = 'alphabetic';
+        }
+      }
       if (MHD.stopPts && sx > 0.2) {
         const mPx = toImg(0, 0, 0)[1] - toImg(0, 0, 1)[1], u = Math.max(3, Math.round(sx * 4)), lit = night > 0.3;
         for (const st of MHD.stopPts) {
