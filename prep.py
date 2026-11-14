@@ -608,6 +608,8 @@ for _, g, c, w, _n in roads:
         line(g, C['dirt'], 3.2, block=True); line(g, C['rail'], 1.4); continue
     line(g, C[RCLS.get(c, 'road')], w, block=w >= 3)
 # ruční povrchy (assets/upresneni.json, "plochy"): přes cesty, stromy pak určí assets/oblasti.json
+for _pl in UP.get('parkoviste', []):                  # ruční parkoviště ještě jednou přes povrchy z dat (louka, trávník by ho jinak přemalovaly)
+    fill(Polygon([to_local(lo, la) for la, lo in _pl['q']]), C['parking'])
 for pl in UP.get('plochy', []):
     g_ = Polygon([to_local(lo, la) for la, lo in pl['q']])
     fill(g_, C[pl['k']])
@@ -1268,7 +1270,8 @@ for _, r in bld.iterrows():
             c = 'residential' if _ru[0] == 'apartments' and not (r.id in DMP and DMP[r.id][1] - DMP[r.id][0] < 0.4) else _ru[0]
         if not c and area < 45 and garage_row(p): c = 'garages'
         # dvorní stavby bez typu (kůlny, dílny, garáže): malé, nebo do 150 m² a laserem nízké -> bez řad oken, nízká střecha
-        kulna = not c and r.id not in DOM_BY_ID and (area < 25 or (area < 150 and r.id in DMP and DMP[r.id][0] < 3.2))
+        kulna = r.id not in DOM_BY_ID and ((not c and (area < 25 or (area < 150 and r.id in DMP and DMP[r.id][0] < 3.2)))
+                                           or (c == 'service' and area < 80))   # technická budova (trafostanice, čerpací stanice) bez oken
         floors = r.num_floors if r.num_floors == r.num_floors and r.num_floors else None
         if not floors and _ru and _ru[1] and r.id not in DMP: floors = _ru[1]      # laser má přednost
         hgt = r.height if r.height == r.height and r.height else None
