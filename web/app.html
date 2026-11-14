@@ -1223,7 +1223,36 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     return true;
   }
-  const blocked = (z) => z.rb ? !ringFree(z.rb) : z.g.closed;    // vjezd na kruhový objezd, nebo zavřený přejezd
+  const blocked = (z) => z.sig ? sigState(z) !== 'g' : z.rb ? !ringFree(z.rb) : z.g.closed;    // semafor, vjezd na kruhový objezd, nebo zavřený přejezd
+  // semafory (overlay "sg": [metry, x, y, 1 křižovatka / 0 přechod]): křižovatka střídá dva směry po 30 s (podle osy silnice),
+  // přechod pro chodce má pro auta většinou zelenou, krátce červenou. Fáze podle polohy, takže stejná pro všechny návštěvníky.
+  const SG = [], sigs = []; let sigPosts = null;
+  function addSig(rr, q) {
+    const z = [q[0]]; z.sig = { x: q[1], y: q[2], k: q[3] };
+    const o = along(rr, Math.max(0, Math.min(rr.L, q[0]))), ang = Math.atan2(o.dy, o.dx);
+    let g = SG.find((G) => G.k === q[3] && Math.hypot(G.x - q[1], G.y - q[2]) < (q[3] ? 35 : 12));
+    if (!g) SG.push(g = { x: q[1], y: q[2], k: q[3], off: Math.abs(Math.round(q[1] * 7.3 + q[2] * 3.1)) % 60, ax: null });
+    if (g.ax === null) g.ax = ang;
+    const da = Math.abs(((ang - g.ax) % Math.PI + Math.PI) % Math.PI);
+    z.sig.g = g; z.sig.b = q[3] ? (da > Math.PI / 4 && da < 3 * Math.PI / 4 ? 1 : 0) : 0;
+    sigs.push([rr, z]); sigPosts = null; return z;
+  }
+  function sigState(z) {
+    const t = Date.now() / 1000, g = z.sig.g;
+    if (!g.k) { const u = (t + g.off) % 45; return u < 33 ? 'g' : u < 36 ? 'a' : 'r'; }   // přechod: 33 s zelená, 3 s oranžová, 9 s červená
+    const u = (t + g.off + (z.sig.b ? 30 : 0)) % 60; return u < 26 ? 'g' : u < 29 ? 'a' : 'r';   // křižovatka: 26 s zelená, 3 s oranžová, 31 s červená
+  }
+  function drawSignal(o, st, sx, ox, oy, night) {           // sloupek se třemi světly, svítí aktuální barva
+    const x = ox + o.ix * sx, y = oy + o.iy * sx, h = 26 * sx, q = Math.max(2.2, 3 * sx);
+    ctx.fillStyle = '#3a3c40'; ctx.fillRect(x - q * 0.25, y - h, q * 0.5, h);
+    ctx.fillStyle = '#1d1f22'; ctx.fillRect(x - q * 0.9, y - h - q * 3.6, q * 1.8, q * 3.8);
+    const L = [['r', '#ff3b30', '255,59,48'], ['a', '#ffb020', '255,176,32'], ['g', '#32d74b', '50,215,75']];
+    L.forEach(([k, c, rgb], i) => {
+      const cy = y - h - q * 3.0 + i * q * 1.15, on = st === k;
+      if (on && night > 0.3) { const gr = ctx.createRadialGradient(x, cy, 0, x, cy, q * 3); gr.addColorStop(0, `rgba(${rgb},${0.5 * Math.min(1, (night - 0.3) / 0.4)})`); gr.addColorStop(1, `rgba(${rgb},0)`); ctx.fillStyle = gr; ctx.fillRect(x - q * 3, cy - q * 3, q * 6, q * 6); }
+      ctx.fillStyle = on ? c : '#2c2e31'; ctx.fillRect(x - q * 0.45, cy - q * 0.45, q * 0.9, q * 0.9);
+    });
+  }
   // železniční přejezdy (z[0] metry od začátku kusu, z[1..2] svět): zavřeno ~25 s před příjezdem vlaku, dokud neprojede poslední vůz
   // Přejezdy přes sousední koleje (do XG_M od sebe) tvoří jeden přejezd: jedny výstražníky před první a za poslední kolejí,
   // zavřeno, když jede vlak po kterékoli koleji (v OSM je přejezd zvlášť na každé koleji).
@@ -1311,7 +1340,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     const i0 = roads.length;
     for (const r of d.roads) {
       const len = [0]; for (let i = 1; i < r.w.length; i++) len.push(len[i - 1] + Math.hypot(r.w[i][0] - r.w[i - 1][0], r.w[i][1] - r.w[i - 1][1]));
-      if (len[len.length - 1] > 1) { roads.push({ ...r, k, len, L: len[len.length - 1] }); const rr = roads[roads.length - 1]; for (const z of r.j || []) addXing(rr, z); rr.jy = [...(r.j || []), ...(r.y || []).map((y) => yieldZ(rr, y))]; if (r.rb) rr.rbk = r.rb[0].toFixed(0) + ',' + r.rb[1].toFixed(0); }   // i krátké kousky (kruhový objezd u vjezdů), jinak v okruhu zůstanou mezery a auta tam stojí
+      if (len[len.length - 1] > 1) { roads.push({ ...r, k, len, L: len[len.length - 1] }); const rr = roads[roads.length - 1]; for (const z of r.j || []) addXing(rr, z); rr.jy = [...(r.j || []), ...(r.y || []).map((y) => yieldZ(rr, y)), ...(r.sg || []).map((q) => addSig(rr, q))]; if (r.rb) rr.rbk = r.rb[0].toFixed(0) + ',' + r.rb[1].toFixed(0); }   // i krátké kousky (kruhový objezd u vjezdů), jinak v okruhu zůstanou mezery a auta tam stojí
     }
     for (let i = i0; i < roads.length; i++) { const r = roads[i]; for (const [end, dir] of [[r.w[0], 1], [r.w[r.w.length - 1], -1]]) { const q = ek(end); if (!ends.has(q)) ends.set(q, []); ends.get(q).push([i, dir]); } }
     // konce, které se v datech minou o pár metrů (rozdělená vozovka, mostovka), propojit, ať auto nemusí otáčet ani mizet
@@ -2686,6 +2715,21 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
           if (z.zav) o.arm = [(cen.ix - o.ix) * 1.1, (cen.iy - o.iy) * 1.1];    // závora přes svůj pruh   // vpravo u okraje vozovky pro auta, která k přejezdu jedou
           if (!vis(o.ix, o.iy) || occluded(o.ix, o.iy, dp) || occluded(o.ix, o.iy - 30, dp)) continue;   // za budovou (pata nebo výstražník) se nekreslí
           if (dp < dc) xFront.push([o, z]); else drawXPost(o, z, sx, ox, oy, now, night);
+        }
+      }
+      if (sx > 0.25) {                                      // semafory: u pravého okraje před stopčárou pro každý směr příjezdu
+        if (!sigPosts) {                                     // polohy sloupků jednou; blízké (do 9 m) jen jeden, jinak je křižovatka les sloupků
+          sigPosts = [];
+          for (const [r, z] of sigs) for (const d of [-1, 1]) {
+            const sp = z[0] - d * 5; if (sp < 0 || sp > r.L) continue;
+            const o = curbPt(along(r, sp), d, 4);
+            if (sigPosts.some((q) => Math.hypot(q.o.x - o.x, q.o.y - o.y) < 9)) continue;
+            sigPosts.push({ o, z, k: r.k });
+          }
+        }
+        for (const { o, z, k } of sigPosts) {
+          if (!shown(k) || !vis(o.ix, o.iy) || occluded(o.ix, o.iy, o.d) || occluded(o.ix, o.iy - 26, o.d)) continue;
+          drawSignal(o, sigState(z), sx, ox, oy, night);
         }
       }
       if (sx > 0.25) for (const pq of pedX) {               // přechod pro pěší přes trať: výstražník se závorou z obou stran koleje

@@ -2026,7 +2026,9 @@ def _oneway(r):
     if acc is None or isinstance(acc, float): return 0
     for a in acc:
         w_ = a.get('when') or {}
-        if a.get('access_type') == 'denied' and a.get('between') is None and _none(w_.get('mode')) and _none(w_.get('using')) and _none(w_.get('recognized')):
+        b_ = a.get('between')                       # omezení jen na části úseku: platí, když pokrývá aspoň polovinu (OSM jednosměrka rozdělená křižovatkou)
+        if b_ is not None and not (len(b_) == 2 and float(b_[1]) - float(b_[0]) >= 0.5): continue
+        if a.get('access_type') == 'denied' and _none(w_.get('mode')) and _none(w_.get('using')) and _none(w_.get('recognized')):
             if w_.get('heading') == 'backward': return 1
             if w_.get('heading') == 'forward': return -1
     return 0
@@ -2184,6 +2186,18 @@ if os.path.exists('assets/prejezdy.json'):
         if j_: g_['j'] = j_
 for g_ in graph: g_.pop('_deck', None)
 print('železničních přejezdů', sum(len(g_.get('j', [])) for g_ in graph))
+# semafory (nastroje/semafory.py, OSM highway=traffic_signals / crossing=traffic_signals): kus silnice si nese
+# [metry od začátku, x, y, 1 = křižovatka / 0 = přechod]; prohlížeč je střídá a auta na červenou stojí
+if os.path.exists('assets/semafory.json'):
+    sys.path.insert(0, 'nastroje'); import prejezdy as _pj
+    _sg = json.load(open('assets/semafory.json'))
+    for _kd in ('k', 'p'):
+        _pts = [tuple(float(v) for v in to_local(lo, la)) for la, lo, k in _sg if k == _kd]
+        if not _pts: continue
+        for g_ in graph:
+            if g_.get('_deck'): continue
+            for q in _pj.na_kusu(g_['p'], _pts): g_.setdefault('sg', []).append([q[0], q[1], q[2], 1 if _kd == 'k' else 0])
+    print('semaforů na silnicích', sum(len(g_.get('sg', [])) for g_ in graph))
 sys.path.insert(0, 'nastroje'); import kruhace as _kr
 _kr.oznac(graph, _ring_lines)   # kruhový objezd: kusy okruhu ('rb') a vjezdy, které dávají přednost ('y')
 print('vjezdů na kruhový objezd', sum(len(g_.get('y', [])) for g_ in graph))
