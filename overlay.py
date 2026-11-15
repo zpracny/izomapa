@@ -66,7 +66,7 @@ AREA_TREE = shapely.STRtree([a[2] for a in AREAS]) if AREAS else None
 PL_TREE = shapely.STRtree([shapely.geometry.Point(p[0], p[1]) for p in PLACES_DB]) if PLACES_DB else None
 
 # chodci (web/app.html): pěší cesty z Overture po čtvercích, společné souřadnice [x, y] po 0,1 m.
-# l = čáry, c = druh (p pěší zóna, f chodník, s schody, t cesta v parku/lese, k cyklostezka), a = pěší plochy a náměstí (polygony).
+# l = čáry, c = druh (p pěší zóna, f chodník, s schody, t cesta v parku/lese, k cyklostezka, c / d cyklotrasa po silnici / po cestě), a = pěší plochy a náměstí (polygony).
 # Chodníky podél ulic, které v datech nejsou, si prohlížeč dopočítá ze silnic (roads). Vypnout: "chodci": false v mesto.json.
 WALK_K = {'pedestrian': 'p', 'footway': 'f', 'steps': 's', 'path': 't', 'cycleway': 'k', 'living_street': 'p', 'bridleway': 't'}
 _WALK, _WALK_SRC = {}, None
@@ -82,6 +82,9 @@ def _walk_src():
                 k = WALK_K.get(c)
                 if not k or any('is_tunnel' in (q.get('values') or []) and not q.get('between') for q in fl or []): continue
                 lines.append((k, tr(shapely.from_wkb(g))))
+        if os.path.exists('assets/cyklotrasy.json'):         # značené cyklotrasy (nastroje/cyklotrasy_osm.py): c po silnici, d po cestě, jen pro cyklisty
+            for druh, pts in json.load(open('assets/cyklotrasy.json')):
+                if len(pts) > 1: lines.append((druh, shapely.geometry.LineString([to_local(lo, la) for la, lo in pts])))
         for f in sorted(glob.glob('data_all/land_use.parquet') or glob.glob('data*/land_use.parquet')):
             t = pq.read_table(f, columns=['class', 'geometry']).to_pydict()
             areas += [tr(shapely.from_wkb(g)) for c, g in zip(t['class'], t['geometry']) if c in ('pedestrian', 'plaza')]

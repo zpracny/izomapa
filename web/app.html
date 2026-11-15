@@ -1738,9 +1738,9 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   // ---- chodci: pixeloví lidé (postava 16 bodů po 10 cm) po pěších cestách a náměstích (overlay walk) a po chodnících podél ulic (roads).
   // Oblečení podle ročního období, počet podle hodiny (realTime), kreslí se jen zblízka; obrázek každé postavy se kreslí jednou do cache.
   const PEOPLE = [], PWK = new Map();                         // PWK: konce pěších čar -> [čára, směr]
-  const PDENS = { p: 3, f: 0.9, s: 0.5, t: 0.2, k: 0.2 };     // lidí na 100 m podle druhu cesty (p pěší zóna, f chodník, s schody, t cesta, k cyklostezka)
-  const BDENS = { k: 0.9, t: 0.06 };                        // cyklistů na 100 m: cyklostezky, v lese a v parku občas
-  const BIKE_SEASON = { spring: 0.7, summer: 1, autumn: 0.45, winter: 0.12 };
+  const PDENS = { p: 3, f: 0.9, s: 0.5, t: 0.2, k: 0.2, c: 0, d: 0 };   // lidí na 100 m podle druhu cesty (p pěší zóna, f chodník, s schody, t cesta, k cyklostezka, c / d cyklotrasa po silnici / po cestě)
+  const BDENS = { k: 0.9, t: 0.06, c: 0.25, d: 0.25 };      // cyklistů na 100 m: cyklostezky, cyklotrasy, v lese a v parku občas
+  const BIKE_SEASON = { spring: 0.35, summer: 1, autumn: 0.25, winter: 0.06 };   // na jaře a na podzim jen pár, v létě víc
   const BIKE_COL = ['#c23a2a', '#2a2c31', '#2f6fd1', '#e8e4da', '#2aa36b', '#f2c230', '#7a7f88', '#e86a2a', '#5a3a7a', '#1d6f8a'];
   const PSIDE = { residential: 0.22, living_street: 0.5, tertiary: 0.35, secondary: 0.35, primary: 0.3, unclassified: 0.1 };   // chodníky podél ulic
   const PSIDE_OFF = { residential: 3.8, living_street: 2.6, tertiary: 5, secondary: 5.6, primary: 6.2, unclassified: 3.6 };
@@ -1756,7 +1756,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       const len = [0]; for (let m = 1; m < w.length; m++) len.push(len[m - 1] + Math.hypot(w[m][0] - w[m - 1][0], w[m][1] - w[m - 1][1]));
       const r = { w, len, L: len[len.length - 1], c: kinds[j] || 'f', k };
       for (const [e, dir] of [[w[0], 1], [w[w.length - 1], -1]]) { const q = pEk(e); if (!PWK.has(q)) PWK.set(q, []); PWK.get(q).push([r, dir]); }
-      const n = r.L / 100 * (PDENS[r.c] || 0.5), cnt = Math.floor(n) + (rnd(i + j) < n % 1 ? 1 : 0);
+      const n = r.L / 100 * (PDENS[r.c] ?? 0.5), cnt = Math.floor(n) + (rnd(i + j) < n % 1 ? 1 : 0);
       for (let m = 0; m < cnt; m++) add({ m: 'l', r, s: rnd(i + m * 3) * r.L, dir: rnd(i + m) < 0.5 ? 1 : -1, side: (rnd(i + m * 5) - 0.5) * 1.4 });
       const nb = r.L / 100 * (BDENS[r.c] || 0), cb = Math.floor(nb) + (rnd(i + j * 13 + 777) < nb % 1 ? 1 : 0);   // cyklisti
       for (let m = 0; m < cb; m++) { const z = i + j * 17 + m * 41 + 999;
@@ -1783,7 +1783,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     }
     const r = p.r, Ls = r.len; let i = 1; while (i < Ls.length - 1 && Ls[i] < p.s) i++;
     const a = r.w[i - 1], b = r.w[i], t = Math.max(0, Math.min(1, (p.s - Ls[i - 1]) / ((Ls[i] - Ls[i - 1]) || 1))), dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1;
-    const x = a[0] + dx * t + dy / L * p.side, y = a[1] + dy * t - dx / L * p.side; return [x, y, gz(x, y), dx * p.dir, dy * p.dir];
+    const sd = r.c === 'c' ? p.dir * 2.3 : p.side;            // po silnici u pravého okraje
+    const x = a[0] + dx * t + dy / L * sd, y = a[1] + dy * t - dx / L * sd; return [x, y, gz(x, y), dx * p.dir, dy * p.dir];
   }
   // lidé na nástupišti: před příjezdem vlaku (3 min) přicházejí a čekají, při stání nastoupí, vystoupivší se po odjezdu rozejdou.
   // Vše podle času jízdy vlaku (el), takže bez stavu a stejné pro všechny návštěvníky. Strana nástupiště podle pěších cest v okolí.
@@ -1805,7 +1806,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     const key = Math.round(x / 30) + ',' + Math.round(y / 30);
     if (PLAT.side.has(key)) return PLAT.side.get(key);
     let a = 0, b = 0;
-    for (const ls of PWK.values()) for (const [r] of ls) for (const w of r.w) {
+    for (const ls of PWK.values()) for (const [r] of ls) if (r.c !== 'c' && r.c !== 'd') for (const w of r.w) {
       const dx = w[0] - x, dy = w[1] - y, al = dx * tx + dy * ty, la = -dx * ty + dy * tx;
       if (Math.abs(al) < 40 && Math.abs(la) > 2.5 && Math.abs(la) < 18) { if (la > 0) a++; else b++; }
     }
@@ -1863,10 +1864,14 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     const endPt = p.s < 0 ? r.w[0] : r.w[r.w.length - 1];
     if (Math.random() < (p.bike ? 0.02 : 0.15)) p.wait = 1 + Math.random() * 4;   // zastaví se (výloha, telefon)
     let opts;
-    if (p.m === 'l') opts = (PWK.get(pEk(endPt)) || []).filter(([q]) => q !== r && (!p.bike || q.c !== 's'));
+    if (p.m === 'l') opts = (PWK.get(pEk(endPt)) || []).filter(([q]) => q !== r && (p.bike ? q.c !== 's' : q.c !== 'c' && q.c !== 'd'));
     else opts = (ends.get(ek(endPt)) || []).filter(([j]) => j !== p.ri && PSIDE[roads[j].c] && !roads[j].tunnel);
-    if (p.bike && opts.length) { const ok = opts.filter(([q]) => q.c === 'k'); if (ok.length) opts = ok; else if (r.c === 'k' && Math.random() < 0.6) opts = []; }   // cyklista se drží cyklostezky
-    if (opts.length && Math.random() < 0.85) {
+    if (p.bike && opts.length) {                                                // cyklista se drží cyklostezky nebo cyklotrasy
+      const G = (c) => c === 'k' ? 'k' : c === 'c' || c === 'd' ? 'r' : 'o', g = G(r.c);
+      let ok = opts.filter(([q]) => G(q.c) === g); if (!ok.length) ok = opts.filter(([q]) => G(q.c) !== 'o');
+      if (ok.length) opts = ok; else if (g === 'r' || (g === 'k' && Math.random() < 0.6)) opts = [];
+    }
+    if (opts.length && Math.random() < (p.bike ? 0.97 : 0.85)) {
       const [q, dir] = opts[Math.floor(Math.random() * opts.length)];
       if (p.m === 'l') { p.r = q; } else { p.ri = q; } p.dir = dir; p.s = dir > 0 ? 0 : (p.m === 'l' ? q : roads[q]).L;
     } else { p.dir *= -1; p.s = Math.max(0, Math.min(r.L, p.s)); }               // sem tam: otočí se
