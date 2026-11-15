@@ -2189,18 +2189,6 @@ if os.path.exists('assets/prejezdy.json'):
         if j_: g_['j'] = j_
 for g_ in graph: g_.pop('_deck', None)
 print('železničních přejezdů', sum(len(g_.get('j', [])) for g_ in graph))
-# semafory (nastroje/semafory.py, OSM highway=traffic_signals / crossing=traffic_signals): kus silnice si nese
-# [metry od začátku, x, y, 1 = křižovatka / 0 = přechod]; prohlížeč je střídá a auta na červenou stojí
-if os.path.exists('assets/semafory.json'):
-    sys.path.insert(0, 'nastroje'); import prejezdy as _pj
-    _sg = json.load(open('assets/semafory.json'))
-    for _kd in ('k', 'p'):
-        _pts = [tuple(float(v) for v in to_local(lo, la)) for la, lo, k in _sg if k == _kd]
-        if not _pts: continue
-        for g_ in graph:
-            if g_.get('_deck'): continue
-            for q in _pj.na_kusu(g_['p'], _pts): g_.setdefault('sg', []).append([q[0], q[1], q[2], 1 if _kd == 'k' else 0])
-    print('semaforů na silnicích', sum(len(g_.get('sg', [])) for g_ in graph))
 sys.path.insert(0, 'nastroje'); import kruhace as _kr
 _kr.oznac(graph, _ring_lines)   # kruhový objezd: kusy okruhu ('rb') a vjezdy, které dávají přednost ('y')
 print('vjezdů na kruhový objezd', sum(len(g_.get('y', [])) for g_ in graph))
