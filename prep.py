@@ -561,8 +561,8 @@ for g0, r in bridge_segs:
         hi = np.where(z - gz > 0.25)[0]                 # oříznout nájezdy tam, kde mostovka leží na terénu
         i0 = min(max(int(hi[0]) - 1, 0) if len(hi) else si[0], si[0]); i1 = max(min(int(hi[-1]) + 1, len(d) - 1) if len(hi) else si[-1], si[-1])
         _cut(A0, ds0 - d[i0]); _cut(A1, d[i1] - ds1)
-        lz = LineString(xy[i0:i1 + 1]); d = d[i0:i1 + 1] - d[i0]
-        DECKS.append((lz, d, z[i0:i1 + 1], gz[i0:i1 + 1], w, kind, c, sname(r), int(l.intersects(_water))))
+        d0_ = d[i0]; lz = LineString(xy[i0:i1 + 1]); d = d[i0:i1 + 1] - d[i0]
+        DECKS.append((lz, d, z[i0:i1 + 1], gz[i0:i1 + 1], w, kind, c, sname(r), int(l.intersects(_water)), (ds0 - d0_, ds1 - d0_)))
 for qb in UP.get('bridges', []):
     bl = LineString([to_local(lo, la) for la, lo in qb['line']]).segmentize(2.0)
     if bl.intersects(DRAWBOX):
@@ -2003,8 +2003,10 @@ json.dump({'chunk': CHUNK, 'center': [CX, CY], 'half': HALF, 'step': STEP, 'n': 
            'floor': geo.FLOOR, 'top': round(TOP, 1),
            'buildings': buildings, 'trees': trees, 'props': props, 'cars': cars, 'buses': buses, 'portals': portals, 'lines': lines_out,
            'herds': herds_out,
+           # 5. číslo bodu: 1 = vlastní most z dat (± 2 m), 0 = nájezd (render z něj udělá násep i výš než 2,5 m, bez pilířů)
            'bridges': [{'p': run, 'w': D[4], 'k': D[5], 'c': D[6], 'wtr': D[8] if len(D) > 8 else 0} for D in DECKS if D[0].intersects(EXT)
-                       for run in deck_runs([[*q, round(float(g_), 2)] for q, g_ in zip(deck_line(D), D[3])])],
+                       for run in deck_runs([[*q, round(float(g_), 2)] + ([int(D[9][0] - 2 <= dd <= D[9][1] + 2)] if len(D) > 9 else [])
+                                             for q, g_, dd in zip(deck_line(D), D[3], D[1])])],
            'xmas': xmas, 'rinks': rinks, 'stalls': stalls, 'ice': ice,
            'play': [[round(float(x), 2), round(float(y), 2), round(float(ground(x, y)), 2), round(a, 3), t] for x, y, a, t in play]},
           open(f'{OUT}/scene.json', 'w'), separators=(',', ':'))
