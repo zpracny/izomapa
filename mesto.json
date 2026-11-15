@@ -1,0 +1,60 @@
+{
+  "nazev": "Příbram",
+  "titulek": "Izometrická Příbram",
+  "h1": [
+    "Izometrická",
+    "Příbram"
+  ],
+  "podtitul": "Příbram z otevřených dat, ve stylu SimCity 2000.",
+  "popis": "Izometrická pixel-art mapa: Příbram ve stylu SimCity 2000. Roční období, den a noc, počasí a příběhy míst.",
+  "url": "https://pribram.dev",
+  "stred": [14.016374, 49.698341],
+  "polovina": 1150.0,
+  "ctverce": [
+    [-1, 0],
+    [0, 0],
+    [1, 0],
+    [-2, -1],
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [2, -1],
+    [-1, -2],
+    [0, -2],
+    [1, -2],
+    [-1, -3],
+    [-2, 0]
+  ],
+  "href": 521.7,
+  "dno": -117,
+  "mhd": {
+    "gtfs": "https://data.pid.cz/PID_GTFS.zip",
+    "zdroj": "Pražská integrovaná doprava (PID)",
+    "zdroj_url": "https://pid.cz/o-systemu/opendata/"
+  },
+  "vlak": {
+    "vychozi": "regionova",
+    "linky": {
+      "R26": "arriva845"
+    }
+  },
+  "rybniky": [
+    {"nazev": "Fialák", "lat": 49.66907, "lon": 14.00205},
+    {"nazev": "Novák", "lat": 49.67557, "lon": 14.0039}
+  ],
+  "polohy": true,
+  "pocasi": true,
+  "pohled": [49.6889, 14.0105, 1.6],
+  "hlaseni": true,
+  "fotky": true,
+  "autor": {
+    "jmeno": "Zdeněk Pracný",
+    "url": "https://pracny.app",
+    "text": "Mapu Příbrami připravil"
+  },
+  "sochy": [
+    [49.68923, 14.01428],
+    [49.6886, 14.00952],
+    [49.6899, 14.01348]
+  ]
+}
