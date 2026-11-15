@@ -1,0 +1,2955 @@
+[
+ {
+  "name": "Bazilika Nanebevzetí Panny Marie (Svatá Hora)",
+  "lat": 49.68499,
+  "lon": 14.01756,
+  "text": "Podle leteckého snímku z Wikimedia Commons (Jirka Jiroušek, CC BY-SA 4.0) a měření DMP OK (ČÚZK): bazilika na kamenné terase, křížová břidlicová střecha s hřebeny v 601 m n. m., uprostřed štíhlá měděná věžička.",
+  "spec": {
+   "wc": [
+    234,
+    208,
+    152
+   ],
+   "rc": [
+    66,
+    62,
+    64
+   ],
+   "r": "gabled",
+   "h": 13,
+   "rh": 6,
+   "win": 19,
+   "dily": {
+    "ll": [
+     49.684988,
+     14.017564
+    ],
+    "a": 8.5,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 46,
+      "w": 35,
+      "e": 586.3,
+      "r": "flat",
+      "wc": [
+       170,
+       164,
+       152
+      ],
+      "rc": [
+       158,
+       154,
+       146
+      ],
+      "win": 5
+     },
+     {
+      "s": 0,
+      "t": 0,
+      "l": 33,
+      "w": 22,
+      "e": 592.5,
+      "rh": 2.5,
+      "r": "hipped",
+      "g": 586.3
+     },
+     {
+      "s": 0,
+      "t": 0,
+      "l": 34,
+      "w": 12,
+      "e": 595,
+      "rh": 6,
+      "r": "gabled",
+      "g": 586.3
+     },
+     {
+      "s": 0,
+      "t": 0,
+      "l": 23.5,
+      "w": 12,
+      "a": 90,
+      "e": 595,
+      "rh": 6,
+      "r": "gabled",
+      "g": 586.3
+     }
+    ],
+    "v": [
+     {
+      "s": 0,
+      "t": 0,
+      "w": 2.8,
+      "e": 604.5,
+      "to": 616,
+      "top": "helm",
+      "tc": [
+       96,
+       146,
+       128
+      ],
+      "wc": [
+       96,
+       146,
+       128
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Ambit Svaté Hory",
+  "lat": 49.685002,
+  "lon": 14.018078,
+  "text": "Podle leteckého snímku z Wikimedia Commons (Jirka Jiroušek, CC BY-SA 4.0) a měření DMP OK (ČÚZK): čtyři nízká křídla s arkádami do nádvoří, uprostřed západního křídla věž s bání, na východě Pražská brána s balustrádou a dvěma věžičkami.",
+  "spec": {
+   "wc": [
+    230,
+    200,
+    140
+   ],
+   "rc": [
+    66,
+    62,
+    64
+   ],
+   "r": "gabled",
+   "h": 7,
+   "rh": 4,
+   "win": 19,
+   "face": [
+    49.6851,
+    14.02
+   ],
+   "dily": {
+    "ll": [
+     49.684988,
+     14.017564
+    ],
+    "a": 8.5,
+    "p": [
+     {
+      "s": -34.7,
+      "t": 1.2,
+      "a": 90,
+      "l": 47,
+      "w": 9.5,
+      "e": 595,
+      "rh": 3.5,
+      "g": 584.5,
+      "win": 19,
+      "wini": 18
+     },
+     {
+      "s": 33.4,
+      "t": 1.2,
+      "a": 90,
+      "l": 47,
+      "w": 9.5,
+      "e": 591,
+      "rh": 3,
+      "g": 584.5,
+      "win": 19,
+      "wini": 18
+     },
+     {
+      "s": -0.6,
+      "t": 30.5,
+      "l": 57,
+      "w": 9.5,
+      "e": 590,
+      "rh": 3,
+      "g": 584.5,
+      "win": 19,
+      "wini": 18
+     },
+     {
+      "s": -0.6,
+      "t": -27.8,
+      "l": 57,
+      "w": 9.5,
+      "e": 587.5,
+      "rh": 3,
+      "g": 583.0,
+      "win": 19,
+      "wini": 18
+     },
+     {
+      "s": 34.6,
+      "t": 1.35,
+      "a": 90,
+      "l": 20,
+      "w": 11.5,
+      "e": 592.5,
+      "rh": 3,
+      "r": "hipped",
+      "g": 581.5,
+      "wc": [
+       226,
+       190,
+       140
+      ],
+      "win": 19
+     }
+    ],
+    "v": [
+     {
+      "ll": [
+       49.684953,
+       14.017082
+      ],
+      "w": 7.5,
+      "e": 601.5,
+      "to": 613,
+      "top": "bell",
+      "tc": [
+       96,
+       146,
+       128
+      ],
+      "clock": 1,
+      "wc": [
+       230,
+       200,
+       140
+      ]
+     },
+     {
+      "ll": [
+       49.685283,
+       14.017492
+      ],
+      "w": 2.6,
+      "e": 597.5,
+      "to": 604,
+      "top": "helm",
+      "tc": [
+       96,
+       146,
+       128
+      ]
+     },
+     {
+      "ll": [
+       49.684696,
+       14.017519
+      ],
+      "w": 2.6,
+      "e": 594,
+      "to": 600.5,
+      "top": "helm",
+      "tc": [
+       96,
+       146,
+       128
+      ]
+     },
+     {
+      "ll": [
+       49.684714,
+       14.017735
+      ],
+      "w": 2.6,
+      "e": 594,
+      "to": 600.5,
+      "top": "helm",
+      "tc": [
+       96,
+       146,
+       128
+      ]
+     },
+     {
+      "ll": [
+       49.684967,
+       14.018082
+      ],
+      "w": 2.4,
+      "e": 595.5,
+      "to": 598,
+      "top": "pyramid",
+      "tc": [
+       120,
+       112,
+       104
+      ],
+      "wc": [
+       226,
+       190,
+       140
+      ]
+     },
+     {
+      "ll": [
+       49.68513,
+       14.018047
+      ],
+      "w": 2.4,
+      "e": 595.5,
+      "to": 598,
+      "top": "pyramid",
+      "tc": [
+       120,
+       112,
+       104
+      ],
+      "wc": [
+       226,
+       190,
+       140
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Probošství Svaté Hory",
+  "lat": 49.685541,
+  "lon": 14.017748,
+  "text": "Krémová budova s červenou střechou severně od ambitu (ortofoto, fotka probošství).",
+  "spec": {
+   "wc": [
+    232,
+    220,
+    182
+   ],
+   "rc": [
+    178,
+    88,
+    60
+   ],
+   "r": "hipped",
+   "h": 16,
+   "rh": 5
+  }
+ },
+ {
+  "name": "Plzeňská kaple (Svatá Hora)",
+  "lat": 49.68522,
+  "lon": 14.01711,
+  "text": "Nárožní kaple ambitu: osmiboký okrový tambur s bílým členěním, velká zvoncová měděná báně s lucernou a cibulkou (fotky Zdeňka Pracného, ortofoto).",
+  "spec": {
+   "wc": [
+    230,
+    200,
+    140
+   ],
+   "rc": [
+    230,
+    200,
+    140
+   ],
+   "r": "flat",
+   "h": 15,
+   "win": 19,
+   "towers": [
+    {
+     "at": "c",
+     "w": 10,
+     "h": 15.5,
+     "top": "bell",
+     "to": 29,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "round": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "Březnická kaple (Svatá Hora)",
+  "lat": 49.6847,
+  "lon": 14.01722,
+  "text": "Nárožní kaple ambitu: osmiboký okrový tambur s bílým členěním, velká zvoncová měděná báně s lucernou a cibulkou (fotky Zdeňka Pracného, ortofoto).",
+  "spec": {
+   "wc": [
+    230,
+    200,
+    140
+   ],
+   "rc": [
+    230,
+    200,
+    140
+   ],
+   "r": "flat",
+   "h": 9,
+   "win": 19,
+   "towers": [
+    {
+     "at": "c",
+     "w": 10,
+     "h": 9.5,
+     "top": "bell",
+     "to": 22.5,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "round": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "Mníšecká kaple (Svatá Hora)",
+  "lat": 49.68532,
+  "lon": 14.01804,
+  "text": "Nárožní kaple ambitu: osmiboký okrový tambur s bílým členěním, velká zvoncová měděná báně s lucernou a cibulkou (fotky Zdeňka Pracného, ortofoto).",
+  "spec": {
+   "wc": [
+    230,
+    200,
+    140
+   ],
+   "rc": [
+    230,
+    200,
+    140
+   ],
+   "r": "flat",
+   "h": 8.5,
+   "win": 19,
+   "towers": [
+    {
+     "at": "c",
+     "w": 10,
+     "h": 9,
+     "top": "bell",
+     "to": 23.5,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "round": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "Pražská kaple (Svatá Hora)",
+  "lat": 49.6848,
+  "lon": 14.01815,
+  "text": "Nárožní kaple ambitu: osmiboký okrový tambur s bílým členěním, velká zvoncová měděná báně s lucernou a cibulkou (fotky Zdeňka Pracného, ortofoto).",
+  "spec": {
+   "wc": [
+    230,
+    200,
+    140
+   ],
+   "rc": [
+    230,
+    200,
+    140
+   ],
+   "r": "flat",
+   "h": 8.5,
+   "win": 19,
+   "towers": [
+    {
+     "at": "c",
+     "w": 10,
+     "h": 9,
+     "top": "bell",
+     "to": 22.5,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "round": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kostel sv. Jakuba Staršího",
+  "lat": 49.68865,
+  "lon": 14.00978,
+  "text": "Podle fotek z Wikimedia Commons a fotky Zdeňka Pracného, ortofota a měření DMP OK (ČÚZK): krémová loď s vysokou břidlicovou střechou (hřeben 22 m), užší presbytář, přístavky po stranách, krémová věž se štíty, osmibokou měděnou jehlou a čtyřmi nárožními lucernami (asi 50 m), sanktusník nad presbytářem.",
+  "spec": {
+   "wc": [
+    238,
+    222,
+    180
+   ],
+   "rc": [
+    70,
+    72,
+    78
+   ],
+   "r": "gabled",
+   "h": 13,
+   "rh": 9,
+   "win": 4,
+   "face": [
+    49.68865,
+    14.009
+   ],
+   "towers_rucni": [
+    {
+     "at": "front",
+     "w": 8,
+     "h": 30,
+     "top": "spire",
+     "to": 46,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "clock": 1,
+     "wc": [
+      240,
+      236,
+      224
+     ],
+     "ll": [
+      49.688652,
+      14.009559
+     ]
+    },
+    {
+     "at": "back",
+     "w": 2.0,
+     "h": 23,
+     "top": "spire",
+     "to": 29,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "ll": [
+      49.688643,
+      14.009969
+     ]
+    }
+   ],
+   "dily": {
+    "ll": [
+     49.68866,
+     14.009795
+    ],
+    "a": 0.3,
+    "p": [
+     {
+      "s": -1.5,
+      "t": 0.3,
+      "l": 25,
+      "w": 13.5,
+      "e": 515.3,
+      "rh": 9,
+      "r": "gabled",
+      "g": 502.3
+     },
+     {
+      "s": 14.5,
+      "t": 0.3,
+      "l": 9,
+      "w": 10,
+      "e": 515.3,
+      "rh": 6,
+      "r": "hipped",
+      "g": 502.3
+     },
+     {
+      "s": 5.5,
+      "t": 9.3,
+      "l": 11,
+      "w": 5.5,
+      "e": 509.3,
+      "rh": 2.5,
+      "r": "hipped",
+      "g": 502.3,
+      "win": 0
+     },
+     {
+      "s": -3,
+      "t": -8.3,
+      "l": 10,
+      "w": 4.5,
+      "e": 507.3,
+      "rh": 2,
+      "r": "hipped",
+      "g": 502.3,
+      "win": 0
+     }
+    ],
+    "v": [
+     {
+      "s": -17.2,
+      "t": -0.3,
+      "w": 7,
+      "e": 534.3,
+      "to": 552.3,
+      "top": "gothic",
+      "tc": [
+       96,
+       146,
+       128
+      ],
+      "wc": [
+       240,
+       226,
+       190
+      ],
+      "clock": 1
+     },
+     {
+      "s": 11.5,
+      "t": 0.3,
+      "w": 1.6,
+      "e": 526.8,
+      "to": 533.3,
+      "top": "spire",
+      "tc": [
+       96,
+       146,
+       128
+      ],
+      "wc": [
+       96,
+       146,
+       128
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Zámeček Ernestinum",
+  "lat": 49.68989,
+  "lon": 14.01043,
+  "text": "Podle ortofota a měření DMP OK (ČÚZK) a fotek z Wikimedia Commons: čtyři křídla kolem úzkého dvora, žlutá omítka, valbová střecha z červených tašek, okap 14,7 m nad terénem.",
+  "spec": {
+   "wc": [
+    238,
+    204,
+    104
+   ],
+   "rc": [
+    198,
+    96,
+    62
+   ],
+   "r": "hipped",
+   "h": 14,
+   "rh": 4,
+   "win": 11,
+   "dily": {
+    "ll": [
+     49.689896,
+     14.010419
+    ],
+    "a": 4.0,
+    "p": [
+     {
+      "s": -10.2,
+      "t": 0,
+      "a": 90,
+      "l": 36.8,
+      "w": 11.1,
+      "e": 523.4,
+      "rh": 3.6,
+      "r": "hipped",
+      "g": 508.7
+     },
+     {
+      "s": 8.6,
+      "t": 0,
+      "a": 90,
+      "l": 36.8,
+      "w": 14.3,
+      "e": 523.4,
+      "rh": 3.6,
+      "r": "hipped",
+      "g": 508.7
+     },
+     {
+      "s": 0,
+      "t": 14.3,
+      "l": 31.7,
+      "w": 8.2,
+      "e": 523.4,
+      "rh": 3.6,
+      "r": "hipped",
+      "g": 508.7
+     },
+     {
+      "s": 0,
+      "t": -12.1,
+      "l": 31.7,
+      "w": 12.9,
+      "e": 523.4,
+      "rh": 3.6,
+      "r": "hipped",
+      "g": 508.7
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Městský úřad, Tyršova 108",
+  "lat": 49.68918,
+  "lon": 14.01065,
+  "text": "Podle fotek z Wikimedia Commons, ortofota a měření DMP OK (ČÚZK): třípatrová novorenesanční budova (okap 18 m) s valbovou střechou, střední rizalit převýšený tmavou kupolovou střechou (25 m).",
+  "spec": {
+   "wc": [
+    188,
+    190,
+    178
+   ],
+   "rc": [
+    78,
+    80,
+    86
+   ],
+   "r": "hipped",
+   "h": 19,
+   "rh": 6,
+   "win": 11,
+   "dily": {
+    "ll": [
+     49.68918,
+     14.010652
+    ],
+    "a": 81.6,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 34.1,
+      "w": 19.2,
+      "e": 523.0,
+      "rh": 3,
+      "r": "hipped",
+      "g": 504.6
+     },
+     {
+      "s": 2.5,
+      "t": 0,
+      "a": 90,
+      "l": 20,
+      "w": 10,
+      "e": 525.6,
+      "rh": 4.2,
+      "r": "hipped",
+      "g": 504.6
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Kostel sv. Vojtěcha (Březové Hory)",
+  "lat": 49.68316,
+  "lon": 13.98988,
+  "text": "Podle fotek z Wikimedia Commons, ortofota a měření DMP OK (ČÚZK): trojlodní bazilika, vyšší střední loď (16 m) a nižší boční lodi, apsida, v průčelí věž s hodinami, lucernou a měděnou jehlou (asi 38 m). Věž a štít průčelí upraveny podle fotek Zdeňka Pracného (11/2024): štíhlá zelená jehla, trojúhelníkový štít.",
+  "spec": {
+   "wc": [
+    238,
+    228,
+    184
+   ],
+   "rc": [
+    92,
+    96,
+    104
+   ],
+   "r": "gabled",
+   "h": 11.2,
+   "rh": 5,
+   "win": 4,
+   "face": [
+    49.6825,
+    13.98988
+   ],
+   "towers_rucni": [
+    {
+     "at": "front",
+     "w": 6.5,
+     "h": 24,
+     "top": "helm",
+     "to": 36,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "clock": 1,
+     "ll": [
+      49.683026,
+      13.989808
+     ]
+    }
+   ],
+   "dily": {
+    "ll": [
+     49.683158,
+     13.989877
+    ],
+    "a": 71,
+    "p": [
+     {
+      "s": 0.5,
+      "t": 0,
+      "l": 27,
+      "w": 8,
+      "e": 558.9,
+      "rh": 1.8,
+      "r": "gabled",
+      "g": 544.6,
+      "win": 5
+     },
+     {
+      "s": 0.5,
+      "t": 6.7,
+      "l": 25,
+      "w": 5.4,
+      "e": 555.6,
+      "rh": 0.8,
+      "r": "hipped",
+      "g": 544.6
+     },
+     {
+      "s": 0.5,
+      "t": -6.7,
+      "l": 25,
+      "w": 5.4,
+      "e": 555.6,
+      "rh": 0.8,
+      "r": "hipped",
+      "g": 544.6
+     },
+     {
+      "s": -15.3,
+      "t": 0,
+      "l": 6.5,
+      "w": 12,
+      "e": 557.8,
+      "r": "gabled",
+      "g": 544.6,
+      "rh": 3.2
+     },
+     {
+      "s": 16.3,
+      "t": 0,
+      "l": 5.5,
+      "w": 7,
+      "e": 555.6,
+      "rh": 1.5,
+      "r": "hipped",
+      "g": 544.6
+     }
+    ],
+    "v": [
+     {
+      "s": -15.8,
+      "t": 0,
+      "w": 5.0,
+      "e": 570.1,
+      "to": 584.0,
+      "top": "spire",
+      "tc": [
+       96,
+       146,
+       128
+      ],
+      "clock": 1
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Kostel sv. Prokopa (Březové Hory)",
+  "lat": 49.68597,
+  "lon": 13.99373,
+  "text": "Podle fotek z Wikimedia Commons a ortofota ČÚZK (kostel je pod korunami stromů, výšky jsou odhad z fotek): bílá loď s červenou taškovou střechou, věž s červeným jehlanem a sanktusník.",
+  "spec": {
+   "wc": [
+    236,
+    230,
+    216
+   ],
+   "rc": [
+    168,
+    82,
+    60
+   ],
+   "r": "gabled",
+   "h": 9.5,
+   "rh": 3,
+   "win": 4,
+   "face": [
+    49.68597,
+    13.993
+   ],
+   "towers_rucni": [
+    {
+     "at": "front",
+     "w": 4,
+     "h": 16,
+     "top": "spire",
+     "to": 24,
+     "tc": [
+      172,
+      72,
+      52
+     ],
+     "ll": [
+      49.685912,
+      13.993613
+     ]
+    }
+   ],
+   "dily": {
+    "ll": [
+     49.685968,
+     13.993722
+    ],
+    "a": 31.3,
+    "p": [
+     {
+      "s": 0.5,
+      "t": 0,
+      "l": 16,
+      "w": 9.5,
+      "e": 569.0,
+      "rh": 4,
+      "r": "gabled",
+      "g": 561.0
+     },
+     {
+      "s": 10.2,
+      "t": 0,
+      "l": 5,
+      "w": 6.5,
+      "e": 568.0,
+      "rh": 3,
+      "r": "hipped",
+      "g": 561.0
+     }
+    ],
+    "v": [
+     {
+      "s": -9.3,
+      "t": 0,
+      "w": 4.2,
+      "e": 576.0,
+      "to": 585.0,
+      "top": "spire",
+      "tc": [
+       186,
+       74,
+       52
+      ]
+     },
+     {
+      "s": 7,
+      "t": 0,
+      "w": 1.2,
+      "e": 573.5,
+      "to": 577.0,
+      "top": "spire",
+      "tc": [
+       186,
+       74,
+       52
+      ],
+      "wc": [
+       186,
+       74,
+       52
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Sbor Mistra Jakoubka ze Stříbra (Březové Hory)",
+  "lat": 49.68407,
+  "lon": 13.99155,
+  "text": "Podle fotek z Wikimedia Commons, ortofota a měření DMP OK (ČÚZK): funkcionalistická hala (8 m) s měděnou střechou a hranolová věž (24 m) s měděnou čepicí.",
+  "spec": {
+   "wc": [
+    234,
+    230,
+    218
+   ],
+   "rc": [
+    150,
+    196,
+    186
+   ],
+   "r": "flat",
+   "h": 8,
+   "win": 4,
+   "face": [
+    49.6838,
+    13.992
+   ],
+   "towers_rucni": [
+    {
+     "at": "front",
+     "w": 4.5,
+     "h": 22.5,
+     "top": "pyramid",
+     "to": 24.5,
+     "tc": [
+      96,
+      146,
+      128
+     ],
+     "ll": [
+      49.684128,
+      13.991444
+     ]
+    }
+   ],
+   "dily": {
+    "ll": [
+     49.684076,
+     13.991543
+    ],
+    "a": -40.5,
+    "p": [
+     {
+      "s": 1.5,
+      "t": 0,
+      "l": 21,
+      "w": 10.5,
+      "e": 559.5,
+      "rh": 1.0,
+      "r": "gabled",
+      "g": 551.5
+     },
+     {
+      "s": -10,
+      "t": -4.6,
+      "l": 5,
+      "w": 4,
+      "e": 555.5,
+      "r": "flat",
+      "g": 551.5,
+      "win": 5
+     }
+    ],
+    "v": [
+     {
+      "s": -10,
+      "t": 0,
+      "w": 4.5,
+      "e": 574.0,
+      "to": 575.5,
+      "top": "pyramid",
+      "tc": [
+       110,
+       160,
+       146
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Důl Vojtěch – těžní budova (Hornické muzeum)",
+  "lat": 49.68598,
+  "lon": 13.99127,
+  "text": "Cihlová a kamenná těžní budova, tmavá valbová střecha s lucernou.",
+  "spec": {
+   "wc": [
+    172,
+    96,
+    76
+   ],
+   "rc": [
+    70,
+    72,
+    78
+   ],
+   "r": "hipped",
+   "h": 19,
+   "rh": 3,
+   "win": 11,
+   "towers": [
+    {
+     "at": "c",
+     "w": 3,
+     "h": 21.5,
+     "top": "pyramid",
+     "to": 24,
+     "tc": [
+      60,
+      62,
+      66
+     ],
+     "ll": [
+      49.685983,
+      13.991266
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Ševčinský důl – těžní věž (Hornické muzeum)",
+  "lat": 49.68312,
+  "lon": 13.98702,
+  "text": "Podle fotek z Wikimedia Commons, fotky Zdeňka Pracného, ortofota a měření DMP OK (ČÚZK): cihlová šachetní budova (13 m) se světlou balustrádou, mnohoboká cihlová věž s dřevěným ochozem, dřevěnou nástavbou a tmavou stříškou (asi 25 m), za ní ocelová těžní věž.",
+  "spec": {
+   "wc": [
+    178,
+    84,
+    62
+   ],
+   "rc": [
+    196,
+    190,
+    174
+   ],
+   "r": "flat",
+   "h": 14,
+   "win": 11,
+   "towers_rucni": [
+    {
+     "at": "c",
+     "w": 7,
+     "h": 20,
+     "top": "pyramid",
+     "to": 25,
+     "tc": [
+      54,
+      56,
+      60
+     ]
+    }
+   ],
+   "dily": {
+    "ll": [
+     49.683122,
+     13.987021
+    ],
+    "a": 15.7,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 12.4,
+      "w": 13.3,
+      "e": 540.4,
+      "r": "flat",
+      "g": 527.4,
+      "rc": [
+       196,
+       190,
+       174
+      ]
+     }
+    ],
+    "v": [
+     {
+      "s": -4.9,
+      "t": -0.7,
+      "w": 4.6,
+      "round": 1,
+      "e": 545.9,
+      "to": 552.4,
+      "top": "ochoz",
+      "tc": [
+       40,
+       40,
+       42
+      ],
+      "wc": [
+       178,
+       84,
+       62
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Svatohorské schody",
+  "lat": 49.686661,
+  "lon": 14.01417,
+  "text": "Kryté schodiště z Dlouhé ulice na Svatou Horu: úzká stupňovitá chodba po svahu, červenorůžová omítka s bílými slepými okny s obloukem, jen ojediněle kulaté okénko, tmavá šindelová střecha (fotky od uživatele, ortofoto).",
+  "spec": {
+   "slice": 8,
+   "wc": [
+    192,
+    88,
+    84
+   ],
+   "rc": [
+    86,
+    74,
+    72
+   ],
+   "r": "gabled",
+   "h": 3.4,
+   "rh": 1.8,
+   "win": 16
+  }
+ },
+ {
+  "name": "Kulturní dům a Divadlo A. Dvořáka",
+  "lat": 49.68155,
+  "lon": 14.00091,
+  "text": "Sorelová stavba: pískově béžová fasáda s římsami, ploché střechy. Dlouhé třípatrové křídlo s restaurací a terasou, divadelní část na jihu se sloupovým průčelím a sousoším, sál s červenou střechou a nejvyšší jevištní věží. Výšky částí z laseru ČÚZK, tvar z ortofota, fotky od uživatele.",
+  "spec": {
+   "wc": [
+    216,
+    198,
+    158
+   ],
+   "rc": [
+    104,
+    106,
+    112
+   ],
+   "r": "flat",
+   "h": 12.6,
+   "win": 10,
+   "zones": [
+    {
+     "poly": [
+      [
+       49.6821052,
+       14.0011329
+      ],
+      [
+       49.6821052,
+       14.00123
+      ],
+      [
+       49.6820369,
+       14.00123
+      ],
+      [
+       49.6820369,
+       14.0011329
+      ]
+     ],
+     "h": 20.2,
+     "rc": [
+      104,
+      106,
+      112
+     ],
+     "win": 15
+    },
+    {
+     "poly": [
+      [
+       49.6813143,
+       14.0005821
+      ],
+      [
+       49.6813143,
+       14.0007736
+      ],
+      [
+       49.6811315,
+       14.0007736
+      ],
+      [
+       49.6811315,
+       14.0005821
+      ]
+     ],
+     "h": 24.3,
+     "rc": [
+      104,
+      106,
+      112
+     ],
+     "win": 15
+    },
+    {
+     "poly": [
+      [
+       49.6813245,
+       14.0007841
+      ],
+      [
+       49.6813245,
+       14.0011198
+      ],
+      [
+       49.6811434,
+       14.0011198
+      ],
+      [
+       49.6811434,
+       14.0007841
+      ]
+     ],
+     "h": 17.7,
+     "rc": [
+      198,
+      110,
+      100
+     ],
+     "win": 10
+    },
+    {
+     "poly": [
+      [
+       49.6821906,
+       14.0011146
+      ],
+      [
+       49.6821906,
+       14.0013244
+      ],
+      [
+       49.6819634,
+       14.0013244
+      ],
+      [
+       49.6819634,
+       14.0011146
+      ]
+     ],
+     "h": 17.7,
+     "rc": [
+      104,
+      106,
+      112
+     ],
+     "win": 10
+    }
+   ]
+  }
+ },
+ {
+  "name": "Nádraží Příbram",
+  "lat": 49.68893,
+  "lon": 14.00356,
+  "text": "Podle ortofota a měření DMP OK (ČÚZK) a fotky z Wikimedia Commons: patrová žlutá budova s červenými šambránami a tmavou sedlovou střechou se středovým štítem, po stranách přízemní křídla a nástupištní přístřešek.",
+  "spec": {
+   "wc": [
+    240,
+    200,
+    90
+   ],
+   "rc": [
+    72,
+    74,
+    80
+   ],
+   "r": "gabled",
+   "h": 8,
+   "rh": 4,
+   "win": 13,
+   "dily": {
+    "ll": [
+     49.688931,
+     14.003559
+    ],
+    "a": -56.2,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 70.6,
+      "w": 16,
+      "e": 493.6,
+      "r": "flat",
+      "rc": [
+       176,
+       176,
+       174
+      ],
+      "g": 488.6
+     },
+     {
+      "s": -6.6,
+      "t": 2.1,
+      "l": 37.6,
+      "w": 13,
+      "e": 497.6,
+      "rh": 3.8,
+      "r": "gabled",
+      "g": 488.6
+     },
+     {
+      "s": -6.6,
+      "t": 1.1,
+      "a": 90,
+      "l": 14.5,
+      "w": 8,
+      "e": 497.6,
+      "rh": 3.0,
+      "r": "gabled",
+      "g": 488.6
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Waldorfská škola Příbram",
+  "lat": 49.689111,
+  "lon": 14.01749,
+  "text": "Nová budova: světlá, lehce růžová omítka, tmavě šedá mansardová střecha s vikýři (fotky od uživatele, ortofoto). Laser je starší než stavba, výška je odhad.",
+  "spec": {
+   "wc": [
+    238,
+    230,
+    228
+   ],
+   "rc": [
+    72,
+    74,
+    80
+   ],
+   "r": "hipped",
+   "h": 7,
+   "rh": 5,
+   "win": 0
+  }
+ },
+ {
+  "name": "Oblastní nemocnice Příbram – budova I",
+  "lat": 49.69319,
+  "lon": 14.01207,
+  "text": "Hlavní lůžková budova nemocnice, šest podlaží. Tvar střech a hmoty podle DMP OK (ČÚZK, odlitek.py).",
+  "spec": {
+   "wc": [
+    224,
+    178,
+    84
+   ],
+   "rc": [
+    150,
+    150,
+    146
+   ],
+   "r": "flat",
+   "h": 23.5,
+   "win": 1,
+   "odlitek": true,
+   "towers_rucni": [
+    {
+     "at": "c",
+     "w": 9,
+     "h": 27,
+     "top": "none",
+     "wc": [
+      170,
+      170,
+      166
+     ],
+     "ll": [
+      49.693327,
+      14.012084
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Zimní stadion Příbram",
+  "lat": 49.67847,
+  "lon": 14.00256,
+  "text": "Hokejová hala se zabudovaným hotelem. Tvar střech a hmoty podle DMP OK (ČÚZK, odlitek.py).",
+  "spec": {
+   "wc": [
+    236,
+    236,
+    232
+   ],
+   "rc": [
+    186,
+    190,
+    194
+   ],
+   "r": "flat",
+   "h": 11,
+   "win": 15,
+   "odlitek": true
+  }
+ },
+ {
+  "name": "Zimní stadion Příbram – tréninková hala",
+  "lat": 49.67758,
+  "lon": 14.00221,
+  "text": "Druhá, menší hala zimního stadionu. Tvar střech a hmoty podle DMP OK (ČÚZK, odlitek.py).",
+  "spec": {
+   "wc": [
+    232,
+    232,
+    228
+   ],
+   "rc": [
+    150,
+    156,
+    164
+   ],
+   "r": "flat",
+   "h": 10,
+   "win": 15,
+   "odlitek": true
+  }
+ },
+ {
+  "name": "Důl Anna (Hornické muzeum)",
+  "lat": 49.68768,
+  "lon": 13.99416,
+  "text": "Těžní budova stříbrného dolu Anna z kamenného zdiva s cihlovými šambránami a dřevěnou věžičkou; dnes expozice Hornického muzea Příbram.",
+  "spec": {
+   "wc": [
+    140,
+    128,
+    112
+   ],
+   "rc": [
+    168,
+    72,
+    66
+   ],
+   "r": "gabled",
+   "h": 9,
+   "rh": 3.2,
+   "win": 13,
+   "towers": [
+    {
+     "at": "c",
+     "w": 2.4,
+     "h": 12.6,
+     "top": "pyramid",
+     "to": 14.8,
+     "tc": [
+      60,
+      50,
+      44
+     ],
+     "wc": [
+      62,
+      52,
+      46
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Důl Marie (Hornické muzeum)",
+  "lat": 49.6811,
+  "lon": 13.99045,
+  "text": "Klasicistní budova dolu Marie u Mariánské štoly, součást Hornického muzea Příbram.",
+  "spec": {
+   "wc": [
+    234,
+    222,
+    196
+   ],
+   "rc": [
+    176,
+    96,
+    70
+   ],
+   "r": "hipped",
+   "h": 9.7,
+   "rh": 4.5,
+   "win": 10,
+   "towers": [
+    {
+     "at": "c",
+     "w": 0.9,
+     "h": 14.2,
+     "top": "spire",
+     "to": 16.8,
+     "tc": [
+      40,
+      108,
+      80
+     ],
+     "wc": [
+      234,
+      222,
+      196
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Důl Prokop – těžní věž",
+  "lat": 49.68548,
+  "lon": 13.99527,
+  "text": "Betonová těžní věž dolu Prokop, nejhlubší jámy březohorského revíru (1 579,6 m); dnes chátrá.",
+  "spec": {
+   "wc": [
+    188,
+    182,
+    168
+   ],
+   "rc": [
+    150,
+    148,
+    142
+   ],
+   "r": "flat",
+   "h": 13.5,
+   "win": 15
+  }
+ },
+ {
+  "name": "Důl Prokop – strojovna",
+  "lat": 49.68567,
+  "lon": 13.9952,
+  "text": "Strojovna dolu Prokop.",
+  "spec": {
+   "wc": [
+    170,
+    158,
+    140
+   ],
+   "rc": [
+    140,
+    80,
+    62
+   ],
+   "r": "gabled",
+   "h": 9.3,
+   "rh": 3.5,
+   "win": 15
+  }
+ },
+ {
+  "name": "Úřad práce",
+  "lat": 49.687435,
+  "lon": 14.009419,
+  "text": "Podle fotek z Wikimedia Commons (VitVit, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): tři hmoty obložené světlým kamenem, severní věžová část (asi 23 m) s nástavbou, nižší střed (10 m) a jižní křídlo (14 m), ploché střechy.",
+  "spec": {
+   "wc": [
+    208,
+    198,
+    182
+   ],
+   "rc": [
+    112,
+    112,
+    110
+   ],
+   "r": "flat",
+   "h": 14,
+   "win": 3,
+   "dily": {
+    "ll": [
+     49.687435,
+     14.009419
+    ],
+    "a": 3,
+    "p": [
+     {
+      "s": -2,
+      "t": 19,
+      "l": 30,
+      "w": 20,
+      "e": 516.7,
+      "r": "flat",
+      "g": 493.5
+     },
+     {
+      "s": 6.5,
+      "t": 19.5,
+      "l": 13,
+      "w": 9,
+      "e": 519.7,
+      "r": "flat",
+      "g": 516.7,
+      "win": 5,
+      "rc": [
+       150,
+       176,
+       172
+      ]
+     },
+     {
+      "s": -0.5,
+      "t": -0.5,
+      "l": 29,
+      "w": 19,
+      "e": 503.6,
+      "r": "flat",
+      "g": 493.5
+     },
+     {
+      "s": 1,
+      "t": -20,
+      "l": 32,
+      "w": 20,
+      "e": 506.7,
+      "r": "flat",
+      "g": 493.5
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Gymnázium Příbram",
+  "lat": 49.68256,
+  "lon": 14.00329,
+  "text": "Podle fotek z Wikimedia Commons, ortofota a měření DMP OK (ČÚZK): dlouhé třípatrové žluté průčelí s červenou valbovou střechou a převýšeným středem, kolmé východní křídlo.",
+  "spec": {
+   "wc": [
+    246,
+    214,
+    112
+   ],
+   "rc": [
+    172,
+    98,
+    72
+   ],
+   "r": "hipped",
+   "h": 13.5,
+   "rh": 4.5,
+   "win": 11,
+   "dily": {
+    "ll": [
+     49.68265,
+     14.0031
+    ],
+    "a": 0,
+    "p": [
+     {
+      "s": 3,
+      "t": -25.5,
+      "l": 86,
+      "w": 16,
+      "e": 514.6,
+      "rh": 4.5,
+      "r": "hipped",
+      "g": 501.1
+     },
+     {
+      "s": 3,
+      "t": -25.5,
+      "l": 32,
+      "w": 16.6,
+      "e": 514.6,
+      "rh": 7.5,
+      "r": "hipped",
+      "g": 501.1
+     },
+     {
+      "s": 41.5,
+      "t": 17,
+      "a": 90,
+      "l": 38,
+      "w": 13,
+      "e": 509.6,
+      "rh": 3.5,
+      "r": "hipped",
+      "g": 501.1
+     },
+     {
+      "s": 37,
+      "t": -8,
+      "l": 22,
+      "w": 19,
+      "e": 505.6,
+      "r": "flat",
+      "g": 501.1,
+      "rc": [
+       170,
+       168,
+       162
+      ],
+      "win": 0
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Střední průmyslová škola a VOŠ Příbram",
+  "lat": 49.68755,
+  "lon": 14.01932,
+  "text": "Podle fotky z Wikimedia Commons (Honza Thomas, CC0) a měření DMP OK (ČÚZK): světle žlutá fasáda s šedým přízemím, výška okapu 13,5 m.",
+  "spec": {
+   "wc": [
+    242,
+    228,
+    160
+   ],
+   "rc": [
+    150,
+    86,
+    68
+   ],
+   "r": "gabled",
+   "h": 13.5,
+   "rh": 3.5,
+   "win": 11
+  }
+ },
+ {
+  "name": "Střední průmyslová škola a VOŠ Příbram – hlavní budova",
+  "lat": 49.68766,
+  "lon": 14.01887,
+  "text": "Podle fotky z Wikimedia Commons (Honza Thomas, CC0) a měření DMP OK (ČÚZK): světle žlutá fasáda, okap 14,5 m, hřeben 19 m.",
+  "spec": {
+   "wc": [
+    242,
+    228,
+    160
+   ],
+   "rc": [
+    150,
+    86,
+    68
+   ],
+   "r": "gabled",
+   "h": 14.5,
+   "rh": 4.5,
+   "win": 11
+  }
+ },
+ {
+  "name": "Báňské ředitelství",
+  "lat": 49.68878,
+  "lon": 14.01056,
+  "text": "Podle fotek z Wikimedia Commons (Reaperman, CC BY-SA 3.0; PatrikPaprika, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): klasicistní třípatrová budova z roku 1836 se světle béžovou fasádou, římsami a balkonem nad vjezdem, nízká valbová střecha z červených tašek.",
+  "spec": {
+   "wc": [
+    228,
+    216,
+    186
+   ],
+   "rc": [
+    178,
+    96,
+    74
+   ],
+   "r": "hipped",
+   "h": 18.5,
+   "rh": 4,
+   "win": 11
+  }
+ },
+ {
+  "name": "Česká spořitelna Příbram",
+  "lat": 49.68704,
+  "lon": 14.00997,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): třípodlažní budova se zaobleným průčelím obloženým šedou žulou, pásy oken, červeným vstupem s markýzou a plochou střechou.",
+  "spec": {
+   "wc": [
+    176,
+    174,
+    168
+   ],
+   "rc": [
+    150,
+    152,
+    152
+   ],
+   "r": "flat",
+   "h": 15,
+   "win": 3
+  }
+ },
+ {
+  "name": "Obchodní dům Uran",
+  "lat": 49.6901,
+  "lon": 14.00789,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, PatrikPaprika, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): dvoupodlažní obchodní dům ze 70. let, betonová atika, prosklený pás oken v patře a výlohy v přízemí, plochá střecha.",
+  "spec": {
+   "wc": [
+    158,
+    154,
+    142
+   ],
+   "rc": [
+    104,
+    112,
+    118
+   ],
+   "r": "flat",
+   "h": 10.5,
+   "win": 3
+  }
+ },
+ {
+  "name": "Děkanství (fara) Příbram",
+  "lat": 49.68949,
+  "lon": 14.00881,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0; Reaperman, CC BY-SA 3.0), ortofota a měření DMP OK (ČÚZK): dvoupatrová budova do L se světlou omítkou a červenou valbovou střechou, na západní straně dvě kulaté věžičky se cimbuřím.",
+  "spec": {
+   "wc": [
+    228,
+    222,
+    204
+   ],
+   "rc": [
+    190,
+    98,
+    68
+   ],
+   "r": "hipped",
+   "h": 8.8,
+   "rh": 4.5,
+   "win": 0,
+   "towers": [
+    {
+     "at": "w",
+     "ll": [
+      49.6895812,
+      14.0087495
+     ],
+     "w": 4,
+     "h": 10,
+     "top": "none",
+     "round": 1,
+     "wc": [
+      182,
+      180,
+      172
+     ],
+     "tc": [
+      150,
+      150,
+      146
+     ]
+    },
+    {
+     "at": "w",
+     "ll": [
+      49.6895013,
+      14.0086884
+     ],
+     "w": 4,
+     "h": 10,
+     "top": "none",
+     "round": 1,
+     "wc": [
+      182,
+      180,
+      172
+     ],
+     "tc": [
+      150,
+      150,
+      146
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Sokolovna Příbram",
+  "lat": 49.69085,
+  "lon": 14.0117,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0; ŠJů, CC BY-SA 3.0), ortofota a měření DMP OK (ČÚZK): lososově růžová novorenesanční budova se šedým soklem, průčelí s nápisem SOKOL a mansardovou střechou, křídlo do ulice K Zátiší a tělocvična s vysokou sedlovou plechovou střechou a orlicemi.",
+  "spec": {
+   "wc": [
+    226,
+    156,
+    128
+   ],
+   "rc": [
+    168,
+    170,
+    170
+   ],
+   "r": "hipped",
+   "h": 12,
+   "rh": 4.5,
+   "win": 11,
+   "dily": {
+    "ll": [
+     49.690854,
+     14.01152
+    ],
+    "a": 0,
+    "p": [
+     {
+      "s": -10.5,
+      "t": 11.8,
+      "a": 94,
+      "l": 25.5,
+      "w": 15,
+      "e": 518.5,
+      "rh": 6,
+      "r": "gabled",
+      "g": 509,
+      "win": 4,
+      "wc": [
+       228,
+       168,
+       150
+      ],
+      "rc": [
+       196,
+       198,
+       200
+      ]
+     },
+     {
+      "s": 4,
+      "t": -7,
+      "a": 23,
+      "l": 34,
+      "w": 21,
+      "e": 520.5,
+      "rh": 4.5,
+      "r": "hipped",
+      "g": 508.5
+     },
+     {
+      "s": -8.5,
+      "t": -12,
+      "a": 111,
+      "l": 15,
+      "w": 12,
+      "e": 521.5,
+      "rh": 5.5,
+      "r": "hipped",
+      "g": 508.5,
+      "rc": [
+       122,
+       80,
+       66
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Pošta Příbram 1",
+  "lat": 49.689734,
+  "lon": 14.011565,
+  "text": "Podle fotky z Wikimedia Commons (Irena Kolackova, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): třípatrová budova se světle růžovobílou omítkou, půlkruhovými okny v přízemí a nárožním arkýřem, tři křídla s valbovou střechou kolem nízkého dvorního přístavku s plochou střechou.",
+  "spec": {
+   "wc": [
+    240,
+    228,
+    220
+   ],
+   "rc": [
+    104,
+    116,
+    116
+   ],
+   "r": "hipped",
+   "h": 15.5,
+   "rh": 3.5,
+   "win": 11,
+   "zones": [
+    {
+     "poly": [
+      [
+       49.6898463,
+       14.0114328
+      ],
+      [
+       49.6898463,
+       14.0114745
+      ],
+      [
+       49.6897924,
+       14.0114745
+      ],
+      [
+       49.6897924,
+       14.0115161
+      ],
+      [
+       49.6895993,
+       14.0115161
+      ],
+      [
+       49.6894555,
+       14.0112315
+      ],
+      [
+       49.6895094,
+       14.0111065
+      ],
+      [
+       49.6896981,
+       14.0113426
+      ],
+      [
+       49.689716,
+       14.0114328
+      ]
+     ],
+     "h": 6,
+     "rc": [
+      120,
+      122,
+      124
+     ],
+     "win": 17
+    }
+   ]
+  }
+ },
+ {
+  "name": "Ústav sv. Jana Nepomuka Neumanna",
+  "lat": 49.69063,
+  "lon": 14.01468,
+  "text": "Podle fotky z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): novorenesanční třípatrová budova s krémovou fasádou, bosovaným přízemím a převýšeným středním rizalitem, valbové střechy.",
+  "spec": {
+   "wc": [
+    238,
+    230,
+    206
+   ],
+   "rc": [
+    140,
+    126,
+    118
+   ],
+   "r": "hipped",
+   "h": 19.5,
+   "rh": 4,
+   "win": 11,
+   "towers": [
+    {
+     "at": "c",
+     "ll": [
+      49.6905556,
+      14.0146851
+     ],
+     "w": 8,
+     "h": 20,
+     "to": 27.5,
+     "top": "pyramid",
+     "tc": [
+      96,
+      100,
+      106
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Sportovní hala a Aquapark Příbram",
+  "lat": 49.67972,
+  "lon": 14.00226,
+  "text": "Podle fotek z Wikimedia Commons (ŠJů, Miroslav Langer, PatrikPaprika, CC BY-SA 3.0; Zelenymuzik, CC BY-SA 4.0) a měření DMP OK (ČÚZK): velký hranatý komplex obložený bílým plechem s plochou střechou, nižší dvoupodlažní vstupní křídlo s pásem oken. Tvar střech a hmoty podle DMP OK (odlitek.py).",
+  "spec": {
+   "wc": [
+    232,
+    234,
+    236
+   ],
+   "rc": [
+    178,
+    182,
+    186
+   ],
+   "r": "flat",
+   "h": 11.5,
+   "win": 15,
+   "odlitek": true
+  }
+ },
+ {
+  "name": "Šichtamt (úřednický dům čp. 14)",
+  "lat": 49.68503,
+  "lon": 13.992061,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0) a měření DMP OK (ČÚZK): přízemní barokně-klasicistní úřednický dům zvaný Šichtamt s bílou omítkou, římsou a kamenným soklem, vysoká mansardová valbová střecha z břidlice s vikýři; ve svahu je odhalené suterénní zdivo.",
+  "spec": {
+   "wc": [
+    236,
+    234,
+    226
+   ],
+   "rc": [
+    104,
+    110,
+    116
+   ],
+   "r": "hipped",
+   "h": 5.2,
+   "rh": 6,
+   "win": 0
+  }
+ },
+ {
+  "name": "Šichtamt (čp. 40)",
+  "lat": 49.685117,
+  "lon": 13.992183,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0) a měření DMP OK (ČÚZK): nižší přízemní část Šichtamtu do ulice s béžovou omítkou a tmavou břidlicovou střechou s vikýři.",
+  "spec": {
+   "wc": [
+    206,
+    184,
+    160
+   ],
+   "rc": [
+    72,
+    76,
+    82
+   ],
+   "r": "hipped",
+   "h": 3.4,
+   "rh": 3.7,
+   "win": 0
+  }
+ },
+ {
+  "name": "Budova báňského inspektorátu (Husova 257)",
+  "lat": 49.684481,
+  "lon": 13.989523,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): dvoupatrová budova z režného červeného cihlového zdiva s římsami, cihlovými nadokenními oblouky a kamenným soklem, nízká valbová plechová střecha; dnes pobočka Knihovny Jana Drdy.",
+  "spec": {
+   "wc": [
+    152,
+    74,
+    64
+   ],
+   "rc": [
+    130,
+    74,
+    70
+   ],
+   "r": "hipped",
+   "h": 10,
+   "rh": 3,
+   "win": 11,
+   "dily": {
+    "ll": [
+     49.684481,
+     13.989523
+    ],
+    "a": 59.7,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 21.8,
+      "w": 16.5,
+      "e": 545.6,
+      "rh": 3,
+      "r": "hipped",
+      "g": 535.5
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Budova důlní projekce (Husova 31)",
+  "lat": 49.684951,
+  "lon": 13.98998,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): dvoupatrová klasicistní budova se světle zelenou (mátovou) omítkou, bílými šambránami kolem oken a kordonovou římsou, nízká valbová šedá střecha se dvěma komíny.",
+  "spec": {
+   "wc": [
+    200,
+    216,
+    196
+   ],
+   "rc": [
+    100,
+    102,
+    106
+   ],
+   "r": "hipped",
+   "h": 7,
+   "rh": 3,
+   "win": 11
+  }
+ },
+ {
+  "name": "Hornický domek (Havířská 105)",
+  "lat": 49.680811,
+  "lon": 13.986464,
+  "text": "Podle fotky z Wikimedia Commons (Michal Ritter, CC BY-SA 3.0) a měření DMP OK (ČÚZK): nízký přízemní hornický domek s bílými vápnem natřenými zdmi, malými okny a sedlovou šindelovou střechou.",
+  "spec": {
+   "wc": [
+    238,
+    236,
+    228
+   ],
+   "rc": [
+    146,
+    100,
+    70
+   ],
+   "r": "gabled",
+   "h": 2.4,
+   "rh": 2.6,
+   "win": 0
+  }
+ },
+ {
+  "name": "Důl Drkolnov – šachetní budova",
+  "lat": 49.671978,
+  "lon": 13.983659,
+  "text": "Podle fotek z Wikimedia Commons (ŠJů, CC BY 4.0; MartinVeselka, CC BY-SA 4.0) a měření DMP OK (ČÚZK): obnovená šachetní budova dolu Drkolnov, kvádr s pískově žlutou omítkou s pásovou rustikou na nárožích, slepými obloukovými okny a nízkým štítem, tmavá plechová sedlová střecha. Vstup do historického podzemí je kamenná šíje se schody kousek na východ.",
+  "spec": {
+   "wc": [
+    214,
+    190,
+    130
+   ],
+   "rc": [
+    84,
+    86,
+    92
+   ],
+   "r": "gabled",
+   "h": 5.2,
+   "rh": 1.2,
+   "win": 16
+  }
+ },
+ {
+  "name": "Vstupní portál Mariánské štoly",
+  "lat": 49.685517,
+  "lon": 13.991071,
+  "text": "Podle fotky z Wikimedia Commons (MZVP165, CC BY-SA 3.0): kamenný portál z kvádrů s půlkruhovým vstupem zavřeným mříží, nápisovou deskou a trojúhelným štítem s hornickým znakem, zasazený do opěrné zdi u Husovy ulice.",
+  "spec": {
+   "names": "Mariánská Š",
+   "wc": [
+    150,
+    142,
+    126
+   ],
+   "rc": [
+    136,
+    130,
+    118
+   ],
+   "r": "gabled",
+   "h": 3.5,
+   "rh": 0.9,
+   "win": 17
+  }
+ },
+ {
+  "name": "Portál Ševčinské průjezdní štoly",
+  "lat": 49.684618,
+  "lon": 13.989166,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0): portál ze šedých kamenných kvádrů s profilovanou římsou a nápisem Ševčinská štola, zasazený do násypu s opěrnými zdmi z lomového kamene; vede do něj kolej důlní dráhy.",
+  "spec": {
+   "names": "Ševčinská štola",
+   "wc": [
+    112,
+    114,
+    110
+   ],
+   "rc": [
+    124,
+    124,
+    118
+   ],
+   "r": "flat",
+   "h": 3.6,
+   "win": 17
+  }
+ },
+ {
+  "name": "Dům V Brance 82",
+  "lat": 49.687824,
+  "lon": 14.011447,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0; VitVit, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): patrový barokní měšťanský dům se světle žlutou omítkou, bílými šambránami, kamenným soklem a portály, sedlová střecha z červených tašek s vikýři a volutový štít s vázami do boční uličky; dnes Cukrárna V Brance.",
+  "spec": {
+   "wc": [
+    232,
+    214,
+    160
+   ],
+   "rc": [
+    180,
+    92,
+    62
+   ],
+   "r": "gabled",
+   "h": 8,
+   "rh": 5.2,
+   "win": 11
+  }
+ },
+ {
+  "name": "Dům U Modré hvězdy (Dlouhá 94)",
+  "lat": 49.68744,
+  "lon": 14.011722,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): patrový barokní nárožní dům s cihlově červenou omítkou, bílými šambránami, bosáží na nároží a kordonovou římsou, volutový štít s modrou hvězdou a kulatými okénky, sedlová střecha z červených tašek s vikýři do Dlouhé ulice.",
+  "spec": {
+   "wc": [
+    196,
+    92,
+    74
+   ],
+   "rc": [
+    170,
+    86,
+    70
+   ],
+   "r": "gabled",
+   "h": 8.6,
+   "rh": 6,
+   "win": 11
+  }
+ },
+ {
+  "name": "Dům Dlouhá 96 (Penzion Dlouhá)",
+  "lat": 49.687219,
+  "lon": 14.011483,
+  "text": "Podle fotek z Wikimedia Commons (MartinVeselka, CC BY-SA 4.0; Gerd Eichmann, CC BY 4.0), ortofota a měření DMP OK (ČÚZK): patrový barokní dům štítem do Dlouhé ulice, tmavě šedá hrubá omítka s bílými lizénami, římsami a štukovou výzdobou pod okny, volutový štít s vázami a sedlová střecha z červených tašek; vedle průjezd s patrem nad obloukem.",
+  "spec": {
+   "wc": [
+    98,
+    96,
+    92
+   ],
+   "rc": [
+    184,
+    90,
+    64
+   ],
+   "r": "gabled",
+   "h": 7.6,
+   "rh": 4.8,
+   "win": 11
+  }
+ },
+ {
+  "name": "Modrý hrozen (nám. T. G. Masaryka 143)",
+  "lat": 49.687739,
+  "lon": 14.00997,
+  "text": "Podle fotek z Wikimedia Commons (Reaperman, CC BY-SA 3.0; ŠJů, CC BY-SA 3.0), ortofota a měření DMP OK (ČÚZK): patrový klasicistní dům na náměstí s šedorůžovou (lila) omítkou, bílými lizénami a šambránami a půlkruhovými vstupy v přízemí, vysoká valbová střecha z tmavé šablonové krytiny s řadou sedmi vikýřů.",
+  "spec": {
+   "wc": [
+    194,
+    168,
+    182
+   ],
+   "rc": [
+    84,
+    90,
+    100
+   ],
+   "r": "hipped",
+   "h": 9,
+   "rh": 4.6,
+   "win": 11
+  }
+ },
+ {
+  "name": "Rodný dům Jana Drdy (Žižkova 254)",
+  "lat": 49.68965,
+  "lon": 14.023069,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): přízemní řadový domek se světle šedou omítkou s pásovou bosáží, vlysem s malými okénky pod okapem a pamětní deskou spisovatele Jana Drdy, sedlová střecha z šedých tašek se střešními okny, hřebenem souběžně s ulicí.",
+  "spec": {
+   "wc": [
+    214,
+    216,
+    216
+   ],
+   "rc": [
+    96,
+    98,
+    100
+   ],
+   "r": "gabled",
+   "h": 4.7,
+   "rh": 3,
+   "win": 0,
+   "dily": {
+    "ll": [
+     49.68965,
+     14.023069
+    ],
+    "a": 9.8,
+    "p": [
+     {
+      "s": 0,
+      "t": 0,
+      "l": 7.8,
+      "w": 10.0,
+      "e": 546.6,
+      "rh": 3,
+      "r": "gabled",
+      "g": 542.0
+     }
+    ]
+   }
+  }
+ },
+ {
+  "name": "Mariánská studánka (Svatá Hora)",
+  "lat": 49.684085,
+  "lon": 14.017814,
+  "text": "Podle fotek z Wikimedia Commons (VitVit, CC BY-SA 4.0; Michal Ritter, CC BY-SA 3.0) a půdorysu z OSM: osmiboká barokní kaple nad pramenem v aleji pod Svatou Horou, bílá omítka se žulovým soklem a nikou s malbou Panny Marie za mříží, nad římsou mohutná zvoncová báně ze šindele zakončená šindelovou špičkou s měděnou makovicí. Výška odhadnuta z fotek (stavba je pod korunami lip).",
+  "spec": {
+   "names": "Mariánská studánka",
+   "wc": [
+    232,
+    226,
+    206
+   ],
+   "rc": [
+    128,
+    72,
+    48
+   ],
+   "r": "flat",
+   "h": 3.2,
+   "win": 17,
+   "towers": [
+    {
+     "at": "c",
+     "w": 6.2,
+     "h": 3.4,
+     "top": "bell",
+     "to": 9.6,
+     "tc": [
+      128,
+      72,
+      48
+     ],
+     "round": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "Hrobka rodiny Mixovy (hřbitov Příbram)",
+  "lat": 49.692829,
+  "lon": 14.014336,
+  "text": "Podle fotek z Wikimedia Commons (Zelenymuzik, CC BY-SA 4.0) a měření DMP OK (ČÚZK): novorenesanční hrobková kaple rodiny Mixovy na příbramském hřbitově, okrová omítka s korintskými pilastry a žulovým soklem, půdorys kříže s trojúhelnými štíty, nad křížením osmiboký tambur s šedou plechovou kopulí a lucernou s křížem.",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    206,
+    170,
+    110
+   ],
+   "rc": [
+    104,
+    110,
+    118
+   ],
+   "r": "flat",
+   "h": 5.2,
+   "win": 4,
+   "towers": [
+    {
+     "at": "c",
+     "w": 3.8,
+     "h": 7.4,
+     "top": "dome",
+     "to": 10.2,
+     "tc": [
+      104,
+      112,
+      122
+     ],
+     "round": 1,
+     "wc": [
+      206,
+      170,
+      110
+     ]
+    },
+    {
+     "at": "c",
+     "w": 1.2,
+     "h": 11,
+     "top": "dome",
+     "to": 12.4,
+     "tc": [
+      104,
+      112,
+      122
+     ],
+     "round": 1,
+     "wc": [
+      206,
+      170,
+      110
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Barokní kaplička s fontánou (Příbram)",
+  "lat": 49.68904,
+  "lon": 14.00887,
+  "text": "Podle fotek z Wikimedia Commons (Андрей Романенко, CC BY-SA 4.0; Zelenymuzik, CC BY-SA 4.0): krémová výklenková kaplička s půlkruhovou nikou, pískovcovou nádrží a litinovou pumpou, volutový štít s letopočty 1862 a 2012, pilíře s kamennými koulemi a vázou na vrcholu, vzadu stříška z červených tašek.",
+  "spec": {
+   "only": 1,
+   "towers": [
+    {
+     "at": "c",
+     "w": 3.2,
+     "h": 4.0,
+     "top": "pyramid",
+     "to": 4.8,
+     "tc": [
+      178,
+      92,
+      64
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple sv. Václava (Podlesí)",
+  "lat": 49.690732,
+  "lon": 13.981737,
+  "text": "Podle fotek z Wikimedia Commons (Jiří Kantor, CC0) a měření DMP OK (ČÚZK): drobná bílá kaple se žlutými nárožími a soklem z lomového kamene, slepá obloučková okna a obloučkový vlys pod štítem, sedlová střecha z červených tašek, nad průčelím (na jihu) bílá zvonička s tmavou jehlancovou stříškou a křížem.",
+  "spec": {
+   "names": "Svatý Václav",
+   "wc": [
+    236,
+    234,
+    226
+   ],
+   "rc": [
+    184,
+    94,
+    62
+   ],
+   "r": "gabled",
+   "h": 3.4,
+   "rh": 2.1,
+   "win": 4,
+   "towers": [
+    {
+     "at": "s",
+     "w": 1.7,
+     "h": 7.0,
+     "top": "spire",
+     "to": 9.2,
+     "tc": [
+      50,
+      52,
+      56
+     ],
+     "wc": [
+      238,
+      236,
+      230
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple v Novém Podlesí",
+  "lat": 49.702326,
+  "lon": 13.978912,
+  "text": "Podle fotek z Wikimedia Commons (Jiří Kantor, CC0) a měření DMP OK (ČÚZK): kaple s bílou hranolovou věží v průčelí (vchod ve věži), krátká loď se žlutými nárožími, kamenným soklem a sedlovou střechou z červených tašek; věž kryje šindelová stříška, nad ní bílá lucerna se žaluziemi a šindelová cibule s makovicí a křížem. Bod je na věži.",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    236,
+    234,
+    226
+   ],
+   "rc": [
+    184,
+    94,
+    62
+   ],
+   "r": "gabled",
+   "h": 3.5,
+   "rh": 2.5,
+   "win": 4,
+   "towers": [
+    {
+     "at": "pt",
+     "w": 2.8,
+     "h": 5.6,
+     "top": "helm",
+     "to": 11.0,
+     "tc": [
+      92,
+      58,
+      40
+     ],
+     "wc": [
+      236,
+      234,
+      226
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple v Orlově",
+  "lat": 49.687133,
+  "lon": 13.949997,
+  "text": "Podle fotek z Wikimedia Commons (Vojtěch Dostál, CC BY-SA 4.0; Jiří Kantor, CC0): bílá kaplička s šedým soklem a dvěma půlkruhovými okny na boku, valbová střecha z tmavých šablon kladených na kosočtverec, u čela dřevěná tmavě hnědá zvonička se žaluziemi a šedou zvonovitou jehlancovou stříškou s křížem. Výšky odhadnuty z fotek (kaple je pod lipami).",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    236,
+    234,
+    226
+   ],
+   "rc": [
+    86,
+    84,
+    86
+   ],
+   "r": "hipped",
+   "h": 3.3,
+   "rh": 2.3,
+   "win": 4,
+   "towers": [
+    {
+     "at": "c",
+     "w": 1.5,
+     "h": 6.8,
+     "top": "spire",
+     "to": 9.0,
+     "tc": [
+      70,
+      72,
+      76
+     ],
+     "wc": [
+      92,
+      64,
+      44
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple v Kozičíně",
+  "lat": 49.673849,
+  "lon": 13.951506,
+  "text": "Podle fotek z Wikimedia Commons (Wakowlk, CC BY-SA 3.0; Jiří Kantor, CC0) a měření DMP OK (ČÚZK): kaple se žlutou hrubou omítkou a bílými pilastry, půlkruhové okno a dveře ve štítovém průčelí, střecha ze světle šedých šablon kladených na kosočtverec (vzadu valbová), nad průčelím tmavá dřevěná zvonička se žaluziemi a jehlancovou stříškou z šablon.",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    214,
+    190,
+    120
+   ],
+   "rc": [
+    150,
+    152,
+    154
+   ],
+   "r": "hipped",
+   "h": 3.3,
+   "rh": 1.9,
+   "win": 4,
+   "towers": [
+    {
+     "at": "c",
+     "w": 1.5,
+     "h": 6.4,
+     "top": "pyramid",
+     "to": 8.4,
+     "tc": [
+      140,
+      142,
+      146
+     ],
+     "wc": [
+      92,
+      64,
+      44
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple v Konětopech",
+  "lat": 49.650024,
+  "lon": 14.033856,
+  "text": "Podle fotek z Wikimedia Commons (ŠJů, CC BY-SA 3.0): kaplička na návsi pod lipou, okrová hrubá omítka s bílými pilastry, římsami a lemováním štítu, půlkruhové dveře v průčelí a dvě úzká obloučková okna na boku, sedlová střecha z hnědočervených tašek a vzadu tmavá plechová zvonička se štítky a jehlou s makovicí a křížem; před kaplí litinový kříž.",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    204,
+    170,
+    110
+   ],
+   "rc": [
+    140,
+    72,
+    52
+   ],
+   "r": "gabled",
+   "h": 3.0,
+   "rh": 2.2,
+   "win": 4,
+   "towers": [
+    {
+     "at": "c",
+     "w": 1.3,
+     "h": 6.4,
+     "top": "spire",
+     "to": 8.2,
+     "tc": [
+      70,
+      64,
+      60
+     ],
+     "wc": [
+      70,
+      64,
+      60
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaple Nejsvětějšího Srdce Ježíšova (Lešetice)",
+  "lat": 49.647107,
+  "lon": 14.021436,
+  "text": "Podle fotek z Wikimedia Commons (ŠJů, CC BY-SA 3.0): kaple z roku 1859 se světlou hrubou omítkou, žulovým ostěním vstupu a kulatým okénkem na boku, sedlová střecha z červených tašek, vzadu zvalbená, na štítu průčelí otevřená kovová zvonička se stříškou a křížem v kouli; kolem nízká zídka z lomového kamene s laťkovým plotem a pomník padlým v 1. světové válce.",
+  "spec": {
+   "names": "Nejsvětější srdce",
+   "wc": [
+    226,
+    224,
+    218
+   ],
+   "rc": [
+    192,
+    96,
+    62
+   ],
+   "r": "gabled",
+   "h": 3.2,
+   "rh": 2.2,
+   "win": 4,
+   "towers": [
+    {
+     "at": "w",
+     "w": 1.2,
+     "h": 6.6,
+     "top": "pyramid",
+     "to": 7.2,
+     "tc": [
+      92,
+      70,
+      58
+     ],
+     "wc": [
+      100,
+      74,
+      60
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Kaplička v Oseči",
+  "lat": 49.703923,
+  "lon": 13.957789,
+  "text": "Podle fotky z Wikimedia Commons (Wakowlk, CC BY-SA 3.0): drobná kaplička z roku 1933 nad schůdky, bílá omítka se žlutými nárožními lizénami a tmavým soklem, dvoukřídlé dveře s obloukem, hnědá plechová jehlancová střecha a na ní dřevěná zvonička se žaluziemi, zvonovitou jehlancovou stříškou a zlatým dvojitým křížem.",
+  "spec": {
+   "maly": 1,
+   "wc": [
+    236,
+    234,
+    226
+   ],
+   "rc": [
+    86,
+    58,
+    52
+   ],
+   "r": "hipped",
+   "h": 2.8,
+   "rh": 1.1,
+   "win": 0,
+   "towers": [
+    {
+     "at": "c",
+     "w": 1.0,
+     "h": 5.0,
+     "top": "spire",
+     "to": 6.6,
+     "tc": [
+      70,
+      52,
+      46
+     ],
+     "wc": [
+      92,
+      64,
+      44
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "Stadion Na Litavce – hlavní tribuna",
+  "lat": 49.676715,
+  "lon": 13.976884,
+  "text": "Podle fotek z Wikimedia Commons (Richtr Jan, CC BY-SA 4.0; Zelenymuzik, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): krytá hlavní tribuna fotbalového stadionu 1. FK Příbram s červenými a žlutými sedačkami, nahoře prosklené kabiny, ocelová konzolová střecha a zelené zázemí; střecha zhruba 13–14 m nad hrací plochou.",
+  "spec": {
+   "wc": [
+    96,
+    146,
+    108
+   ],
+   "rc": [
+    150,
+    186,
+    210
+   ],
+   "r": "flat",
+   "h": 13.5,
+   "win": 15
+  }
+ },
+ {
+  "name": "Stadion Na Litavce – protější tribuna",
+  "lat": 49.677119,
+  "lon": 13.975493,
+  "text": "Podle fotek z Wikimedia Commons (Richtr Jan, CC BY-SA 4.0), ortofota a měření DMP OK (ČÚZK): krytá tribuna naproti hlavní, betonové stupně s vínovými sedačkami a žlutým nápisem MARILA, plochá střecha zhruba 10–11 m nad hrací plochou.",
+  "spec": {
+   "wc": [
+    168,
+    166,
+    160
+   ],
+   "rc": [
+    155,
+    169,
+    172
+   ],
+   "r": "flat",
+   "h": 10.5,
+   "win": 15
+  }
+ }
+]

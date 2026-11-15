@@ -1,0 +1,5 @@
+[
+ {"nazev": "Šachta č. 16 (Háje)", "lat": 49.67271, "lon": 14.05852, "h": 45, "r": 4.0, "a": 200, "wc": [126, 66, 46], "pozn": "výška odhadem z fotky (Commons, Richenza), laser věž nezachytil"},
+ {"nazev": "Šachta č. 11A (Bytíz)", "lat": 49.68412, "lon": 14.06973, "h": 51, "r": 4.5, "a": 120, "wc": [126, 66, 46], "pozn": "výška z DMP 1G (max bodů nad terénem)"},
+ {"nazev": "Šachta č. 15 (Konětopy)", "lat": 49.65542, "lon": 14.01716, "h": 31, "r": 3.8, "a": 90, "wc": [120, 70, 52], "pozn": "výška z DMP 1G, vzhled neověřen (žádná fotka)"}
+]
