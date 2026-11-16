@@ -13,6 +13,13 @@ if os.path.exists('assets/vanoce.json'):
 LON0, LAT0 = MESTO['stred']          # střed čtverce (0, 0)
 HALF = float(MESTO.get('polovina', 1150.0))   # půl strany čtverce v metrech
 HREF = float(MESTO['href'])          # nulová výška terénu (stejná pro všechny čtverce), m n. m.
+# Rozlišení dlaždic mapy (metry na pixel): "zakladni" 0,2 m, "detailni" 0,1 m (ostřejší detail při největším přiblížení,
+# web ~2,7× větší). Stejná tabulka je v render.mjs. Obrysy a animace prohlížeče jsou vždy v pixelech 0,2 m (MPP_OVERLAY).
+ROZLISENI = {'zakladni': 0.2, 'detailni': 0.1}
+if MESTO.get('rozliseni', 'zakladni') not in ROZLISENI:
+    raise SystemExit(f'mesto.json: "rozliseni" má být "zakladni" nebo "detailni", ne {MESTO["rozliseni"]!r}')
+MPP = ROZLISENI[MESTO.get('rozliseni', 'zakladni')]
+MPP_OVERLAY = 0.2
 
 # Mapa je skládačka čtverců 2·HALF; i roste na východ, j na sever. Čtverec (0, 0) musí být v seznamu.
 CHUNKS = {tuple(c): 'hotovo' for c in MESTO['ctverce']}

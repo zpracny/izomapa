@@ -21,7 +21,7 @@ if [ "$1" != render ]; then rm -rf site/tiles site/tiles.json; fi   # celá stav
 mkdir -p site/tiles
 ./render_par.sh                                               # scény, render a dlaždice: několik čtverců najednou podle paměti (./render_par.sh 1 = po jednom)
 ./vanoce.sh > /dev/null                                       # vánoční výzdoba a led na rybnících (průhledné vrstvy)
-for s in summer autumn winter spring; do node render.mjs mpp=0.2 dir=build season=$s alpha=1 stromy=site/stromy > /dev/null; done   # kresby stromů: auta se schovají přesně za ně
+for s in summer autumn winter spring; do node render.mjs mpp=0.2 dir=build season=$s alpha=1 stromy=site/stromy > /dev/null; done   # kresby stromů: auta se schovají přesně za ně (vždy 0,2 m/px jako animace prohlížeče, i u detailního rozlišení)
 python preview.py
 python overlay.py
 python mhd.py || true                                         # jízdní řády jen když je v mesto.json mhd.gtfs

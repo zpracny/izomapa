@@ -450,12 +450,13 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
 
   // ---------- OpenSeadragon: vrstvy po čtvercích (den podle ročního období × teplý tón × tma + světla) ----------
   // souřadnice: pixely čtverce (0, 0), šířka W = 1 v souřadnicích pohledu; ostatní čtverce jsou posunuté
-  const base = TILES.base || { x0: OV.cam.x0, y1: OV.cam.y1, mpp: OV.cam.mpp, status: 'hotovo' };
+  // UM = metry na pixel souřadnic prohlížeče (obrysy, animace: vždy 0,2); base.mpp = rozlišení dlaždic (0,2, u detailního 0,1)
+  const base = TILES.base || { x0: OV.cam.x0, y1: OV.cam.y1, mpp: OV.cam.mpp, status: 'hotovo' }, UM = OV.cam.mpp;
   const LAYERS = [{ key: 'c0_0', status: base.status, src: (v) => TILES[v], x: 0, y: 0, w: 1 }];
   for (const [key, ch] of Object.entries(TILES.chunks || {})) {
     const any = ch.autumn || ch.lights; if (!any) continue;
-    const dx = (any.x0 - base.x0) / base.mpp, dy = (base.y1 - any.y1) / base.mpp;
-    LAYERS.push({ key, status: ch.status, src: (v) => ch[v], x: dx / W, y: dy / W, w: +any.Image.Size.Width / W });
+    const dx = (any.x0 - base.x0) / UM, dy = (base.y1 - any.y1) / UM;
+    LAYERS.push({ key, status: ch.status, src: (v) => ch[v], x: dx / W, y: dy / W, w: +any.Image.Size.Width * base.mpp / UM / W });
   }
   // pořadí vrstev podle hloubky: pohled od JZ, takže čtverce dál na S a V (větší i + j) se kreslí dřív (níž)
   const far = (k) => { const [i, j] = k.slice(1).split('_').map(Number); return i + j; };
@@ -466,7 +467,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   const viewer = OpenSeadragon({
     element: $('osd'), tileSources: [],
     showNavigationControl: false, imageSmoothingEnabled: false,
-    maxZoomPixelRatio: 6, minZoomImageRatio: 0.6, visibilityRatio: 0.4, animationTime: 0.6,
+    // největší přiblížení stejné v metrech (detailní dlaždice mají 2× víc pixelů, proto u nich poloviční poměr)
+    maxZoomPixelRatio: 6 * base.mpp / UM, minZoomImageRatio: 0.6, visibilityRatio: 0.4, animationTime: 0.6,
     // mobil a pomalé připojení: hrubší dlaždice, aby se mapa ukázala hned (při přiblížení se doostří)
     ...(SLOW ? { minPixelRatio: 1.2, immediateRender: true, imageLoaderLimit: 4 } : { minPixelRatio: 0.6 }),
     gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: true }, gestureSettingsTouch: { pinchRotate: false }, gestureSettingsPen: { clickToZoom: false, dblClickToZoom: true },
@@ -485,7 +487,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     try {
       const pv = await fetch(`preview/${season}.json${VER}`).then((r) => r.json());
       const it = await add({ tileSource: { type: 'image', url: `preview/${season}.webp${VER}`, buildPyramid: false },
-        x: (pv.x0 - base.x0) / base.mpp / W, y: (base.y1 - pv.y1) / base.mpp / W, width: pv.w * pv.mpp / base.mpp / W, index: 0 });
+        x: (pv.x0 - base.x0) / UM / W, y: (base.y1 - pv.y1) / UM / W, width: pv.w * pv.mpp / UM / W, index: 0 });
       if (it && gen !== previewGen) { viewer.world.removeItem(it); return; }   // mezitím jiné období
       if (it) { if (previewItem) viewer.world.removeItem(previewItem); previewItem = it; viewer.world.setItemIndex(it, 0); }
     } catch {}
@@ -515,13 +517,14 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   let xmasUser = null;                                         // ruční přepnutí v menu (jen v tomto prohlížeči)
   const xmasOn = () => !!VANOCE && (xmasUser ?? xmasDefault());
   const frozen = () => RYBNIKY.filter((r) => STAV.zamrzle.includes(r.nazev));
+  const xmasShow = () => xmasOn() && (state.season === 'winter' || state.season === 'autumn');   // ručně zvolené jaro nebo léto výzdobu nemá
   function applyExtras() {
     if (!ready && !LAYERS.some((l) => l.day)) return;
     $('l-xmas').checked = xmasOn();
     $('l-xmas').closest('label').hidden = !VANOCE;
     const want = (l) => {
       const w = {};
-      if (xmasOn()) { const v = state.season === 'winter' ? 'xmas_winter' : 'xmas_autumn'; if (l.src(v)) w.xmas = v; }
+      if (xmasShow()) { const v = state.season === 'winter' ? 'xmas_winter' : 'xmas_autumn'; if (l.src(v)) w.xmas = v; }
       if (frozen().length && l.src('led')) w.led = 'led';
       return w;
     };
@@ -1530,7 +1533,8 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   });
   // MHD podle jízdních řádů GTFS (site/mhd.json z mhd.py): poloha každého spoje podle skutečného času
   const MHD = { on: false, act: [], t: -1, drawn: [], follow: null };
-  fetch('mhd.json' + VER).then((r) => r.json()).then((m) => {
+  // bez GTFS v mesto.json se mhd.json nevyrábí: nežádat o něj (jinak chyba 404 v konzoli)
+  if ({{MHD}}) fetch('mhd.json' + VER).then((r) => r.json()).then((m) => {
     m.shapes = m.shapes.map((w) => { const len = [0]; for (let i = 1; i < w.length; i++) len.push(len[i - 1] + Math.hypot(w[i][0] - w[i - 1][0], w[i][1] - w[i - 1][1])); return { w, len, L: len[len.length - 1] }; });
     m.dur = m.trips.map((t) => t[4][t[4].length - 2]);
     m.maxDur = Math.max(...m.dur);
@@ -1743,6 +1747,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
   const BIKE_SEASON = { spring: 0.35, summer: 1, autumn: 0.25, winter: 0.06 };   // na jaře a na podzim jen pár, v létě víc
   const BIKE_COL = ['#c23a2a', '#2a2c31', '#2f6fd1', '#e8e4da', '#2aa36b', '#f2c230', '#7a7f88', '#e86a2a', '#5a3a7a', '#1d6f8a'];
   const PSIDE = { residential: 0.22, living_street: 0.5, tertiary: 0.35, secondary: 0.35, primary: 0.3, unclassified: 0.1 };   // chodníky podél ulic
+  const pWalk = (r) => PSIDE[r.c] && !r.tunnel && !r.rb;     // prstenec kruhového objezdu (r.rb) chodník nemá, chodci přejdou po vjezdech (upstream #129)
   const PSIDE_OFF = { residential: 3.8, living_street: 2.6, tertiary: 5, secondary: 5.6, primary: 6.2, unclassified: 3.6 };
   const PEOPLE_SHARE = [.06, .04, .03, .03, .04, .12, .35, .7, .75, .7, .75, .85, .9, .85, .85, .95, 1, 1, .85, .65, .45, .3, .18, .1];
   const pinPoly = (P, x, y) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, yi] = P[i], [xj, yj] = P[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
@@ -1770,7 +1775,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       for (let m = 0; m < cnt; m++) for (let t = 0; t < 30; t++) { const x = x0 + rnd(i + m * 31 + t) * (x1 - x0), y = y0 + rnd(i + m * 37 + t + 5) * (y1 - y0); if (pinPoly(P, x, y)) { add({ m: 'a', ar, x, y, tx: x, ty: y }); break; } }
     }
     for (let j = 0; j < roads.length; j++) {                 // chodníky podél ulic tohoto čtverce
-      const r = roads[j]; if (r.k !== k || r.tunnel || !PSIDE[r.c]) continue;
+      const r = roads[j]; if (r.k !== k || !pWalk(r)) continue;
       const n = r.L / 100 * PSIDE[r.c] * (r.v ? Math.min(2, 0.6 + r.v / 12000) : 1), cnt = Math.floor(n) + (rnd(i + j * 3) < n % 1 ? 1 : 0);
       for (let m = 0; m < cnt; m++) add({ m: 'r', ri: j, s: rnd(i + m * 7 + j) * r.L, dir: rnd(i + m + j) < 0.5 ? 1 : -1, side: rnd(i + m * 11 + j) < 0.5 ? 1 : -1 });
     }
@@ -1865,7 +1870,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
     if (Math.random() < (p.bike ? 0.02 : 0.15)) p.wait = 1 + Math.random() * 4;   // zastaví se (výloha, telefon)
     let opts;
     if (p.m === 'l') opts = (PWK.get(pEk(endPt)) || []).filter(([q]) => q !== r && (p.bike ? q.c !== 's' : q.c !== 'c' && q.c !== 'd'));
-    else opts = (ends.get(ek(endPt)) || []).filter(([j]) => j !== p.ri && PSIDE[roads[j].c] && !roads[j].tunnel);
+    else opts = (ends.get(ek(endPt)) || []).filter(([j]) => j !== p.ri && pWalk(roads[j]));
     if (p.bike && opts.length) {                                                // cyklista se drží cyklostezky nebo cyklotrasy
       const G = (c) => c === 'k' ? 'k' : c === 'c' || c === 'd' ? 'r' : 'o', g = G(r.c);
       let ok = opts.filter(([q]) => G(q.c) === g); if (!ok.length) ok = opts.filter(([q]) => G(q.c) !== 'o');
@@ -3252,7 +3257,7 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
       }
     }
     // kluziště: led s mantinelem je ve vrstvě výzdoby, tady jen bruslaři krouží po elipsách
-    const xm = xmasOn();
+    const xm = xmasShow();
     if (xm && sx > 0.25) for (const R of rinks) {
       const c0 = toImg(...R.at(0, 0), R.h); if (!vis(c0[0], c0[1], 60 * sx + 300)) continue;
       for (const q of R.sk.map((q) => [q, q.ph + t * q.v]).sort((m, n) => Math.sin(n[1]) - Math.sin(m[1]))) {

@@ -25,6 +25,8 @@ def build(variant, chunk=None):
     info = json.load(open(f'{src}/info.json'))
     # render.mjs si na začátku odloží značku a po poslední dlaždici ji smaže: když zůstala, render spadl uprostřed
     if os.path.exists(f'{src}/rozpracovano'): sys.exit(f'{src}: render neskončil (zůstala značka „rozpracovano“), dlaždice by byly směs starých a nových. Spusť render znovu.')
+    from geo import MPP           # všechny čtverce mapy musí mít stejné rozlišení (prohlížeč je skládá vedle sebe)
+    if abs(info['mpp'] - MPP) > 1e-9: sys.exit(f'{src}: dlaždice jsou v {info["mpp"]} m/px, ale mesto.json chce {MPP} m/px („rozliseni“). Po změně rozlišení přerenderuj celou mapu: ./postav.sh render')
     T = info['tile']
     alpha = True        # všechny čtverce jsou průhledné vrstvy (skládají se podle hloubky, žádný není podklad)
     img = Image.new('RGBA' if alpha else 'RGB', (info['width'], info['height']), (0, 0, 0, 0) if alpha else (0, 0, 0))

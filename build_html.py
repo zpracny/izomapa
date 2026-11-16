@@ -1,19 +1,30 @@
 import numpy as np
 """Z web/app.html a mesto.json vyrobí site/index.html (texty, meta, sitemap).
 Pokud existuje složka obce/*.json, vyrobí pro každou obec i site/index_<obec>.html a site/obce/<obec>/og.jpg."""
-import html, json, os, re
+import html, json, math, os, re
 from urllib.parse import urljoin
 from PIL import Image
 import geo
 from geo import MESTO
 
 
-def og_obrazek(out='site/og.jpg', W=1200, H=630, dolu=1, latlon=None):
-    """náhled pro sdílení (og:image) 1200×630: výřez středu města z letních dlaždic (o úroveň menší než plné rozlišení)"""
+def og_obrazek(out='site/og.jpg', W=1200, H=630, dolu=None, latlon=None):
+    """náhled pro sdílení (og:image) 1200×630: výřez středu města z letních dlaždic v 0,4 m/px (u základního rozlišení
+    o úroveň menší než plné, u detailního o dvě, aby byl výřez stejně velký)"""
     t = json.load(open('site/tiles.json')); base = t['base']
+    if dolu is None: dolu = 1 + round(math.log2(0.2 / base['mpp']))
     x, y = geo.to_local(float(latlon[1]), float(latlon[0])) if latlon else (0, 0)
     x, y = float(np.ravel(x)[0]), float(np.ravel(y)[0])        # to_local vrací pole i pro jeden bod
-    k = 2 ** dolu; vx, vy, _ = geo.view(x, y, 0)
+    c = geo.chunk_of(float(x), float(y)) if latlon else (0, 0)
+    s = (t.get('chunks') or {}).get(f'c{c[0]}_{c[1]}', {}).get('summer') if c != (0, 0) else None
+    s = s or t['summer']; I = s['Image']
+    url = 'site/' + I['Url'].rstrip('/')
+    T = int(I['TileSize']); SW, SH = int(I['Size']['Width']), int(I['Size']['Height'])
+    lv = max(int(n) for n in os.listdir(url) if n.isdigit()) - dolu; k = 2 ** dolu
+    vx, vy, _ = geo.view(x, y, 0)
+    cx, cy = (vx - s.get('x0', base['x0'])) / base['mpp'] / k, (s.get('y1', base['y1']) - vy) / base['mpp'] / k
+    lw, lh = -(-SW // k), -(-SH // k)
+    x0 = int(min(max(cx - W / 2, 0), max(lw - W, 0))); y0 = int(min(max(cy - H / 2, 0), max(lh - H, 0)))
     img = Image.new('RGB', (W, H), (27, 33, 48))
     # výřez se skládá ze všech čtverců (střed může ležet u hrany čtverce); vzdálenější čtverce se kreslí dřív
     sady = [t['summer']] + [c['summer'] for c in (t.get('chunks') or {}).values() if c.get('summer')]
@@ -77,6 +88,7 @@ def postav_stranku(M, html_out='site/index.html', og_cesta='og.jpg', je_obec=Fal
         'VITR': 'true' if M.get('vitr') else 'false',
         'POCASI': 'true' if M.get('pocasi') else 'false',
         'LETADLA': 'true' if M.get('letadla', False) else 'false',
+        'MHD': 'true' if mhd.get('gtfs') or os.path.exists('site/mhd.json') else 'false',   # mhd.json vyrábí mhd.py jen s GTFS
         'POHLED': json.dumps(pohled if isinstance(pohled, list) and len(pohled) >= 2 else None),
         # autor mapy města: "autor": {"jmeno", "url" (nepovinně), "text" (nepovinně, např. „Mapu Příbrami připravil“)}
         'AUTOR': (lambda a: f'<p>{E(a.get("text") or "Mapu připravil")} ' + (f'<a href="{E(a["url"])}" target="_blank" rel="noopener">{E(a["jmeno"])}</a>' if a.get('url') else E(a['jmeno'])) + '.</p>')(M['autor']) if isinstance(M.get('autor'), dict) and M['autor'].get('jmeno') else '',
