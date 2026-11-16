@@ -2496,6 +2496,22 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
         bulbs: Array.from({ length: 6 }, (_, j) => P(-l + 0.25 + j * (wS - 0.5) / 5, -1.45, 1.9)) });
     }
   }
+  // světelné sochy (assets/vanoce.json "svetla"): socha je ve vrstvě výzdoby (render.html mode=xmas), tady světýlka na řetězech
+  // a modrá záře v kašně. Profil řetězů musí odpovídat render.html.
+  const glowsX = ({{SVETLA}} || []).map((k, n) => {
+    const x = (k.lon - cam.lon0) * cam.kx, y = (k.lat - cam.lat0) * cam.ky, g = gz(x, y), r = k.r || 3.2, h = k.h || 5.5, pts = [];
+    const prof = [[[0.35, h - 1.0], [1.5, h - 1.6], [1.5, 0.5]], [[1.5, h - 1.9], [r * 0.75, h - 1.8], [r, h - 2.6], [r, 0.5]]];
+    for (let j = 0; j < 26; j++) {
+      const th = (j / 26) * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
+      if (Math.sin(th - Math.PI / 4) > 0.35) continue;            // odvrácená strana (pohled od JZ) je za sochou
+      for (const pl of prof) for (let i = 0; i + 1 < pl.length; i++) for (let u = 0; u < 1; u += 0.34) {
+        const rr = pl[i][0] + (pl[i + 1][0] - pl[i][0]) * u, zz = pl[i][1] + (pl[i + 1][1] - pl[i][1]) * u;
+        pts.push(toImg(x + c * rr, y + s * rr, g + zz));
+      }
+    }
+    const pool = Array.from({ length: 16 }, (_, j) => toImg(x + Math.cos(j / 8 * Math.PI) * (r + 0.6), y + Math.sin(j / 8 * Math.PI) * (r + 0.6), g + 0.45));
+    return { c: toImg(x, y, g + h / 2), ball: toImg(x, y, g + h - 0.5), pts, pool, n };
+  });
   // bruslaři na zamrzlých rybnících (mesto.json "rybniky", zapíná administrace): elipsy uvnitř vodní plochy rybníka
   const pondSk = {};                                            // název rybníka -> bruslaři [cx, cy, rx, ph, v, col, hat] v pixelech obrázku
   const skH = toImg(0, 0, 1.7)[1] - toImg(0, 0, 0)[1];          // výška postavy 1,7 m v pixelech obrázku (záporná)
@@ -3270,6 +3286,21 @@ dialog.help ol.vd-list { margin: 0; padding-left: 22px; } ol.vd-list li { margin
           ctx.fillRect(Math.round(ox + bx * sx - k / 2), Math.round(oy + by * sx - k / 2), k, k);
         });
       }
+      ctx.globalAlpha = 1;
+    }
+    // světelná socha: večer modrá záře v kašně, bílomodrá světýlka po řetězech a zářící koule
+    if (xm && night > 0.25 && sx > 0.15) for (const G of glowsX) if (vis(G.c[0], G.c[1], 80)) {
+      const a = Math.min(1, (night - 0.25) / 0.35), k = Math.max(1, Math.round(sx * 1.1));
+      ctx.globalAlpha = a * 0.45; ctx.fillStyle = '#3a6cff'; ctx.beginPath();
+      G.pool.forEach(([px, py], i) => (i ? ctx.lineTo(ox + px * sx, oy + py * sx) : ctx.moveTo(ox + px * sx, oy + py * sx))); ctx.closePath(); ctx.fill();
+      G.pts.forEach(([px, py], i) => {
+        ctx.globalAlpha = a * ((Math.floor(t * 3) + i * 7) % 5 ? 0.95 : 0.4);
+        ctx.fillStyle = i % 3 ? '#e8f2ff' : '#8fc4ff';
+        ctx.fillRect(Math.round(ox + px * sx - k / 2), Math.round(oy + py * sx - k / 2), k, k);
+      });
+      const b = Math.max(2, Math.round(sx * 3.2));
+      ctx.globalAlpha = a * 0.35; ctx.fillStyle = '#cfe6ff'; ctx.fillRect(Math.round(ox + G.ball[0] * sx - b), Math.round(oy + G.ball[1] * sx - b), b * 2, b * 2);
+      ctx.globalAlpha = a; ctx.fillStyle = '#ffffff'; ctx.fillRect(Math.round(ox + G.ball[0] * sx - b / 2), Math.round(oy + G.ball[1] * sx - b / 2), b, b);
       ctx.globalAlpha = 1;
     }
     // vánoční strom: blikající světýlka (strom je ve vrstvě výzdoby)

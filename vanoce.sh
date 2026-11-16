@@ -22,7 +22,7 @@ def chunks_of(lat, lon, r=0):
 plan = {}
 V = MESTO
 for la, lo in (V.get('vanocni_strom') or []): [plan.setdefault(c, set()).add('xmas') for c in chunks_of(la, lo)]
-for k in (V.get('kluziste') or []) + (V.get('vanocni_stanky') or []): [plan.setdefault(c, set()).add('xmas') for c in chunks_of(k['lat'], k['lon'], 20)]
+for k in (V.get('kluziste') or []) + (V.get('vanocni_stanky') or []) + (V.get('vanocni_svetla') or []): [plan.setdefault(c, set()).add('xmas') for c in chunks_of(k['lat'], k['lon'], 20)]
 for k in V.get('rybniky') or []: [plan.setdefault(c, set()).add('led') for c in chunks_of(k['lat'], k['lon'], 300)]
 print(' '.join(f"{c[0]},{c[1]}:" + ','.join(sorted(v)) for c, v in sorted(plan.items())))
 EOF

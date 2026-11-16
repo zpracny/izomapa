@@ -4,11 +4,11 @@ import numpy as np
 
 # Město: mesto.json (vyrobí ho novy_mesto.py), jiný soubor přes proměnnou IZO_MESTO
 MESTO = json.load(open(os.environ.get('IZO_MESTO', 'mesto.json'), encoding='utf-8'))
-# vánoční výzdoba na jednom místě (assets/vanoce.json): {"od": "11-11", "do": "01-06", "stromy": [[lat, lon]], "kluziste": [...], "stanky": [...]}
+# vánoční výzdoba na jednom místě (assets/vanoce.json): {"od": "11-11", "do": "01-06", "stromy": [[lat, lon]], "kluziste": [...], "stanky": [...], "svetla": [...]}
 # přepíše staré klíče vanocni_strom / kluziste / vanocni_stanky z mesto.json
 if os.path.exists('assets/vanoce.json'):
     _V = json.load(open('assets/vanoce.json', encoding='utf-8'))
-    MESTO.update({'vanocni_strom': _V.get('stromy') or [], 'kluziste': _V.get('kluziste') or [], 'vanocni_stanky': _V.get('stanky') or [],
+    MESTO.update({'vanocni_strom': _V.get('stromy') or [], 'kluziste': _V.get('kluziste') or [], 'vanocni_stanky': _V.get('stanky') or [], 'vanocni_svetla': _V.get('svetla') or [],
                   'vanoce': {'od': _V.get('od', '11-11'), 'do': _V.get('do', '01-06')}})
 LON0, LAT0 = MESTO['stred']          # střed čtverce (0, 0)
 HALF = float(MESTO.get('polovina', 1150.0))   # půl strany čtverce v metrech

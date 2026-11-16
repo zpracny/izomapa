@@ -1964,6 +1964,11 @@ for _k in geo.MESTO.get('vanocni_stanky') or []:
     for _i in range(_n):
         _s = (_i - (_n - 1) / 2) * (_w + _m); _sx, _sy = _x + math.cos(_a) * _s, _y + math.sin(_a) * _s
         if AREA.contains(Point(_sx, _sy)): stalls.append([round(float(_sx), 2), round(float(_sy), 2), round(float(ground(_sx, _sy)), 2), round(_a, 4), _w, _i])
+# světelné sochy (assets/vanoce.json "svetla": [{lat, lon, r: poloměr m, h: výška m}]): "fontána" ze světelných řetězů, např. na kašně
+glows = []
+for _k in geo.MESTO.get('vanocni_svetla') or []:
+    _x, _y = to_local(_k['lon'], _k['lat'])
+    if AREA.contains(Point(_x, _y)): glows.append([round(float(_x), 2), round(float(_y), 2), round(float(ground(_x, _y)), 2), _k.get('r', 3.2), _k.get('h', 5.5)])
 # zamrzlé rybníky (mesto.json "rybniky": [{nazev, lat, lon}]): plocha rybníka (vodní polygon s bodem uvnitř) pro vrstvu led;
 # zapíná se ručně v administraci (hlaseni/worker.js, /api/stav)
 ice = []
@@ -2007,7 +2012,7 @@ json.dump({'chunk': CHUNK, 'center': [CX, CY], 'half': HALF, 'step': STEP, 'n': 
            'bridges': [{'p': run, 'w': D[4], 'k': D[5], 'c': D[6], 'wtr': D[8] if len(D) > 8 else 0} for D in DECKS if D[0].intersects(EXT)
                        for run in deck_runs([[*q, round(float(g_), 2)] + ([int(D[9][0] - 2 <= dd <= D[9][1] + 2)] if len(D) > 9 else [])
                                              for q, g_, dd in zip(deck_line(D), D[3], D[1])])],
-           'xmas': xmas, 'rinks': rinks, 'stalls': stalls, 'ice': ice,
+           'xmas': xmas, 'rinks': rinks, 'stalls': stalls, 'glows': glows, 'ice': ice,
            'play': [[round(float(x), 2), round(float(y), 2), round(float(ground(x, y)), 2), round(a, 3), t] for x, y, a, t in play]},
           open(f'{OUT}/scene.json', 'w'), separators=(',', ':'))
 

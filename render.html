@@ -1432,6 +1432,20 @@ function roofDeco(b, X, eave, rc) {
         pushBox(V, f, s - 0.07, s + 0.07, -w - o + 0.05, -w - o + 0.19, e - 0.22, e - 0.08, k % 2 ? [1.0, 0.85, 0.35] : [0.90, 0.20, 0.16], W0);
       }
     }
+    // světelná socha ze řetězů (fontána s koulí): profil musí odpovídat web/app.html (glowProfile)
+    for (const [x, y, g, r, h] of scene.glows || []) {
+      const f = frameAt(x, y, g, 0), col = [0.88, 0.94, 1.0], N = 26;
+      const prof = [[[0.35, h - 1.0], [1.5, h - 1.6], [1.5, 0.5]], [[1.5, h - 1.9], [r * 0.75, h - 1.8], [r, h - 2.6], [r, 0.5]]];
+      for (let k = 0; k < N; k++) {
+        const th = (k / N) * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), dx = -s * 0.15, dy = c * 0.15;
+        for (const pl of prof) for (let i = 0; i + 1 < pl.length; i++) {
+          const [r0, z0] = pl[i], [r1, z1] = pl[i + 1];
+          pushQuad(V, f(c * r0 - dx, s * r0 - dy, z0), f(c * r0 + dx, s * r0 + dy, z0), f(c * r1 + dx, s * r1 + dy, z1), f(c * r1 - dx, s * r1 - dy, z1), col, W0);
+        }
+      }
+      const zb = h - 0.5, rb = 0.6, B = [f(rb, 0, zb), f(0, rb, zb), f(-rb, 0, zb), f(0, -rb, zb)], T = f(0, 0, zb + rb), D = f(0, 0, zb - rb);
+      for (let i = 0; i < 4; i++) { pushTri(V, B[i], B[(i + 1) % 4], T, [0.96, 0.97, 1.0], W0); pushTri(V, B[(i + 1) % 4], B[i], D, [0.80, 0.86, 0.95], W0); }
+    }
     if (V.p.length) { const m = new THREE.Mesh(geom(V), ovMat); m.userData.ov = true; world.add(m); }
   }
   // lana lanovek a vleků – tenké tmavé čáry (elektrické vedení se nekreslí)
@@ -1777,6 +1791,7 @@ if (OVERLAY) {
     for (const [x, y, g] of scene.xmas || []) mark(x, y, g + 16, 5);
     for (const [x, y, z0, z1, a, L, W] of scene.rinks || []) mark(x, y, z1 + 2, Math.max(L, W) / 2 + 1);
     for (const [x, y, g] of scene.stalls || []) mark(x, y, g + 4, 3);
+    for (const [x, y, g, r, h] of scene.glows || []) mark(x, y, g + h + 0.5, r + 1);
   }
   if (LED) for (const rings of scene.ice || []) for (const [x, y] of rings[0]) { const r = (HALF - Math.abs(x) < 1 || HALF - Math.abs(y) < 1) ? 0 : 0; mark(x, y, hxAt(x, y) + 1, 3 + r); }
   if (LED) for (const rings of scene.ice || []) {                    // vnitřek polygonu: mřížka po 20 m

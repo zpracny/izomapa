@@ -1,5 +1,5 @@
 {
-  "_pozn": "Vánoční výzdoba (samostatná vrstva mapy). od/do = měsíc-den zapnutí a vypnutí. Po změně: ./vanoce.sh",
+  "_pozn": "Vánoční výzdoba (samostatná vrstva mapy). od/do = měsíc-den zapnutí a vypnutí. Po změně: ./vanoce.sh svetla = světelná socha z řetězů (fontána s koulí): lat, lon, r poloměr m, h výška m.",
   "od": "11-11",
   "do": "01-06",
   "stromy": [
@@ -31,6 +31,14 @@
       "lon": 13.996534,
       "a": 25.6,
       "n": 6
+    }
+  ],
+  "svetla": [
+    {
+      "lat": 49.67836,
+      "lon": 13.99615,
+      "r": 4,
+      "h": 6
     }
   ]
 }
