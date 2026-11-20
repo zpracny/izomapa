@@ -1,5 +1,5 @@
 import numpy as np
-"""Z web/app.html a mesto.json vyrobí site/index.html (texty, meta, sitemap).
+"""Z web/app.html + web/css + web/js (složí web/sestav.py) a mesto.json vyrobí site/index.html (texty, meta, sitemap).
 Pokud existuje složka obce/*.json, vyrobí pro každou obec i site/index_<obec>.html a site/obce/<obec>/og.jpg."""
 import html, json, math, os, re
 from urllib.parse import urljoin
@@ -43,7 +43,10 @@ def og_obrazek(out='site/og.jpg', W=1200, H=630, dolu=None, latlon=None):
     img.save(out, quality=85)
 
 
-SABLONA = open('web/app.html', encoding='utf-8').read()
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web'))
+import sestav
+SABLONA = sestav.app('web')   # šablona web/app.html s vloženými web/css/*.css a web/js/*.js (ze složky města)
 
 
 def ikony_a_manifest(M):

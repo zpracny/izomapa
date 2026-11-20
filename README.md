@@ -227,7 +227,8 @@ mhd.py          jízdní řády GTFS -> site/mhd.json (krajské GTFS ořízne na
 road_route.py   trasy autobusů po silnicích pro GTFS bez shapes.txt (např. IDS JMK)
 pamatky/        volitelné vlastní modely památek: kandidáti, podklady, stavebnice, náhled, dashboard Před / po
 hlaseni/        volitelný server: hlášení nepřesností a administrace /admin
-web/app.html    prohlížeč, build_html.py z něj udělá site/index.html
+web/           prohlížeč: šablona app.html + styly css/ + skript js/ po částech, web/sestav.py je slepí,
+               build_html.py z toho udělá site/index.html
 ```
 
 ## Hlášení nepřesností od lidí (volitelné)
