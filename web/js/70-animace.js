@@ -251,7 +251,33 @@
   // rychlost podle limitu z dat, jinak odhad podle třídy silnice; c.f je povaha řidiče
   const CLASS_KMH = { motorway: 110, trunk: 90, primary: 50, secondary: 50, tertiary: 50, unclassified: 40, residential: 30, living_street: 20 };
   const roadSpeed = (r) => (r.x ? Math.min(r.l || 50, 50) : r.l || CLASS_KMH[r.c] || 40) / 3.6;   // r.x = nájezdová rampa
-  const carSpeed = (c, r) => Math.min(c.truck ? Math.min(roadSpeed(r), 22) * 0.85 : roadSpeed(r), (c.T.vmax || 999) / 3.6) * c.f;   // nákladní auta o něco pomaleji, popeláři a traktory pomalu
+  // Bez limitu v datech: hlavní silnice mimo obec 90 km/h (unclassified 70), v obci podle CLASS_KMH. Obec = aspoň 4 budovy do 100 m
+  // od silnice, po 20m úsecích (podle větve Hořic, tam 50 m; u velkých domů v centru je ale těžiště daleko). Po načtení dalšího čtverce se úseky přepočítají.
+  const BW = new Map(), BWC = 100, BWS = new Set(); let bwVer = 0;
+  onChunk.push((k, d) => {
+    for (const b of d.buildings) {
+      if (b.lon == null || BWS.has(b.oid || b.id)) continue; BWS.add(b.oid || b.id);   // budovy v pásu sousedů jsou ve dvou čtvercích
+      const x = (b.lon - cam.lon0) * cam.kx, y = (b.lat - cam.lat0) * cam.ky, q = Math.floor(x / BWC) + ',' + Math.floor(y / BWC);
+      if (!BW.has(q)) BW.set(q, []); BW.get(q).push([x, y]);
+    }
+    bwVer++;
+  });
+  const nearB = (x, y) => {
+    let n = 0; const cx = Math.floor(x / BWC), cy = Math.floor(y / BWC);
+    for (let i = cx - 1; i <= cx + 1; i++) for (let j = cy - 1; j <= cy + 1; j++) for (const [bx, by] of BW.get(i + ',' + j) || []) if ((bx - x) ** 2 + (by - y) ** 2 < BWC * BWC && ++n >= 4) return n;
+    return n;
+  };
+  const RURAL_KMH = { trunk: 90, primary: 90, secondary: 90, tertiary: 90, unclassified: 70 };
+  function segSpeed(r, s) {                                // m/s na 20m úseku, kde auto je
+    if (r.l || r.x || !RURAL_KMH[r.c]) return roadSpeed(r);
+    if (r.limV !== bwVer) {
+      const n = Math.max(1, Math.ceil(r.L / 20)); r.lims = [];
+      for (let k = 0; k < n; k++) { const o = along(r, Math.min(r.L, (k + 0.5) * 20)); r.lims.push(nearB(o.x, o.y) >= 4 ? roadSpeed(r) : RURAL_KMH[r.c] / 3.6); }
+      r.limV = bwVer;
+    }
+    return r.lims[Math.min(r.lims.length - 1, Math.max(0, Math.floor(s / 20)))];
+  }
+  const carSpeed = (c, r) => { const v = segSpeed(r, c.s); return Math.min(c.truck ? Math.min(v, 22) * 0.85 : v, (c.T.vmax || 999) / 3.6) * c.f; };   // nákladní auta o něco pomaleji, popeláři a traktory pomalu
   function drawXPost(o, z, sx, ox, oy, now, night) {      // výstražník s křížem; v noci světlo září
     const x = ox + o.ix * sx, y = oy + o.iy * sx, h = 30 * sx, q = Math.max(2.5, 3.4 * sx), ph = Math.floor(now / 500) % 2;
     ctx.fillStyle = '#26262a'; ctx.fillRect(x - q * 0.35, y - h - q * 2.6, q * 0.7, h + q * 2.6);
@@ -296,8 +322,10 @@
     return false;
   }
   function stepCar(c, dt) {
-    if (c.hold) { if (blocked(c.hold)) return; c.hold.q = null; c.hold = null; }
-    const r = roads[c.r], next = c.s + carSpeed(c, r) * dt * c.dir;
+    if (c.hold) { if (blocked(c.hold)) { c.v = 0; return; } c.hold.q = null; c.hold = null; }
+    const r = roads[c.r], vt = carSpeed(c, r);
+    c.v = c.v == null ? vt : c.v < vt ? Math.min(vt, c.v + 2.5 * dt) : Math.max(vt, c.v - 3.5 * dt);   // plynule se rozjede a přibrzdí
+    const next = c.s + c.v * dt * c.dir;
     for (const zs of [r.jy, r.sg]) if (zs) for (const z of zs) {   // zavřený přejezd, plný kruhový objezd (6 m před) nebo červená/žlutá na semaforu (z.d m před bodem); fronta po c.T.gap m
       if (!blocked(z) || (z.t && z.t !== c.dir)) continue;  // semafor platí jen pro směr ke křižovatce
       const D = z.d ?? 6, qi = c.dir > 0 ? 0 : 1, stop = z[0] - c.dir * (D + ((z.q && z.q[qi]) || 0));   // z.q = délka fronty v m
