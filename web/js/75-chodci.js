@@ -52,7 +52,7 @@
   }
   // lidé na nástupišti: před příjezdem vlaku (3 min) přicházejí a čekají, při stání nastoupí, vystoupivší se po odjezdu rozejdou.
   // Vše podle času jízdy vlaku (el), takže bez stavu a stejné pro všechny návštěvníky. Strana nástupiště podle pěších cest v okolí.
-  const PLAT = { dw: new Map(), side: new Map() };
+  const PLAT = { on: {{NASTUPISTE}}, dw: new Map(), side: new Map() };   // zapíná "nastupiste": true v mesto.json (hodí se na menší stanice s pár kolejemi)
   function trainDwells(i) {                                  // [[příjezd, odjezd, x, y, tx, ty], …] zastavení vlaku v mapě (s od výjezdu)
     if (PLAT.dw.has(i)) return PLAT.dw.get(i);
     const trip = MHD.trips[i], q = trip[4], out = [];
@@ -78,7 +78,7 @@
   }
   function platformPeople(share, tNow) {                     // pseudo-postavy [p, P, ip] pro kreslení spolu s chodci
     const res = [];
-    if (!MHD.on || !MHD.act) return res;
+    if (!PLAT.on || !MHD.on || !MHD.act) return res;
     for (const a of MHD.act) {
       const i = a[0], trip = MHD.trips[i];
       if (MHD.routes[trip[0]][1] !== 2) continue;

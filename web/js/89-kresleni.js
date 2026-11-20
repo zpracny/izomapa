@@ -196,7 +196,7 @@
           if (!vis(ip[0], ip[1], 30)) continue;
           stepPerson(p, dt); list.push([p, P, ip]);
         }
-        for (const q of platformPeople(share, now / 1000 - MHD.t)) if (vis(q[2][0], q[2][1], 30)) list.push(q);
+        if (PLAT.on) for (const q of platformPeople(share, now / 1000 - MHD.t)) if (vis(q[2][0], q[2][1], 30)) list.push(q);
         list.sort((a, b) => a[2][1] - b[2][1]);
         const hidden = (x, y, h, ip) => {
           const dp = depth(x, y, h);
