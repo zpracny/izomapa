@@ -26,7 +26,7 @@
 
   <div class="search">
     <label class="label" for="q">Hledat</label>
-    <input id="q" type="search" placeholder="Ulice, adresa nebo místo" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+    <div class="q-wrap"><input id="q" type="search" placeholder="Ulice, adresa nebo místo" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button class="q-x" id="qClear" type="button" aria-label="Vymazat hledání" title="Vymazat">×</button></div>
     <ul class="results" id="results"></ul>
   </div>
 
@@ -72,6 +72,7 @@
       <label><input type="checkbox" id="l-labels" checked> Popisky</label>
       <label><input type="checkbox" id="l-traffic" checked> Doprava</label>
       <label><input type="checkbox" id="l-people" checked> Lidé</label>
+      <label id="l-pluhy-w" hidden><input type="checkbox" id="l-pluhy" checked> Sypače ŘSD (živě) <span id="pluhy-n"></span></label>
       <label><input type="checkbox" id="l-smoke" checked> Kouř z&nbsp;komínů</label>
       <label><input type="checkbox" id="l-xmas"> Vánoční výzdoba</label>
       <label><input type="checkbox" id="l-hover" checked> Zvýraznit budovy</label>
@@ -140,7 +141,7 @@
   </ul>
   {{AUTOR}}
   <p class="muted">Vytvořeno nástrojem <a href="https://github.com/adamklatovsky/izomapa" target="_blank" rel="noopener">izomapa</a> od <a href="https://www.adamklatovsky.cz/" target="_blank" rel="noopener">Adama Klatovského</a> (původní mapa: <a href="https://izomapa.fun" target="_blank" rel="noopener">izometrický Liberec</a>).<br>
-  Mapová data © přispěvatelé <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL) a&nbsp;Overture Maps, terén Terrarium (AWS Open Data), výšky budov a&nbsp;stromů, ortofoto a&nbsp;ZABAGED{{RUIAN_ZDROJ}} © <a href="https://geoportal.cuzk.cz/" target="_blank" rel="noopener">ČÚZK</a> (CC BY 4.0){{MHD_ZDROJ}}{{VITR_ZDROJ}}{{LETADLA_ZDROJ}}{{DOPRAVA_ZDROJ}}.</p>
+  Mapová data © přispěvatelé <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL) a&nbsp;Overture Maps, terén Terrarium (AWS Open Data), výšky budov a&nbsp;stromů, ortofoto a&nbsp;ZABAGED{{RUIAN_ZDROJ}} © <a href="https://geoportal.cuzk.cz/" target="_blank" rel="noopener">ČÚZK</a> (CC BY 4.0){{MHD_ZDROJ}}{{VITR_ZDROJ}}{{LETADLA_ZDROJ}}{{PLUHY_ZDROJ}}{{DOPRAVA_ZDROJ}}.</p>
 </dialog>
 <dialog class="help plocha" id="plochaDlg" aria-labelledby="plochaTitle">
   <button class="px-btn close" id="plochaClose" type="button" aria-label="Zavřít">×</button>

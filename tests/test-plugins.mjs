@@ -65,7 +65,7 @@ function makeMockElement(tag) {
   assert.ok(scriptMatch, 'web/app.html musí obsahovat hlavní <script>');
   const filled = scriptMatch[1].replace(/\{\{(\w+)\}\}/g, (_, key) => {
     if (key === 'VLAK') return JSON.stringify({ vychozi: 'regionova', linky: {} });
-    if (['HLASENI', 'VITR', 'POCASI', 'LETADLA', 'NASTUPISTE', 'DOMU_CELEK', 'MHD', 'VANOCE'].includes(key)) return 'false';
+    if (['HLASENI', 'VITR', 'POCASI', 'LETADLA', 'PLUHY', 'NASTUPISTE', 'DOMU_CELEK', 'MHD', 'VANOCE'].includes(key)) return 'false';
     return 'null';
   });
   new vm.Script(filled, { filename: 'web/app.html' });

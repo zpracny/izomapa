@@ -139,6 +139,35 @@
         Pt(-l + 0.25, -0.3, -w * 0.72, w * 0.72, 0.95, 1.45, A, A);
         Pt(-l + 0.3, -0.35, -w * 0.7, w * 0.7, 1.45, 2.6, GL, GL, 2);
         Pt(-l + 0.2, -0.25, -w * 0.78, w * 0.78, 2.6, 2.75, A, sn(A), 3);
+      } else if (isBus === 11) {                                            // sypač s radlicí (Tatra): col "#oranžová|#modrá|r", r = radlice dole (zásah)
+        const OR = A, BL = B, down = String(col).split('|')[2] === 'r', TK = [218, 220, 216], SV = [176, 180, 186], tt = (a, b) => [Math.min(a, b), Math.max(a, b)];
+        axles.push([l - 1.75, 0.55, w, 0.17], [-l + 1.85, 0.55, w, 0.17]);
+        Pt(-l + 0.3, l - 0.5, -w * 0.78, w * 0.78, 0.55, 1.15, DK, DK, 0);                      // rám
+        Pt(l - 0.55, l, -w * 0.96, w * 0.96, 0.45, 1.2, DK, DK, 0);                             // nárazník
+        const ce = cab(l - 2.2, l - 0.15, 1.15, 3.15, 2.05, OR);                                   // kabina
+        win(ce, l - 0.15, -w * 0.9, l - 0.15, w * 0.9, 1.45, 1.75, DK);                             // maska
+        Pt(l - 2.38, l - 2.2, w * 0.7, w * 0.88, 1.3, 3.8, SV, SV, 2);                             // výfuk za kabinou
+        for (const sd of [-1, 1]) Pt(l - 1.15, l - 0.85, sd * w * 0.62 - 0.15, sd * w * 0.62 + 0.15, 3.15, 3.42, [255, 168, 0], [255, 196, 50], 2);   // majáky
+        Pt(-l + 0.15, l - 2.45, -w * 0.8, w * 0.8, 1.15, 1.95, tone(OR, 0.9), tone(OR, 0.9));     // spodek násypky
+        const hp = Pt(-l + 0.05, l - 2.45, -w, w, 1.95, 3.0, OR, sn(tone(OR, 1.06)), 2);            // nástavba se solí
+        for (const sd of [-1, 1]) {
+          win(hp, l - 2.45, sd * w, -l + 0.05, sd * w, 2.58, 2.76, BL);                               // modrý pruh
+          Pt(-l + 0.7, l - 3.0, ...tt(sd * w * 0.8, sd * w * 1.0), 1.2, 1.85, TK, TK);              // nádrže se solankou
+        }
+        Pt(-l - 0.05, -l + 0.25, -0.45, 0.45, 0.5, 1.0, DK, DK, 0);                                // talíř posypu vzadu
+        const z0 = down ? 0.02 : 0.45, z1 = z0 + 1.15, bA = [l + 1.35, -w * 1.3], bB = [l + 0.55, w * 1.3];   // radlice: šikmý štít před vozem
+        Pt(l, l + 0.8, -0.45, 0.45, z0 + 0.35, z0 + 0.7, DK, DK, 0);                               // rameno radlice
+        parts.push({ k: 1000 + (fwd ? 1 : -1) * (l + 1.0), f: [() => {
+          const es = bB[0] - bA[0], et = bB[1] - bA[1], el = Math.hypot(es, et), ns = et / el, nt = -es / el;
+          const nx = fx_ * ns + sxv * nt, ny = fy_ * ns + syv * nt, front = vis(nx, ny), d = sun(front ? nx : -nx, front ? ny : -ny, 0.2);
+          const q = (za, zb, rgb) => faces.push([[R(bA[0], bA[1], za), R(bB[0], bB[1], za), R(bB[0], bB[1], zb), R(bA[0], bA[1], zb)], lit(rgb, d)]);
+          q(z0, z0 + 0.18, front ? BL : DK); q(z0 + 0.18, z1, front ? OR : tone(OR, 0.78));
+          faces.push([[R(bA[0], bA[1], z1), R(bB[0], bB[1], z1), R(bB[0] - 0.14, bB[1], z1), R(bA[0] - 0.14, bA[1], z1)], lit(OR, sun(0, 0, 1))]);
+        }] });
+        for (const [s_, t_] of [bA, bB]) {                                                          // tyčky s praporky na krajích radlice
+          Pt(s_ - 0.05, s_ + 0.05, t_ - 0.05, t_ + 0.05, z1, z1 + 1.0, DK, DK, 3);
+          Pt(s_ - 0.06, s_ + 0.06, ...tt(t_, t_ - Math.sign(t_) * 0.4), z1 + 0.65, z1 + 1.0, [255, 112, 30], [255, 112, 30], 3);
+        }
       }
       const wh = (side) => { for (const [s_, r_, th, hw] of axles) box(s_ - r_ * 0.8, s_ + r_ * 0.8, side * (th - 0.08) - hw, side * (th - 0.08) + hw, 0, r_ * 1.7, DK); };
       wh(-near);

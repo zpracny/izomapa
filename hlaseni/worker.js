@@ -4,6 +4,7 @@
 // Uživatelské jméno se nekontroluje. Ukládá se jen text hlášení a hash IP adresy (kvůli limitu), ne IP samotná.
 // Fotky (volitelně, "fotky": true v mesto.json + R2 bucket s bindingem PHOTOS) vidí jen administrace, veřejně se nezobrazují.
 import { onRequest as flights } from '../functions/api/flights.js';
+import { onRequest as pluhy } from '../functions/api/pluhy.js';
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
 async function sha(s) {
@@ -151,6 +152,7 @@ export default {
   async fetch(req, env, ctx) {
     const p = new URL(req.url).pathname;
     if (p === '/api/flights') return flights({ request: req });
+    if (p === '/api/pluhy') return pluhy({ request: req });
     if (p === '/api/report' && req.method === 'POST') return report(req, env);
     if (p === '/api/stav' && req.method === 'GET') return stav(env);
     if (p === '/api/polohy' && req.method === 'GET') return polohy(req, env, ctx);

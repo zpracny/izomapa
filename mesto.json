@@ -47,6 +47,7 @@
   "pohled": [49.6889, 14.0105, 1.6],
   "hlaseni": true,
   "nastupiste": true,
+  "pluhy": true,
   "fotky": true,
   "autor": {
     "jmeno": "Zdeněk Pracný",

@@ -64,6 +64,15 @@
         out.push([3, b.hull]);
       }
   }
+  // je v bodě obrázku (ix, iy) neprůhledný pixel přesné kresby stromu q = [2, slot, L, T, k]? (kmen i koruna; chodec za ním zmizí)
+  function stromPixel(q, ix, iy) {
+    const A = STROMY[state.season]; if (!A || !A.ok) return false;
+    if (!A.alfa) { try { const c = document.createElement('canvas'); c.width = A.im.width; c.height = A.im.height; const g = c.getContext('2d'); g.drawImage(A.im, 0, 0); A.alfa = g.getImageData(0, 0, c.width, c.height); } catch { A.alfa = { width: 0 }; } }
+    const [, slot, L, T, k] = q, u = Math.floor((ix - L) / k), v = Math.floor((iy - T) / k);
+    if (u < 0 || v < 0 || u >= A.CW || v >= A.CH || !A.alfa.width) return false;
+    const px = (slot % 16) * A.CW + u, py = Math.floor(slot / 16) * A.CH + v;
+    return A.alfa.data[(py * A.alfa.width + px) * 4 + 3] > 100;
+  }
   function treeShapes(x, y, z, bb) {
     const dv = depth(x, y, z), out = [], cx = Math.floor(x / 16), cy = Math.floor(y / 16), A = stromy(), k0 = 0.2 / cam.mpp;
     for (let i = cx - 4; i <= cx + 2; i++) for (let j = cy - 4; j <= cy + 2; j++) for (const t of TG.get(i + ',' + j) || []) {   // stromy před vozidlem (k jihozápadu) až ~60 m

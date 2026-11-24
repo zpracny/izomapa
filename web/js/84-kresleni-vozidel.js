@@ -12,6 +12,17 @@
     }
     NL.beams.length = NL.head.length = NL.tail.length = 0;
   }
+  // je bod světa (x, y, z) z pohledu mapy zakrytý budovou, mostovkou nebo stromem? (stejné tvary jako ořez vozidel v drawBehindTrees)
+  function svetloSkryte(x, y, z) {
+    const [ix, iy] = toImg(x, y, z);
+    for (const q of treeShapes(x, y, z, [ix - 1, iy - 1, ix + 1, iy + 1])) {
+      if (q[0] === 2) { if (stromPixel(q, ix, iy)) return true; }
+      else if (q[0] === 0) { const [a, b, r] = [q[1], q[2], q[3]]; if (iy >= a[1] && iy <= b[1] && Math.abs(ix - a[0]) <= r * (iy - a[1]) / Math.max(1e-6, b[1] - a[1])) return true; }
+      else if (q[0] === 1) { const dx = (ix - q[1][0]) / q[2], dy = (iy - q[1][1]) / q[3]; if (dx * dx + dy * dy <= 1) return true; }
+      else if (q[0] === 3) { let c = false; const h = q[1]; for (let i = 0, j = h.length - 1; i < h.length; j = i++) if ((h[i][1] > iy) !== (h[j][1] > iy) && ix < (h[j][0] - h[i][0]) * (iy - h[i][1]) / (h[j][1] - h[i][1]) + h[i][0]) c = !c; if (c) return true; }
+    }
+    return false;
+  }
   function drawVehicle(o, len, wid, col, sx, ox, oy, night, isBus, lights = 3) {   // lights: 1 přední, 2 zadní
     const L = Math.hypot(o.dx, o.dy) || 1, fx_ = o.dx / L * (o.dirSign || 1), fy_ = o.dy / L * (o.dirSign || 1);
     const sxv = -fy_, syv = fx_;
@@ -23,13 +34,13 @@
     drawBehindTrees(spr.c, base[0] + spr.x0, base[1] + spr.y0, spr.c.width, spr.c.height, cxw, cyw, h0, sx, ox, oy);
     if (night > 0.3 && !o.noLights && sx >= LIGHTS_SX) {                                    // světla jen při přiblížení; kreslí se najednou (flushLights)
       const P = (s, t, h) => { const p = toImg(cxw + fx_ * s + sxv * t, cyw + fy_ * s + syv * t, h0 + h); return [ox + p[0] * sx, oy + p[1] * sx]; };
-      const hid = (s, t, h) => { const x = cxw + fx_ * s + sxv * t, y = cyw + fy_ * s + syv * t, [ix, iy] = toImg(x, y, h0 + h); return occluded(ix, iy, depth(x, y, h0 + h)); };   // za domem
-      const l = len / 2, w = wid / 2;
-      if (lights & 1 && !hid(l, 0, 0.6)) {                    // kužel jen po první dům v cestě (nesvítí skrz)
-        let d = 0; for (const q of [3.5, 7, 10.5, 14]) { if (hid(l + q, 0, 0.1) || hid(l + q, -w - q * 0.28, 0.1) || hid(l + q, w + q * 0.28, 0.1)) break; d = q; }
+      const l = len / 2, w = wid / 2, V = (s, t, h) => !svetloSkryte(cxw + fx_ * s + sxv * t, cyw + fy_ * s + syv * t, h0 + h);   // světla za budovou nebo stromem se nekreslí
+      const head = (lights & 1) && V(l, 0, 0.7), tail = (lights & 2) && V(-l, 0, 0.7);
+      if (head) {                                              // kužel jen po první dům nebo strom v cestě (nesvítí skrz)
+        let d = 0; for (const q of [3.5, 7, 10.5, 14]) { if (!V(l + q, 0, 0.1) || !V(l + q, -w - q * 0.28, 0.1) || !V(l + q, w + q * 0.28, 0.1)) break; d = q; }
         if (d) NL.beams.push([P(l, -w, 0.6), P(l + d, -w - d * 0.28, 0.1), P(l + d, w + d * 0.28, 0.1), P(l, w, 0.6)]);
       }
-      for (const t of [-w * 0.7, w * 0.7]) { if (lights & 1 && !hid(l, t, 0.7)) NL.head.push(P(l, t, 0.7)); if (lights & 2 && !hid(-l, t, 0.7)) NL.tail.push(P(-l, t, 0.7)); }
+      for (const t of [-w * 0.7, w * 0.7]) { if (head) NL.head.push(P(l, t, 0.7)); if (tail) NL.tail.push(P(-l, t, 0.7)); }
     }
     return true;
   }

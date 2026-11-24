@@ -46,6 +46,7 @@
       b.hull.forEach(([x, y], i) => (i ? ctx.lineTo(ox + x * sx, oy + y * sx) : ctx.moveTo(ox + x * sx, oy + y * sx)));
       ctx.closePath(); ctx.stroke();
     }
+    drawUlice(sx, ox, oy, cw, ch, dpr);                   // názvy ulic (87-nazvy-ulic.js), pod vozidly a čísly linek
     // doprava
     if ($('l-traffic').checked) {
       if (now - tShareT > 5000 || tShareCount !== cars.length || tShareSlow !== (eco || SLOW)) {
@@ -112,9 +113,10 @@
           let o = mhdPos(trip, ceka ? 0 : el + (now / 1000 - ns) - (typ === 2 ? 0 : busDelay(i, trip, el + (now / 1000 - ns), dt)));   // na konečné stojí
           const ods = ceka && typ === 0 ? odstavPos(trip, ceka, poradi) : null;
           if (ods) o = ods;
-          else if (poradi) {                                     // další vůz ve frontě na konečné: o délku vozu (s mezerou) za předchozím
-            const L_ = Math.hypot(o.dx, o.dy) || 1, d_ = poradi * (typ === 0 ? 36 : 16), x_ = o.x - o.dx / L_ * d_, y_ = o.y - o.dy / L_ * d_, z_ = gz(x_, y_), [ix_, iy_] = toImg(x_, y_, z_);
-            o = { ...o, x: x_, y: y_, z: z_, ix: ix_, iy: iy_ };
+          else if (poradi) {                                     // další vůz ve frontě na konečné: o délku vozu (s mezerou) za předchozím, po silnici, kudy linka přijíždí
+            const d_ = poradi * (typ === 0 ? 36 : 16), pr = prijezdSh(trip);
+            if (pr && pr.L > d_ + 5) o = shapePos(pr, pr.L - d_);
+            else { const L_ = Math.hypot(o.dx, o.dy) || 1, x_ = o.x - o.dx / L_ * d_, y_ = o.y - o.dy / L_ * d_, z_ = gz(x_, y_), [ix_, iy_] = toImg(x_, y_, z_); o = { ...o, x: x_, y: y_, z: z_, ix: ix_, iy: iy_ }; }
           }
           if (!vis(o.ix, o.iy, 120) || !cam.grounds.some((q) => Math.abs(o.x - q.cx) <= cam.half && Math.abs(o.y - q.cy) <= cam.half)) continue;   // mimo čtverce mapy
           const shown_ = typ === 0 ? drawVehicle(o, 15, 2.5, 't3', sx, ox, oy, night, 2) : typ === 2 ? drawTrain(trip, el + (now / 1000 - ns), line, sx, ox, oy, night) : drawVehicle(o, 12, 2.5, '#e9e6dc', sx, ox, oy, night, true);
@@ -202,7 +204,7 @@
           const dp = depth(x, y, h);
           if (occluded(ip[0], ip[1], dp) || occluded(ip[0], ip[1] - hpx * 1.2, dp)) return true;
           for (const q of treeShapes(x, y, h, [ip[0] - 1, ip[1] - 9, ip[0] + 1, ip[1]]))
-            if (q[0] === 1 ? ((ip[0] - q[1][0]) / q[2]) ** 2 + ((ip[1] - 4 - q[1][1]) / q[3]) ** 2 < 1 : ip[1] - 4 > q[1][1] && ip[1] - 4 < q[2][1] && Math.abs(ip[0] - q[1][0]) < q[3] * (ip[1] - 4 - q[1][1]) / (q[2][1] - q[1][1])) return true;
+            if (q[0] === 2 ? stromPixel(q, ip[0], ip[1] - 4) || stromPixel(q, ip[0], ip[1] - 1) : q[0] === 1 ? ((ip[0] - q[1][0]) / q[2]) ** 2 + ((ip[1] - 4 - q[1][1]) / q[3]) ** 2 < 1 : ip[1] - 4 > q[1][1] && ip[1] - 4 < q[2][1] && Math.abs(ip[0] - q[1][0]) < q[3] * (ip[1] - 4 - q[1][1]) / (q[2][1] - q[1][1])) return true;
           return false;
         };
         const put = (o, key, ip, back, mir, fr) => {
@@ -306,6 +308,8 @@
       });
       ctx.globalAlpha = 1;
     }
+    // sypače a pluhy ŘSD (živě, jen s "pluhy": true v mesto.json)
+    if (PLOW.on && $('l-pluhy').checked) stepDrawPlows(dt, sx, ox, oy, vis, t, now);
     runFrameLayer('world', frameView, t);
     // svíčky na hřbitovech: večer; kolem Dušiček (30. 10.–10. 11.) skoro na každém hrobě, na Štědrý den na většině, jinak jen tu a tam.
     // Hřbitovní lampy jsou červené, žluté a bílé; plamen se mihotá, při přiblížení kolem něj malá záře
