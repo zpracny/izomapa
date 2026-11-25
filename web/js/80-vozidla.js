@@ -1,7 +1,7 @@
   // jedoucí vozidla: stejný model jako zaparkovaná auta v renderu (karoserie, prosklení, střecha, 4 kola), stěny stínované
   // stejným sluncem (od jihovýchodu). Kreslí se jako render: do malého obrázku v rozlišení mapy (1 px = cam.mpp),
   // s tmavým obrysem, a zvětší se bez vyhlazení. Obrázky se cachují podle barvy a směru (48 směrů).
-  const SUNV = (() => { const v = [0.38, -0.68, 0.62], n = Math.hypot(...v); return v.map((q) => q / n); })();
+  const SUNV = (() => { const v = cam.sun || [0.38, -0.68, 0.62], n = Math.hypot(...v); return v.map((q) => q / n); })();
   const RGB = {}, rgbOf = (hex) => RGB[hex] || (RGB[hex] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)));
   const lit = (rgb, d) => { const f = (0.62 + 0.42 * Math.max(0, d)) / 0.88; return `rgb(${rgb.map((q) => Math.min(255, Math.round(q * f))).join(',')})`; };
   const VEH = new Map(), NDIR = 48, NDIR_VLAK = 240;   // vlak: jemnější natočení, ať na sebe vozy navazují (48 směrů = schod na spoji)
@@ -71,8 +71,8 @@
       else for (let s_ = -l + 1.2; s_ < sBox - 0.4; s_ += 1.9)                                             // spáry skříně
         Qs(s_, s_ + 0.07, side * w * 1.003, 1.25, top - 0.14, BODY.map((q) => q * 0.86));
     }
-    // vzdálenější díly první (pohled od jihozápadu = větší x + y je dál), při shodě nižší dřív
-    const depth = ([s, t, z]) => (fx_ * s + sxv * t) + (fy_ * s + syv * t);
+    // vzdálenější díly první (od kamery; od JZ je to větší x + y), při shodě nižší dřív
+    const depth = ([s, t, z]) => -((fx_ * s + sxv * t) * Z[0] - (fy_ * s + syv * t) * Z[2]);
     parts.sort((a, b) => depth(b) - depth(a) || a[2] - b[2]).forEach((p) => p[3]());
   }
   function vehicleSprite(col, k, isBus, len, wid, snowy) {
@@ -81,7 +81,7 @@
     const a = k / ndirOf(isBus) * Math.PI * 2, fx_ = Math.cos(a), fy_ = Math.sin(a), sxv = -fy_, syv = fx_;
     const O = toImg(0, 0, 0), R = (s, t, h) => { const p = toImg(fx_ * s + sxv * t, fy_ * s + syv * t, h); return [p[0] - O[0], p[1] - O[1]]; };
     const l = len / 2, w = wid / 2, faces = [];
-    const vis = (nx, ny) => nx + ny < 0;                                   // normála míří ke kameře (na jihozápad)
+    const vis = faceVis;                                                    // normála míří ke kameře
     const sun = (nx, ny, nz) => nx * SUNV[0] + ny * SUNV[1] + nz * SUNV[2];
     const box = (s0, s1, t0, t1, z0, z1, rgb, topRgb) => {
       for (const [nx, ny, A, B] of [[fx_, fy_, [s1, t0], [s1, t1]], [-fx_, -fy_, [s0, t1], [s0, t0]], [sxv, syv, [s1, t1], [s0, t1]], [-sxv, -syv, [s0, t0], [s1, t0]]])

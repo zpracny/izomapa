@@ -47,6 +47,7 @@ done
 for C in $CT; do
   ./render_chunk.sh $C $V
   if [ "$C" = "0,0" ]; then python dzi.py $V; else python dzi.py --chunk $C $V; fi
+  ./pohledy.sh ctverec $C $V                                     # otočené pohledy (site/pN), jsou-li
   # otisk pro ./postav.sh render (render jen změněných čtverců): po všech variantách platí, po části variant (summer)
   # se smaže, aby ./postav.sh render čtverec dokreslil celý
   if [ "$C" = "0,0" ]; then B=build; else B=build/c$(echo $C | tr ',' '_'); fi
@@ -54,5 +55,6 @@ for C in $CT; do
 done
 python preview.py
 python overlay.py
+./pohledy.sh web
 cp pamatky/schvalene.json build/pamatky_vykresleno.json
 echo HOTOVO pamatky

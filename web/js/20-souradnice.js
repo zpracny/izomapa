@@ -3,6 +3,9 @@
   const X = cam.X, Y = cam.Y, Z = [X[1] * Y[2] - X[2] * Y[1], X[2] * Y[0] - X[0] * Y[2], X[0] * Y[1] - X[1] * Y[0]];
   const toImg = (x, y, h) => [((x * X[0] + h * X[1] - y * X[2]) - cam.x0) / cam.mpp, (cam.y1 - (x * Y[0] + h * Y[1] - y * Y[2])) / cam.mpp];
   const depth = (x, y, h) => -(x * Z[0] + h * Z[1] - y * Z[2]);
+  // směr ke kameře po zemi (úhel od východu; od JZ = 225°) a viditelnost svislé plochy s normálou (nx, ny) – platí pro každý pohled
+  const CAM_ANG = Math.atan2(-Z[2], Z[0]), VROT = CAM_ANG - 1.25 * Math.PI;
+  const faceVis = (nx, ny) => nx * Z[0] - ny * Z[2] > 0;
   const gz = (x, y) => {
     const G = cam.grounds.find((q) => Math.abs(x - q.cx) <= cam.half && Math.abs(y - q.cy) <= cam.half) || cam.grounds[0];
     const g = G.g, n = g.length - 1; x -= G.cx; y -= G.cy;

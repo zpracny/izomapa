@@ -37,7 +37,8 @@ for p in $PLAN; do
   case $v in *led*) VAR="$VAR led";; esac
   ./render_chunk.sh $c $VAR
   D=$( [ "$c" = "0,0" ] && echo build || echo build/c$(echo $c | tr ',' '_') )
-  OK=""; for x in $VAR; do ls $D/tiles_$x/*.png > /dev/null 2>&1 && OK="$OK $x"; done      # bez dlaždic (nic ve čtverci) = bez vrstvy
+  S=$( [ "${IZO_POHLED:-0}" = 0 ] || echo _p$IZO_POHLED )
+  OK=""; for x in $VAR; do ls $D/tiles_$x$S/*.png > /dev/null 2>&1 && OK="$OK $x"; done      # bez dlaždic (nic ve čtverci) = bez vrstvy
   [ -z "$OK" ] && continue
   if [ "$c" = "0,0" ]; then python dzi.py $OK; else python dzi.py --chunk $c $OK; fi
   KEEP="$KEEP $c:$(echo $OK | tr ' ' ',')"
@@ -46,13 +47,17 @@ done
 python - $KEEP <<'EOF'
 import json, sys
 keep = {a.split(':')[0]: set(a.split(':')[1].split(',')) for a in sys.argv[1:]}
-t = json.load(open('site/tiles.json'))
+from geo import SITE
+t = json.load(open(f'{SITE}/tiles.json'))
 def clean(d, key):
     for v in ('xmas_winter', 'xmas_autumn', 'led'):
         if v in d and v not in keep.get(key, set()): del d[v]; print('odstraněno', key, v)
 clean(t, '0,0')
 for name, ch in t.get('chunks', {}).items(): clean(ch, f"{ch['chunk'][0]},{ch['chunk'][1]}")
-json.dump(t, open('site/tiles.json', 'w'))
+json.dump(t, open(f'{SITE}/tiles.json', 'w'))
 EOF
-python build_html.py
-echo "Hotovo. Nasazení: npx wrangler deploy"
+if [ -z "${IZO_POHLED:-}" ]; then                             # otočené pohledy (./postav_pohledy.sh), jsou-li
+  for d in site/p1 site/p2 site/p3; do [ -f $d/tiles.json ] && IZO_POHLED=${d#site/p} ./vanoce.sh > /dev/null; done
+  python build_html.py
+  echo "Hotovo. Nasazení: npx wrangler deploy"
+fi

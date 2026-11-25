@@ -19,11 +19,12 @@ VARIANTY = ('autumn', 'winter', 'spring', 'summer', 'lights', 'xmas_winter', 'xm
 def save(im, path):
     if FMT == 'webp': im.convert('RGBA' if im.mode in ('P', 'RGBA', 'LA') else 'RGB').save(path[:-4] + '.webp', 'WEBP', lossless=True, quality=50, method=4, exact=False)   # u bezztrátového WebP je quality jen úsilí komprese: pixely stejné, poloviční čas, soubory o ~1 % větší
     else: im.save(path, optimize=True)
-OUT = 'site/tiles'
+from geo import PRE, SFX, SITE
+OUT = f'{SITE}/tiles'
 
 
 def build(variant, chunk=None):
-    src = f'build/tiles_{variant}' if not chunk else f'build/c{chunk[0]}_{chunk[1]}/tiles_{variant}'
+    src = f'build/tiles_{variant}{SFX}' if not chunk else f'build/c{chunk[0]}_{chunk[1]}/tiles_{variant}{SFX}'
     info = json.load(open(f'{src}/info.json'))
     # render.mjs si na začátku odloží značku a po poslední dlaždici ji smaže: když zůstala, render spadl uprostřed
     if os.path.exists(f'{src}/rozpracovano'): sys.exit(f'{src}: render neskončil (zůstala značka „rozpracovano“), dlaždice by byly směs starých a nových. Spusť render znovu.')
@@ -138,15 +139,15 @@ def build_alpha(variant, chunk, img, info):
         n += len(jobs)
     size = sum(os.path.getsize(os.path.join(a, f)) for a, _, fs in os.walk(d0) for f in fs)
     print(name or 'c0_0', variant, W, 'x', H, 'souborů', n, 'MB', round(size / 1e6, 1))
-    return {'Image': {'xmlns': 'http://schemas.microsoft.com/deepzoom/2008', 'Url': f'tiles/{name}/{variant}/' if name else f'tiles/{variant}/', 'Format': FMT,
+    return {'Image': {'xmlns': 'http://schemas.microsoft.com/deepzoom/2008', 'Url': f'{PRE}tiles/{name}/{variant}/' if name else f'{PRE}tiles/{variant}/', 'Format': FMT,
                       'Overlap': '0', 'TileSize': str(TS), 'Size': {'Width': str(W), 'Height': str(H)}},
             'x0': info['x0'], 'y1': info['y1']}
 
 
 if __name__ == '__main__':
     from geo import CHUNKS
-    os.makedirs('site', exist_ok=True)
-    path = 'site/tiles.json'
+    os.makedirs(SITE, exist_ok=True)
+    path = f'{SITE}/tiles.json'
     out = json.load(open(path)) if os.path.exists(path) else {}
     args = sys.argv[1:]
     chunk = None
@@ -171,7 +172,7 @@ if __name__ == '__main__':
             ch = out.setdefault('chunks', {}).setdefault(name, {'chunk': list(chunk), 'status': CHUNKS[chunk]})
             ch['status'] = CHUNKS[chunk]; ch.update(built)
         else:
-            info = json.load(open('build/tiles_autumn/info.json'))
+            info = json.load(open(f'build/tiles_autumn{SFX}/info.json'))
             out['base'] = {'x0': info['x0'], 'y1': info['y1'], 'mpp': info['mpp'], 'status': CHUNKS[(0, 0)]}
             out.update(built)
         # verze dlaždic pro cache prohlížeče: mění se jen tady, když vzniknou nové dlaždice. Každý čtverec a období má svou (d['ver']):

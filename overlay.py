@@ -7,10 +7,10 @@ import heapq, json, math
 import numpy as np
 from shapely.geometry import MultiPoint
 import os
-from geo import CAM_X, CAM_Y, CHUNKS, HALF, KX, KY, LAT0, LON0, MESTO, MPP_OVERLAY, Image2D, chunk_center, chunk_dir, to_local
+from geo import CAM_X, CAM_Y, CHUNKS, HALF, KX, KY, LAT0, LON0, MESTO, MPP_OVERLAY, POHLED, SFX, SITE, SUN, Image2D, chunk_center, chunk_dir, to_local
 
 # souřadnice obrázku = pixely čtverce (0, 0); ostatní čtverce leží mimo (záporné / větší souřadnice)
-info = json.load(open('build/tiles_autumn/info.json'))
+info = json.load(open(f'build/tiles_autumn{SFX}/info.json'))
 if info['mpp'] != MPP_OVERLAY:          # detailní rozlišení: dlaždice jsou jemnější, obrysy a animace prohlížeče zůstávají v pixelech 0,2 m
     k = info['mpp'] / MPP_OVERLAY
     info = {**info, 'mpp': MPP_OVERLAY, 'width': round(info['width'] * k), 'height': round(info['height'] * k)}
@@ -373,7 +373,7 @@ for s in SOUS_RAW:
     neighbors.append(item)
 
 cam = {'x0': info['x0'], 'y1': info['y1'], 'mpp': info['mpp'], 'X': list(map(float, CAM_X)), 'Y': list(map(float, CAM_Y)),
-       'half': HALF, 'grounds': grounds}
+       'half': HALF, 'grounds': grounds, 'sun': list(SUN), 'pohled': POHLED}
 # vánoční strom na náměstí (zima): mesto.json vanocni_strom = [lat, lon] (příp. více stromů z obce/*.json)
 stromy = []
 _vs = lambda v: v if isinstance(v, list) and v and isinstance(v[0], list) else [v]      # jeden strom [lat, lon] nebo seznam stromů
@@ -388,9 +388,9 @@ needs = []
 for name, lat, lon, text in NEEDS:
     x, y = to_local(lon, lat); OFF = (0.0, 0.0); c = chunk_of(float(x), float(y))
     if c in CKEY: needs.append({'name': name, 'text': text, 'k': CKEY[c], 'xy': list(px(float(x), float(y), gz(x, y) + 15)[:2])})
-os.makedirs('site/overlay', exist_ok=True)
+os.makedirs(f'{SITE}/overlay', exist_ok=True)
 for K, v in per_chunk.items():
-    json.dump(v, open(f'site/overlay/{K}.json', 'w'), separators=(',', ':'), ensure_ascii=False)
+    json.dump(v, open(f'{SITE}/overlay/{K}.json', 'w'), separators=(',', ':'), ensure_ascii=False)
 # názvy čtvrtí (Overture divisions: macrohood + obce/osady), zobrazují se jen při oddálení
 districts = []
 _dv = pq.read_table('data_all/division_area.parquet').to_pandas()
@@ -477,7 +477,7 @@ def _plugin_xy(a, b, is_world=False):
 _doplnky = _plugins.load_and_run_plugins(MESTO, {**cam, 'w': W, 'h': H}, _plugin_xy)
 json.dump({'w': W, 'h': H, 'cam': cam, 'districts': districts, 'needs': needs, 'xmas': nam, 'chunks': {CKEY[c]: CHUNKS[c] for c in chunks}, 'bus': bus_route, 'trams': trams, 'decks': decks,
            'streets': streets, 'places': places, 'neighbors': neighbors, **({'signals': signals} if signals else {}), **({'doplnky': _doplnky} if _doplnky else {})},
-          open('site/overlay.json', 'w'), separators=(',', ':'), ensure_ascii=False)
-json.dump(addr_index, open('site/search.json', 'w'), separators=(',', ':'), ensure_ascii=False)   # adresy pro hledání, načte se až při psaní
+          open(f'{SITE}/overlay.json', 'w'), separators=(',', ':'), ensure_ascii=False)
+json.dump(addr_index, open(f'{SITE}/search.json', 'w'), separators=(',', ':'), ensure_ascii=False)   # adresy pro hledání, načte se až při psaní
 print('čtverců', len(chunks), 'budov', sum(len(v['buildings']) for v in per_chunk.values()), 'adres', len(addr_index),
-      'ulic', len(streets), 'míst', len(places), 'sousedů', len(neighbors), 'kB', os.path.getsize('site/overlay.json') // 1000)
+      'ulic', len(streets), 'míst', len(places), 'sousedů', len(neighbors), 'kB', os.path.getsize(f'{SITE}/overlay.json') // 1000)

@@ -75,7 +75,8 @@
   }
   function treeShapes(x, y, z, bb) {
     const dv = depth(x, y, z), out = [], cx = Math.floor(x / 16), cy = Math.floor(y / 16), A = stromy(), k0 = 0.2 / cam.mpp;
-    for (let i = cx - 4; i <= cx + 2; i++) for (let j = cy - 4; j <= cy + 2; j++) for (const t of TG.get(i + ',' + j) || []) {   // stromy před vozidlem (k jihozápadu) až ~60 m
+    const i0 = Z[0] < 0 ? cx - 4 : cx - 2, j0 = -Z[2] < 0 ? cy - 4 : cy - 2;
+    for (let i = i0; i <= i0 + 6; i++) for (let j = j0; j <= j0 + 6; j++) for (const t of TG.get(i + ',' + j) || []) {   // stromy před vozidlem (ke kameře) až ~60 m
       const [tx, ty, tz, h, con] = t;
       if (depth(tx, ty, tz) >= dv - 0.3) continue;                               // strom je za vozidlem
       if (A) {                                                                    // přesná kresba stromu

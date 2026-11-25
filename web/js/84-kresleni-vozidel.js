@@ -51,7 +51,7 @@
     for (let i = 0; i < 6; i++) {
       const z0 = 1.2 + i * 1.75, r = 3.7 - i * 0.56;
       for (let k = 0; k < 7 - i; k++) {
-        const u = 0.12 + rnd(n * 100 + i * 10 + k) * 0.6, a = (225 + (rnd(n * 100 + i * 10 + k + 5) - 0.5) * 150) * Math.PI / 180;   // přivrácená strana (pohled od JZ)
+        const u = 0.12 + rnd(n * 100 + i * 10 + k) * 0.6, a = CAM_ANG + (rnd(n * 100 + i * 10 + k + 5) - 0.5) * 150 * Math.PI / 180;   // přivrácená strana (ke kameře)
         lights.push(toImg(x + Math.cos(a) * r * (1 - u), y + Math.sin(a) * r * (1 - u), g + z0 + 3.0 * u));
       }
     }
@@ -89,7 +89,7 @@
     const prof = [[[0.35, h - 1.0], [1.5, h - 1.6], [1.5, 0.5]], [[1.5, h - 1.9], [r * 0.75, h - 1.8], [r, h - 2.6], [r, 0.5]]];
     for (let j = 0; j < 26; j++) {
       const th = (j / 26) * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
-      if (Math.sin(th - Math.PI / 4) > 0.35) continue;            // odvrácená strana (pohled od JZ) je za sochou
+      if (Math.sin(th - Math.PI / 4 - VROT) > 0.35) continue;     // odvrácená strana (od kamery) je za sochou
       for (const pl of prof) for (let i = 0; i + 1 < pl.length; i++) for (let u = 0; u < 1; u += 0.34) {
         const rr = pl[i][0] + (pl[i + 1][0] - pl[i][0]) * u, zz = pl[i][1] + (pl[i + 1][1] - pl[i][1]) * u;
         pts.push(toImg(x + c * rr, y + s * rr, g + zz));

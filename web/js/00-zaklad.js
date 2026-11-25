@@ -4,7 +4,16 @@
   addEventListener('pointerdown', () => document.documentElement.classList.add('ukazatel'), { capture: true, passive: true });
   addEventListener('keydown', (e) => { if (e.key === 'Tab') document.documentElement.classList.remove('ukazatel'); }, { capture: true });
 
-  const [TILES, OV] = await Promise.all([fetch('tiles.json').then((r) => r.json()), fetch('overlay.json').then((r) => r.json())]);
+  // otočení mapy po 90° (geo.py POHLED): od JZ (výchozí), SZ, SV, JV; data pohledu N > 0 jsou ve složce pN/ (#leto-sv@…)
+  const VIEWS = ['jz', 'sz', 'sv', 'jv'];
+  const viewTok = (location.hash || '').slice(1).split('@')[0].split('-').find((t) => VIEWS.includes(t));
+  let VIEW = Math.max(0, VIEWS.indexOf(viewTok || 'jz')), P = VIEW ? `p${VIEW}/` : '';
+  const getJ = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
+  let TILES, OV;
+  try { [TILES, OV] = await Promise.all([getJ(`${P}tiles.json`), getJ(`${P}overlay.json`)]); }
+  catch { VIEW = 0; P = ''; [TILES, OV] = await Promise.all([getJ('tiles.json'), getJ('overlay.json')]); }   // pohled chybí: výchozí
+  // seznam pohledů, které existují (set_status.py): tiles.json výchozího pohledu ho má vždy aktuální
+  const VIEWS_OK = VIEW ? await getJ('tiles.json').then((t) => t.pohledy || [0]).catch(() => [0, VIEW]) : (TILES.pohledy || [0]);
   // real wind for chimney smoke; the map camera looks from the south-west, so east is right and up, north is left and up
   let realWind = null, realWeather = null, realSnow = null, applyRealWeather = () => {};
   // roční období podle kalendáře; v zimních měsících bez sněhu podzim (zimní mapa je celá pod sněhem)
@@ -19,7 +28,8 @@
         applyRealWeather();
       }
       if (!{{VITR}}) return;
-      const from = c.wind_direction_10m * Math.PI / 180, e = -Math.sin(from), n = -Math.cos(from);
+      const from = c.wind_direction_10m * Math.PI / 180, e0 = -Math.sin(from), n0 = -Math.cos(from);
+      const dv = VIEW * Math.PI / 2, e = e0 * Math.cos(dv) + n0 * Math.sin(dv), n = n0 * Math.cos(dv) - e0 * Math.sin(dv);   // otočený pohled: směr na obrazovce jako od JZ
       realWind = { dx: 0.7071 * (e - n), dy: -0.3536 * (e + n), strength: Math.min(2.2, Math.max(0.15, c.wind_speed_10m / 3)) };
     }).catch(() => {});
   if ({{VITR}} || {{POCASI}}) { loadWind(); setInterval(loadWind, 30 * 60 * 1000); }

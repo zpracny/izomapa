@@ -26,7 +26,7 @@
   for (const s of OV.streets) index.push({ label: s.name, kind: 'ulice', k: s.k, n: norm(s.name), go: () => goTo(s.xy[0], s.xy[1], 0.9) });
   // adresy celé mapy jsou ve zvláštním souboru, načtou se při prvním psaní do hledání
   let addrLoad = null;
-  const loadAddr = () => addrLoad || (addrLoad = fetch('search.json').then((r) => r.json()).then((A) => {
+  const loadAddr = () => addrLoad || (addrLoad = fetch(`${P}search.json`).then((r) => r.json()).then((A) => {
     for (const [a, k, cx, cy, i, kind] of A) index.push({ label: a, kind: kind || 'adresa', k, n: norm(a), go: () => { goTo(cx, cy, 2); loadChunk(k).then((c) => c && showBuilding(c.buildings[i])); } });
   }).catch(() => {}));
   $('q').addEventListener('focus', loadAddr);
@@ -101,6 +101,7 @@
   async function share() {
     const tok = [{ spring: 'jaro', summer: 'leto', autumn: 'podzim', winter: 'zima' }[state.season]];
     if (state.night > 0.7) tok.push('noc'); else if (state.night > 0.25) tok.push('soumrak');
+    if (VIEW) tok.push(VIEWS[VIEW]);
     const url = `${location.origin}${location.pathname}#${tok.join('-')}@${(location.hash.split('@')[1] || '')}`;
     const toast = (t) => { $('toast').textContent = t; $('toast').hidden = false; clearTimeout(share.t); share.t = setTimeout(() => { $('toast').hidden = true; }, 2200); };
     try {
@@ -116,6 +117,22 @@
     }
   }
   zbtn('share', share); zbtn('mShare', share);
+  // otočení mapy: jiný pohled = jiné dlaždice i data, stránka se načte znovu se stejným středem, přiblížením a stavem v odkazu
+  const VIEW_NAME = ['od jihozápadu', 'od severozápadu', 'od severovýchodu', 'od jihovýchodu'];
+  const nextView = () => { for (let k = 1; k < 4; k++) { const v = (VIEW + k * (VIEWS_OK.length === 2 ? 2 : 3)) % 4; if (VIEWS_OK.includes(v)) return v; } return VIEW; };
+  function rotate(nv) {
+    const c = viewer.viewport.getCenter(true), [x, y] = imgToWorld(c.x * W, c.y * W), [lon, lat] = lonlat(x, y);
+    const km = viewer.viewport.getBounds(true).width * W * cam.mpp / 1000;
+    const tok = location.hash.slice(1).split('@')[0].split('-').filter((t) => t && !VIEWS.includes(t));
+    if (nv) tok.push(VIEWS[nv]);
+    history.replaceState(null, '', `#${tok.join('-')}@${lat.toFixed(5)},${lon.toFixed(5)},${km.toFixed(2)}`);
+    location.reload();
+  }
+  if (VIEWS_OK.length > 1 && nextView() !== VIEW) {
+    const nv = nextView(), t = `Otočit mapu: pohled ${VIEW_NAME[nv]}`;
+    $('rot').hidden = false; $('rot').title = t; $('rot').setAttribute('aria-label', t); $('helpRot').hidden = false;
+    zbtn('rot', () => rotate(nv));
+  }
   function setMenu(open) { $('panel').classList.toggle('closed', !open); $('menu').setAttribute('aria-expanded', String(open)); $('menu').textContent = open ? 'Skrýt' : 'Menu'; }
   $('menu').addEventListener('click', () => setMenu($('panel').classList.contains('closed')));
   // desktop: panel jde zasunout ouškem vpravo od něj, stav si pamatuje prohlížeč

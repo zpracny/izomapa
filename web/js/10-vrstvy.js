@@ -8,8 +8,9 @@
     const dx = (any.x0 - base.x0) / UM, dy = (base.y1 - any.y1) / UM;
     LAYERS.push({ key, status: ch.status, src: (v) => ch[v], x: dx / W, y: dy / W, w: +any.Image.Size.Width * base.mpp / UM / W });
   }
-  // pořadí vrstev podle hloubky: pohled od JZ, takže čtverce dál na S a V (větší i + j) se kreslí dřív (níž)
-  const far = (k) => { const [i, j] = k.slice(1).split('_').map(Number); return i + j; };
+  // pořadí vrstev podle hloubky: čtverce dál od kamery se kreslí dřív (níž); od JZ je to větší i + j
+  const Zc = ((A, B) => [A[1] * B[2] - A[2] * B[1], 0, A[0] * B[1] - A[1] * B[0]])(OV.cam.X, OV.cam.Y);   // směr ke kameře (souřadnice se definují až v 20-souradnice)
+  const far = (k) => { const [i, j] = k.slice(1).split('_').map(Number); return -(i * Zc[0] - j * Zc[2]); };
   LAYERS.sort((a, b) => far(b.key) - far(a.key));
   if (!WIP) { $('wipSel').parentElement.hidden = true; state.wip = true; }   // vše hotové: bez přepínače, celá mapa   // bez rozpracovaných čtverců (např. náhled v artefaktu)
   const shown = (k) => state.wip || (LAYERS.find((l) => l.key === k) || {}).status === 'hotovo';
@@ -40,8 +41,8 @@
   async function addPreview(season) {
     const gen = ++previewGen;
     try {
-      const pv = await fetch(`preview/${season}.json${VER}`).then((r) => r.json());
-      const it = await add({ tileSource: { type: 'image', url: `preview/${season}.webp${VER}`, buildPyramid: false },
+      const pv = await fetch(`${P}preview/${season}.json${VER}`).then((r) => r.json());
+      const it = await add({ tileSource: { type: 'image', url: `${P}preview/${season}.webp${VER}`, buildPyramid: false },
         x: (pv.x0 - base.x0) / UM / W, y: (base.y1 - pv.y1) / UM / W, width: pv.w * pv.mpp / UM / W, index: 0 });
       if (it && gen !== previewGen) { viewer.world.removeItem(it); return; }   // mezitím jiné období
       if (it) { if (previewItem) viewer.world.removeItem(previewItem); previewItem = it; viewer.world.setItemIndex(it, 0); }
@@ -216,6 +217,7 @@
     addEventListener('hashchange', () => {
       if (Date.now() - uiBackAt < 1500) return;                  // návrat po zavření okna (Zpět) mapu nepřesouvá
       const tok = location.hash.slice(1).split('@')[0].split('-');
+      if (Math.max(0, VIEWS.indexOf(tok.find((t) => VIEWS.includes(t)) || 'jz')) !== VIEW) { location.reload(); return; }   // odkaz na jiný pohled mapy
       for (const q of tok) if (SEASON_TOKEN[q]) setSeason(SEASON_TOKEN[q]);
       // sdílený odkaz má vždy roční období, noc nebo soumrak jen když platí; odkaz jen s polohou denní dobu nemění
       const denni = tok.includes('noc') ? 1 : tok.includes('soumrak') ? 0.42 : tok.some((q) => SEASON_TOKEN[q]) ? 0 : null;

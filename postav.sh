@@ -24,6 +24,7 @@ mkdir -p site/tiles
 for s in summer autumn winter spring; do node render.mjs mpp=0.2 dir=build season=$s alpha=1 stromy=site/stromy > /dev/null; done   # kresby stromů: auta se schovají přesně za ně (vždy 0,2 m/px jako animace prohlížeče, i u detailního rozlišení)
 python preview.py
 python overlay.py
+./pohledy.sh web                                              # otočené pohledy (./postav_pohledy.sh), jsou-li
 python mhd.py || true                                         # jízdní řády jen když je v mesto.json mhd.gtfs
 python set_status.py hotovo
 python build_html.py

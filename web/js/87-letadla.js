@@ -5,7 +5,7 @@
     if (PLANESPR.has(key)) return PLANESPR.get(key);
     const a = k / NDIR * Math.PI * 2, fx_ = Math.cos(a), fy_ = Math.sin(a), sxv = -fy_, syv = fx_;
     const O = toImg(0, 0, 0), R = (s, t, h) => { const p = toImg(fx_ * s + sxv * t, fy_ * s + syv * t, h); return [p[0] - O[0], p[1] - O[1]]; };
-    const vis = (nx, ny) => nx + ny < 0;
+    const vis = faceVis;
     const sun = (nx, ny, nz) => nx * SUNV[0] + ny * SUNV[1] + nz * SUNV[2];
     const faces = [];
     const Q = (pts, rgb, normal) => {
