@@ -28,6 +28,8 @@
     if (st) { showStop(st); return; }
     const rz = rozcAt(ix, iy);
     if (rz) { showCard({ title: rz.n, text: 'Turistický rozcestník' + (rz.e ? `, ${rz.e} m n. m.` : '.'), lon: rz.lon, lat: rz.lat, rows: [] }); return; }
+    const sz = slAt(ix, iy);
+    if (sz) { showSl(sz); return; }
     const b = hit(ix, iy);
     if (b) showBuilding(b); else showPoint(ix, iy);
   });
@@ -43,8 +45,9 @@
     const [ix, iy] = vpToImg(new OpenSeadragon.Point(mx, my));
     state.hoverStop = stopAt(ix, iy);                       // zastávka a rozcestník mají přednost před budovou (jsou malé)
     state.hoverRozc = state.hoverStop ? null : rozcAt(ix, iy);
-    state.hover = state.hoverStop || state.hoverRozc ? null : hit(ix, iy);
-    $('osd').style.cursor = state.hover || state.hoverStop || state.hoverRozc ? 'pointer' : '';
+    state.hoverSl = state.hoverStop || state.hoverRozc ? null : slAt(ix, iy);
+    state.hover = state.hoverStop || state.hoverRozc || state.hoverSl ? null : hit(ix, iy);
+    $('osd').style.cursor = state.hover || state.hoverStop || state.hoverRozc || state.hoverSl ? 'pointer' : '';
   });
 
 

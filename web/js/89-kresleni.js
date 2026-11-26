@@ -162,6 +162,7 @@
           ctx.fillStyle = '#e9e6dc'; ctx.textBaseline = 'middle'; ctx.fillText(lab, bx + 5, by + 9); ctx.textBaseline = 'alphabetic';
         }
       }
+      drawSluzby(sx, ox, oy, vis);                       // Balíkovna boxy, nabíječky (47-sluzby.js)
       if (MHD.stopPts && sx > 0.2) {
         const mPx = toImg(0, 0, 0)[1] - toImg(0, 0, 1)[1], u = Math.max(3, Math.round(sx * 4)), lit = night > 0.3;
         for (const st of MHD.stopPts) {

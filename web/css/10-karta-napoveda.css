@@ -42,3 +42,11 @@ dialog.plocha { max-width: 440px; } dialog.plocha h3 { margin-top: 0; } dialog.p
 .coffee { display: block; font-size: .82rem; color: var(--muted); text-decoration: none; padding: 2px 0; }
 .coffee:hover, .coffee:focus-visible { color: var(--ink); text-decoration: underline; }
 .support-links img { width: 132px; height: 132px; image-rendering: pixelated; background: #fff; padding: 4px; }
+/* služby v budově (47-sluzby.js): skupiny podle oboru, dlouhé seznamy (poliklinika) se rolují */
+.card .sluzby { font-size: .84rem; max-height: 38vh; overflow-y: auto; border-top: 2px solid var(--edge); padding-top: 4px; }
+.card .sluzby[hidden] { display: none; }
+.card .sluzby h3 { margin: 0 0 2px; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.card .sluzby summary { cursor: pointer; padding: 1px 0; }
+.card .sluzby ul { margin: 1px 0 4px; padding-left: 16px; }
+.card .sluzby li { line-height: 1.35; }
+.card .sluzby small { color: var(--muted); }

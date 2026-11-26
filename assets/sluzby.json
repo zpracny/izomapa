@@ -1,0 +1,2032 @@
+{
+"zdroje": [
+{
+"nazev": "ÚZIS ČR, Národní registr poskytovatelů zdravotních služeb",
+"licence": "CC BY 4.0",
+"autori": "Zelinková H., Klimeš D., Šnábl I., Májek T., Jarkovský J., Klika P., Vičar M., Jochcová M., Komenda M., Dušek L.",
+"url": "https://nrpzs.uzis.cz/"
+},
+{
+"nazev": "MŠMT, Rejstřík škol a školských zařízení",
+"licence": "CC0",
+"url": "https://rejstriky.msmt.cz/"
+},
+{
+"nazev": "SÚKL, seznam lékáren",
+"licence": "podmínky užití otevřených dat SÚKL",
+"url": "https://opendata.sukl.gov.cz/podminky-uziti-otevrenych-dat"
+},
+{
+"nazev": "Česká pošta, pobočky a Balíkovny",
+"url": "https://www.ceskaposta.cz/ke-stazeni/zakaznicke-vystupy"
+},
+{
+"nazev": "MPO, seznam veřejně přístupných dobíjecích stanic",
+"url": "https://mpo.gov.cz/cz/energetika/statistika/statistika-a-evidence-cerpacich-a-dobijecich-stanic/seznam-verejne-pristupnych-dobijecich-stanic--280706/"
+}
+],
+"sluzby": [
+[
+49.68847,
+14.016151,
+"Balíkovna",
+"Příbram AUDOMEDIA moto shop",
+"Mariánské údolí 126, Příbram II, 26101, Příbram"
+],
+[
+49.691503,
+14.01169,
+"Balíkovna",
+"Příbram Allwyn Bala potraviny",
+"Gen. R. Tesaříka 353, Příbram I, 26101, Příbram"
+],
+[
+49.677366,
+13.993865,
+"Balíkovna",
+"Příbram Allwyn Tabák Bož. Němcové 249",
+"Bož. Němcové 249, Příbram VII, 26101, Příbram"
+],
+[
+49.68503,
+14.00652,
+"Balíkovna",
+"Příbram Allwyn Tabák Mariánská",
+"Mariánská 39, Příbram IV, 26101, Příbram"
+],
+[
+49.670913,
+13.988367,
+"Balíkovna",
+"Příbram Allwyn Tabák Ob. Dům Stavus",
+"Žežická 598, Příbram V-Zdaboř, 26101, Příbram"
+],
+[
+49.689746,
+14.014947,
+"Balíkovna",
+"Příbram Damini",
+"Střelecká 28, Příbram II, 26101, Příbram"
+],
+[
+49.674481,
+13.985814,
+"Balíkovna",
+"Příbram Dětský bazárek",
+"Drkolnovská 354, Příbram VI-Březové Hory, 26101, Příbram"
+],
+[
+49.680652,
+13.988579,
+"Balíkovna",
+"Příbram INCO Soukup voda plyn topení",
+"Kladenská 636, Příbram VI-Březové Hory, 26101, Příbram"
+],
+[
+49.687566,
+14.011513,
+"Balíkovna",
+"Příbram Kožené zboží",
+"Dlouhá 80, Příbram III, 26101, Příbram"
+],
+[
+49.688398,
+14.01124,
+"Balíkovna",
+"Příbram LINGERIE",
+"Pražská 130, Příbram I, 26101, Příbram"
+],
+[
+49.688145,
+14.013059,
+"Balíkovna",
+"Příbram Lovecké potřeby",
+"Dlouhá 164, Příbram II, 26101, Příbram"
+],
+[
+49.677961,
+13.996213,
+"Balíkovna",
+"Příbram Oděvy Rosenbaum",
+"náměstí 17. listopadu 295, Příbram VII, 26101, Příbram"
+],
+[
+49.677813,
+13.999487,
+"Balíkovna",
+"Příbram VE DVOU druhý dech stylu",
+"Bratří Čapků 329, Příbram VII, 26101, Příbram"
+],
+[
+49.64747,
+14.0196,
+"Balíkovna box",
+"Lešetice BOX OX Point",
+"č.p. 41, 26231, Lešetice"
+],
+[
+49.669461,
+13.996201,
+"Balíkovna box",
+"Příbram AlzaBox",
+"Příbram VIII 140, 26101, Příbram"
+],
+[
+49.689046,
+14.012337,
+"Balíkovna box",
+"Příbram AlzaBox Jiráskovy sady Flop",
+"Jiráskovy sady 16, Příbram II, 26101, Příbram"
+],
+[
+49.69209,
+13.998357,
+"Balíkovna box",
+"Příbram AlzaBox Kaufland",
+"Husova 622, Příbram VI-Březové Hory, 26101, Příbram"
+],
+[
+49.686306,
+14.00864,
+"Balíkovna box",
+"Příbram AlzaBox OC Skalka",
+"Milínská 134, Příbram III, 26101, Příbram"
+],
+[
+49.695139,
+14.006739,
+"Balíkovna box",
+"Příbram AlzaBox OMV Evropská",
+"Evropská , Příbram I, 26101, Příbram"
+],
+[
+49.675391,
+13.984073,
+"Balíkovna box",
+"Příbram AlzaBox OMV Podbrdská",
+"Podbrdská 528, Příbram VII, 26101, Příbram"
+],
+[
+49.677865,
+13.992138,
+"Balíkovna box",
+"Příbram AlzaBox Potraviny",
+"Politických vězňů 150, Příbram VII, 26101, Příbram"
+],
+[
+49.67597,
+13.997157,
+"Balíkovna box",
+"Příbram AlzaBox Seifertova Penny",
+"Seifertova 532, Příbram VII, 26101, Příbram"
+],
+[
+49.666593,
+13.996006,
+"Balíkovna box",
+"Příbram AlzaBox Stop Shop",
+"Brodská , Příbram V-Zdaboř, 26101, Příbram"
+],
+[
+49.676277,
+14.000117,
+"Balíkovna box",
+"Příbram AlzaBox U Albertu",
+"Školní , Příbram VIII, 26101, Příbram"
+],
+[
+49.68943,
+14.004468,
+"Balíkovna box",
+"Příbram AlzaBox Čs. armády",
+"Čs. armády 153, Příbram IV, 26101, Příbram"
+],
+[
+49.675504,
+13.989529,
+"Balíkovna box",
+"Příbram AlzaBox Žežická",
+"Žežická 234, Příbram VII, 26101, Příbram"
+],
+[
+49.69097,
+14.032376,
+"Balíkovna box",
+"Příbram AlzaBox Žižkova Orlen",
+"Žižkova 705, Příbram II, 26101, Příbram"
+],
+[
+49.687309,
+14.001672,
+"Balíkovna box",
+"Příbram Z-BOX Aloise Jiráska",
+"Aloise Jiráska 196, Příbram IV, 26101, Příbram"
+],
+[
+49.67721,
+13.99417,
+"Balíkovna box",
+"Příbram Z-BOX Boženy Němcové",
+"Bož. Němcové , Příbram VII, 26101, Příbram"
+],
+[
+49.67005,
+13.995111,
+"Balíkovna box",
+"Příbram Z-BOX Brodská 92",
+"Brodská , Příbram VIII, 26101, Příbram"
+],
+[
+49.667501,
+13.995241,
+"Balíkovna box",
+"Příbram Z-BOX Brodská OKAY Elektro",
+"Brodská , Příbram V-Zdaboř, 26101, Příbram"
+],
+[
+49.675308,
+13.996352,
+"Balíkovna box",
+"Příbram Z-BOX Budovatelů",
+"Budovatelů 136, Příbram VIII, 26101, Příbram"
+],
+[
+49.695936,
+14.011923,
+"Balíkovna box",
+"Příbram Z-BOX Evropská K+K Koberce",
+"Evropská 329, Příbram I, 26101, Příbram"
+],
+[
+49.695293,
+14.006135,
+"Balíkovna box",
+"Příbram Z-BOX Evropská Lidl",
+"Evropská 337, Příbram I, 26101, Příbram"
+],
+[
+49.691933,
+14.020988,
+"Balíkovna box",
+"Příbram Z-BOX Fibichova",
+"Fibichova 674, Příbram II, 26101, Příbram"
+],
+[
+49.692341,
+13.996851,
+"Balíkovna box",
+"Příbram Z-BOX Husova",
+"Husova , Příbram VI-Březové Hory, 26101, Příbram"
+],
+[
+49.686306,
+14.00864,
+"Balíkovna box",
+"Příbram Z-BOX Milínská",
+"Milínská 134, Příbram III, 26101, Příbram"
+],
+[
+49.655931,
+13.994151,
+"Balíkovna box",
+"Příbram Z-BOX Na Větrov",
+"Na Větrov 199, Žežice, 26101, Příbram"
+],
+[
+49.677865,
+13.992138,
+"Balíkovna box",
+"Příbram Z-BOX Politických vězňů",
+"Politických vězňů 150, Příbram VII, 26101, Příbram"
+],
+[
+49.68884,
+14.013385,
+"Balíkovna box",
+"Příbram Z-BOX Pražská",
+"Pražská 147, Příbram II, 26101, Příbram"
+],
+[
+49.68913,
+14.004661,
+"Balíkovna box",
+"Příbram Z-BOX Československé armády",
+"Čs. armády , Příbram IV, 26101, Příbram"
+],
+[
+49.67214,
+13.987821,
+"Balíkovna box",
+"Příbram Z-BOX Žežická",
+"Žežická , Příbram V-Zdaboř, 26101, Příbram"
+],
+[
+49.67572,
+14.00046,
+"Dentální hygiena",
+"Bc. Simona Machová DiS.",
+""
+],
+[
+49.673092,
+13.989718,
+"Dentální hygiena",
+"Dominika Průšová DiS.",
+""
+],
+[
+49.67568,
+13.99826,
+"Dentální hygiena",
+"Kateřina Hrabáková DiS.",
+""
+],
+[
+49.68736,
+14.010806,
+"Dentální hygiena",
+"Kateřina Krutská, DiS.",
+""
+],
+[
+49.67572,
+14.00046,
+"Dentální hygiena",
+"Petra Schneeweissová, DiS.",
+""
+],
+[
+49.689952,
+14.026839,
+"Dentální hygiena",
+"Radka Pátková",
+""
+],
+[
+49.67572,
+14.00046,
+"Dentální hygiena",
+"Stanislava Braná, DiS., dentální hygienistka",
+""
+],
+[
+49.673092,
+13.989718,
+"Dentální hygiena",
+"Veronika Dent s.r.o.",
+""
+],
+[
+49.689952,
+14.026839,
+"Dentální hygiena",
+"Veronika Šrainová DiS.",
+""
+],
+[
+49.666973,
+13.99586,
+"Dobíjecí stanice",
+"Chargee infrastructure s.r.o.",
+"50 kW, 2 nabíjecí body"
+],
+[
+49.677277,
+14.006387,
+"Dobíjecí stanice",
+"DRUPOL autodružstvo",
+"1 nabíjecí body"
+],
+[
+49.676137,
+13.998419,
+"Dobíjecí stanice",
+"E.ON Česká republika s.r.o.",
+"22 kW, 2 nabíjecí body"
+],
+[
+49.695639,
+14.007361,
+"Dobíjecí stanice",
+"Pražská energetika, a.s.",
+"75 kW, 2 nabíjecí body"
+],
+[
+49.695639,
+14.007361,
+"Dobíjecí stanice",
+"Pražská energetika, a.s.",
+"150 kW, 2 nabíjecí body"
+],
+[
+49.690162,
+14.007667,
+"Dobíjecí stanice",
+"innogy Energo, s.r.o.",
+"2 nabíjecí body"
+],
+[
+49.67944,
+14.00529,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"50 kW, 2 nabíjecí body"
+],
+[
+49.67944,
+14.00529,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"50 kW, 2 nabíjecí body"
+],
+[
+49.691647,
+14.03359,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"50 kW, 2 nabíjecí body"
+],
+[
+49.665968,
+13.999567,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"1 nabíjecí body"
+],
+[
+49.665968,
+13.999567,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"1 nabíjecí body"
+],
+[
+49.665968,
+13.999567,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"1 nabíjecí body"
+],
+[
+49.665968,
+13.999567,
+"Dobíjecí stanice",
+"ČEZ, a. s.",
+"1 nabíjecí body"
+],
+[
+49.676364,
+13.994243,
+"Dětský lékař",
+"MUDr. Iva Ptáčková",
+""
+],
+[
+49.67572,
+14.00046,
+"Dětský lékař",
+"MUDr. Michaela Šedivá",
+""
+],
+[
+49.67572,
+14.00046,
+"Dětský lékař",
+"MUDr. Renata Kramářová",
+""
+],
+[
+49.67572,
+14.00046,
+"Dětský lékař",
+"Mediclinic a.s.",
+""
+],
+[
+49.673427,
+13.995971,
+"Dětský lékař",
+"Péče s.r.o.",
+""
+],
+[
+49.68736,
+14.010806,
+"Dětský lékař",
+"Sana Vita s.r.o.",
+""
+],
+[
+49.680531,
+13.996258,
+"Dům dětí a mládeže",
+"Vzdělávací institut Středočeského kraje - Zařízení pro další vzdělávání pedagogických pracovníků",
+""
+],
+[
+49.673092,
+13.989718,
+"Fyzioterapie",
+"ALKA, o.p.s.",
+"Ergoterapeut, Fyzioterapeut, rehabilitační a fyzikální medicína"
+],
+[
+49.67572,
+14.00046,
+"Fyzioterapie",
+"B&F Rehabilitace Příbram s.r.o.",
+"Fyzioterapeut"
+],
+[
+49.689847,
+14.00839,
+"Fyzioterapie",
+"Edita Koutová",
+"Fyzioterapeut"
+],
+[
+49.67333,
+13.997095,
+"Fyzioterapie",
+"Fyziobody PROF.I.K s.r.o.",
+"Fyzioterapeut"
+],
+[
+49.673092,
+13.989718,
+"Fyzioterapie",
+"Martina Bartošová",
+"Fyzioterapeut"
+],
+[
+49.67572,
+14.00046,
+"Fyzioterapie",
+"Mgr. Iveta Peterková",
+"Fyzioterapeut"
+],
+[
+49.67572,
+14.00046,
+"Fyzioterapie",
+"Mgr. Kateřina Ptáčková",
+"Fyzioterapeut"
+],
+[
+49.67572,
+14.00046,
+"Fyzioterapie",
+"Mgr. Tereza Hájková",
+"Fyzioterapeut"
+],
+[
+49.707349,
+13.983005,
+"Fyzioterapie",
+"Radovan Alt, DiS., Rehabilitační středisko Kovohutě",
+"Fyzioterapeut"
+],
+[
+49.692121,
+14.002783,
+"Fyzioterapie",
+"Rehamedica Příbram s.r.o.",
+"Fyzioterapeut"
+],
+[
+49.690349,
+14.007528,
+"Fyzioterapie",
+"Sandra Oudová DiS.",
+"Fyzioterapeut"
+],
+[
+49.67572,
+14.00046,
+"Fyzioterapie",
+"Simona Doležalová, DiS.",
+"Fyzioterapeut"
+],
+[
+49.696621,
+14.051964,
+"Fyzioterapie",
+"Věra Jechová, fyzioterapie",
+"Fyzioterapeut"
+],
+[
+49.673413,
+13.996613,
+"Gynekologie",
+"Gymat s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Gynekologie",
+"Gymine s.r.o.",
+""
+],
+[
+49.673413,
+13.996613,
+"Gynekologie",
+"Gynase s.r.o.",
+""
+],
+[
+49.673092,
+13.989718,
+"Gynekologie",
+"Gynekologicko-porodnická ambulance PB s. r. o.",
+""
+],
+[
+49.688323,
+14.015635,
+"Gynekologie",
+"Gynekologicko-porodnická ambulance PB s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Gynekologie",
+"Gynekologie Příbram s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Gynekologie",
+"MUDr. Jaromír Jiruš s.r.o.",
+""
+],
+[
+49.68736,
+14.010806,
+"Gynekologie",
+"MUDr. Pavel Pokorný",
+""
+],
+[
+49.67572,
+14.00046,
+"Gynekologie",
+"MUDr. Vlastislav Páca",
+""
+],
+[
+49.690854,
+14.009279,
+"Logopedie",
+"Klinická logopedie Příbram s.r.o.",
+""
+],
+[
+49.682427,
+13.989808,
+"Logopedie",
+"Mgr. Iva Vanerová, logopedická ordinace",
+""
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Alfa Medica s.r.o.",
+"dětská otorinolaryngologie, foniatrie, otorinolaryngologie a chirurgie hlavy a krku"
+],
+[
+49.691771,
+14.010443,
+"Lékař specialista",
+"Angio a.s.",
+"angiologie, intervenční radiologie, kardiologie, radiologie a zobrazovací metody"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"BB Klinik,s.r.o.",
+"cévní chirurgie, chirurgie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Chirurgie VM s.r.o.",
+"cévní chirurgie, dětská chirurgie, chirurgie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Clinterap s.r.o.",
+"psychiatrie, Sestra pro péči v psychiatrii"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"DB Ortopedie s.r.o.",
+"ortopedie a traumatologie pohybového ústrojí"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"FB Med s.r.o.",
+"plastická chirurgie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"GENNET, s.r.o.",
+"alergologie a klinická imunologie"
+],
+[
+49.69118,
+14.009688,
+"Lékař specialista",
+"Gennet Lab s.r.o., Příbram",
+"lékařská genetika"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Kardiologická ambulance s.r.o.",
+"kardiologie, vnitřní lékařství"
+],
+[
+49.68736,
+14.010806,
+"Lékař specialista",
+"MUDr. Boleslava Bobeková",
+"vnitřní lékařství"
+],
+[
+49.68736,
+14.010806,
+"Lékař specialista",
+"MUDr. Eva Šedivá",
+"vnitřní lékařství, všeobecné praktické lékařství"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Ivana Mášová",
+"oftalmologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Iveta Kravarčíková",
+"oftalmologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Jan Dvořák",
+"otorinolaryngologie a chirurgie hlavy a krku"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Jan Titlbach",
+"psychiatrie"
+],
+[
+49.691645,
+14.0085,
+"Lékař specialista",
+"MUDr. Jiřina Bodnárová",
+"dermatovenerologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Karel Beneš",
+"chirurgie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Karel Vosátko",
+"ortopedie a traumatologie pohybového ústrojí"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Kateřina Blűmlová",
+"dermatovenerologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Kateřina Starková s.r.o.",
+"dermatovenerologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Kateřina Stehlíková",
+"chirurgie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Marie Mikolášová",
+"neurologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Marie Urbanová",
+"radiologie a zobrazovací metody"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Martin Švagr",
+"ortopedie a traumatologie pohybového ústrojí"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Michaela Fraňková",
+"infekční lékařství"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Miroslav Choura",
+"kardiologie, vnitřní lékařství"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"MUDr. Miroslava Horníková",
+"revmatologie"
+],
+[
+49.667794,
+13.98615,
+"Lékař specialista",
+"MUDr. Otto Lang",
+"vnitřní lékařství"
+],
+[
+49.673092,
+13.989718,
+"Lékař specialista",
+"MUDr. Tomáš Karas",
+"ortopedie a traumatologie pohybového ústrojí"
+],
+[
+49.680117,
+13.999686,
+"Lékař specialista",
+"MUDr. V. Štruplová s.r.o.",
+"alergologie a klinická imunologie, vnitřní lékařství"
+],
+[
+49.691003,
+14.010262,
+"Lékař specialista",
+"MUDr. Vladimír Danda",
+"chirurgie"
+],
+[
+49.680117,
+13.999686,
+"Lékař specialista",
+"Milan Kvapil s.r.o.",
+"endokrinologie a diabetologie, vnitřní lékařství"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Milan Kvapil s.r.o.",
+"endokrinologie a diabetologie, vnitřní lékařství"
+],
+[
+49.674573,
+13.987852,
+"Lékař specialista",
+"NL - BioLAB s.r.o.",
+"alergologie a klinická imunologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Neurologie Příbram VIII, s.r.o.",
+"neurologie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Oftalmologie Příbram s.r.o.",
+"oftalmologie"
+],
+[
+49.68761,
+14.012006,
+"Lékař specialista",
+"Ortho Salutogenesis s.r.o.",
+"ortodoncie"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Ortoped Sed s.r.o.",
+"ortopedie a traumatologie pohybového ústrojí"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Rtg Klinik s.r.o.",
+"radiologie a zobrazovací metody"
+],
+[
+49.689641,
+14.009872,
+"Lékař specialista",
+"Sintana med s.r.o.",
+"rehabilitační a fyzikální medicína"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Trnin Příbram s.r.o.",
+"pneumologie a ftizeologie, vnitřní lékařství"
+],
+[
+49.67572,
+14.00046,
+"Lékař specialista",
+"Urologie - PB - s.r.o",
+"urologie"
+],
+[
+49.692677,
+13.997637,
+"Lékárna",
+"Benu Lékárna",
+""
+],
+[
+49.680117,
+13.999686,
+"Lékárna",
+"Benu Lékárna",
+""
+],
+[
+49.67572,
+14.00046,
+"Lékárna",
+"Benu Lékárna",
+""
+],
+[
+49.675581,
+13.998112,
+"Lékárna",
+"Dr. Max Lékárna",
+""
+],
+[
+49.666531,
+13.998239,
+"Lékárna",
+"Dr. Max Lékárna",
+""
+],
+[
+49.694119,
+14.004598,
+"Lékárna",
+"Dr.Max Lékárna",
+""
+],
+[
+49.68736,
+14.010806,
+"Lékárna",
+"Hradčanská lékárenská společnost, s.r.o., Lékárna",
+""
+],
+[
+49.688338,
+14.010071,
+"Lékárna",
+"Lékárna Pharmgest spol.s r.o.",
+""
+],
+[
+49.682863,
+13.989338,
+"Lékárna",
+"U Sv.Vojtěcha",
+""
+],
+[
+49.683203,
+14.007627,
+"Mateřská škola",
+"All Stars School - mateřská škola a základní škola, s.r.o.",
+""
+],
+[
+49.673622,
+13.996304,
+"Mateřská škola",
+"Alternativní mateřská škola",
+""
+],
+[
+49.673574,
+13.996862,
+"Mateřská škola",
+"Alternativní mateřská škola",
+""
+],
+[
+49.681099,
+13.998549,
+"Mateřská škola",
+"Mateřská škola 28. října 55, Příbram VII",
+""
+],
+[
+49.688966,
+14.018864,
+"Mateřská škola",
+"Mateřská škola Kličkova vila",
+""
+],
+[
+49.677285,
+13.990357,
+"Mateřská škola",
+"Mateřská škola Klubíčko",
+""
+],
+[
+49.679016,
+13.993038,
+"Mateřská škola",
+"Mateřská škola Perníková chaloupka",
+""
+],
+[
+49.688599,
+13.979757,
+"Mateřská škola",
+"Mateřská škola Podlesí",
+""
+],
+[
+49.690932,
+14.008719,
+"Mateřská škola",
+"Mateřská škola Pohádka",
+""
+],
+[
+49.691347,
+14.018166,
+"Mateřská škola",
+"Mateřská škola Rybička",
+""
+],
+[
+49.685329,
+14.010065,
+"Mateřská škola",
+"Mateřská škola V Zahradě",
+""
+],
+[
+49.687887,
+14.017274,
+"Mateřská škola",
+"Mateřská škola pod Svatou Horou",
+""
+],
+[
+49.685693,
+14.010386,
+"Mateřská škola",
+"Mateřská škola, Příbram III, Jungmannova 91",
+""
+],
+[
+49.676468,
+13.994995,
+"Mateřská škola",
+"Mateřská škola, Příbram VII, Bratří Čapků 278",
+""
+],
+[
+49.6768,
+13.998118,
+"Mateřská škola",
+"Mateřská škola, Příbram VII, Bratří Čapků 278",
+""
+],
+[
+49.677599,
+13.987847,
+"Mateřská škola",
+"Mateřská škola, Příbram VII, Jana Drdy 496",
+""
+],
+[
+49.676451,
+13.987108,
+"Mateřská škola",
+"Mateřská škola, Příbram VII, Jana Drdy 496",
+""
+],
+[
+49.673127,
+13.996096,
+"Mateřská škola",
+"Mateřská škola, Příbram VIII, Školní 131",
+""
+],
+[
+49.67307,
+13.99543,
+"Mateřská škola",
+"Mateřská škola, Příbram VIII, Školní 131",
+""
+],
+[
+49.690854,
+14.009279,
+"Mateřská škola",
+"Odborné učiliště, Praktická škola, Základní škola a Mateřská škola Příbram IV, příspěvková organizace",
+""
+],
+[
+49.691771,
+14.010443,
+"Nemocnice",
+"Oblastní nemocnice Příbram, a.s.",
+""
+],
+[
+49.673092,
+13.989718,
+"Nemocnice",
+"Oblastní nemocnice Příbram, a.s.",
+""
+],
+[
+49.67572,
+14.00046,
+"Odběrové místo",
+"Euc Laboratoře s.r.o., odběrová místnost",
+""
+],
+[
+49.67572,
+14.00046,
+"Odběrové místo",
+"Oblastní nemocnice Příbram, a.s., odběrová místnost",
+""
+],
+[
+49.68736,
+14.010806,
+"Odběrové místo",
+"Unilabs Diagnostics k.s., odběrová místnost",
+""
+],
+[
+49.675581,
+13.998112,
+"Odběrové místo",
+"VIDIA-DIAGNOSTIKA, spol. s r.o., odběrová místnost",
+""
+],
+[
+49.67572,
+14.00046,
+"Odběrové místo",
+"VIDIA-DIAGNOSTIKA, spol. s r.o., odběrová místnost",
+""
+],
+[
+49.688707,
+14.012872,
+"Oční optika",
+"Axis Optik s.r.o., optometrista",
+""
+],
+[
+49.688062,
+14.010767,
+"Oční optika",
+"Fokus optik a.s.",
+""
+],
+[
+49.688139,
+14.01051,
+"Oční optika",
+"GrandVision CZ s.r.o.",
+""
+],
+[
+49.685693,
+14.010386,
+"Oční optika",
+"Oblastní nemocnice Příbram, a.s.,ortoptista",
+""
+],
+[
+49.684922,
+14.006986,
+"Oční optika",
+"Optik Marek s.r.o.",
+""
+],
+[
+49.675581,
+13.998112,
+"Oční optika",
+"SIRIUS.s.r.o.",
+""
+],
+[
+49.689451,
+14.014285,
+"Oční optika",
+"Václav Antonín, Optik - optometrista",
+""
+],
+[
+49.687889,
+14.010773,
+"Oční optika",
+"Česká Oční Optika Holding a.s.",
+""
+],
+[
+49.689591,
+14.011393,
+"Pošta",
+"Příbram 1",
+"Gen. R. Tesaříka 179, Příbram I, 26101, Příbram"
+],
+[
+49.678788,
+13.997543,
+"Pošta",
+"Příbram 2",
+"třída Osvobození 305, Příbram VII, 26101, Příbram"
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"Cemedic s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"Kamedic s.r.o.",
+""
+],
+[
+49.669279,
+13.9889,
+"Praktický lékař",
+"MUDr. Eva Štětinová",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"MUDr. Ilona Zelnerová s.r.o.",
+""
+],
+[
+49.684498,
+13.989512,
+"Praktický lékař",
+"MUDr. Jarmila Pracná",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"MUDr. Kvasničková Stanislava s.r.o.",
+""
+],
+[
+49.684498,
+13.989512,
+"Praktický lékař",
+"MUDr. Linda Janovská",
+""
+],
+[
+49.688338,
+14.010071,
+"Praktický lékař",
+"MUDr. Ludmila Rejlková s.r.o",
+""
+],
+[
+49.668372,
+13.997932,
+"Praktický lékař",
+"MUDr. Naděžda Vyskočilová",
+""
+],
+[
+49.688338,
+14.010071,
+"Praktický lékař",
+"MUDr. Soňa Lukovicsová",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"MUDr. Tereza Bartošová",
+""
+],
+[
+49.688338,
+14.010071,
+"Praktický lékař",
+"MUDr. Veronika Drábová",
+""
+],
+[
+49.689404,
+14.020812,
+"Praktický lékař",
+"MUDr. Zuzana Fialová",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"Macmed s.r.o.",
+""
+],
+[
+49.675581,
+13.998112,
+"Praktický lékař",
+"Ortopraxe Medical s.r.o.",
+""
+],
+[
+49.707349,
+13.983005,
+"Praktický lékař",
+"Penta Clinic s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"Praktik Maňasová s.r.o.",
+""
+],
+[
+49.680117,
+13.999686,
+"Praktický lékař",
+"Praktik Pb s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Praktický lékař",
+"Wellmedic s.r.o.",
+""
+],
+[
+49.675581,
+13.998112,
+"Praktický lékař",
+"praktikpribram s.r.o.",
+""
+],
+[
+49.68248,
+14.003101,
+"Střední škola",
+"Gymnázium, Příbram, Legionářů 402",
+""
+],
+[
+49.688692,
+14.018603,
+"Střední škola",
+"Gymnázium, Příbram, Legionářů 402",
+""
+],
+[
+49.690368,
+14.009538,
+"Střední škola",
+"Obchodní akademie a Vyšší odborná škola, Příbram I, Na Příkopech 104",
+""
+],
+[
+49.689919,
+14.009851,
+"Střední škola",
+"Obchodní akademie a Vyšší odborná škola, Příbram I, Na Příkopech 104",
+""
+],
+[
+49.685034,
+13.998428,
+"Střední škola",
+"Odborné učiliště, Praktická škola, Základní škola a Mateřská škola Příbram IV, příspěvková organizace",
+""
+],
+[
+49.687695,
+14.048247,
+"Střední škola",
+"Střední odborná škola a Střední odborné učiliště, Dubno",
+""
+],
+[
+49.687617,
+14.019258,
+"Střední škola",
+"Střední průmyslová škola a Vyšší odborná škola, Příbram II, Hrabákova 271",
+""
+],
+[
+49.690059,
+14.012814,
+"Střední škola",
+"Střední zdravotnická škola a Vyšší odborná škola zdravotnická, Příbram I, Jiráskovy sady 113",
+""
+],
+[
+49.690353,
+14.011685,
+"Střední škola",
+"Střední škola pedagogiky, cestovního ruchu a gastronomie Příbram, příspěvková organizace",
+""
+],
+[
+49.690098,
+14.007892,
+"Střední škola",
+"Střední škola pedagogiky, cestovního ruchu a gastronomie Příbram, příspěvková organizace",
+""
+],
+[
+49.680692,
+13.993632,
+"Střední škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.686604,
+14.010236,
+"Střední škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.689136,
+14.01747,
+"Střední škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.685034,
+13.998428,
+"Střední škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.689919,
+14.009851,
+"Vyšší odborná škola",
+"Obchodní akademie a Vyšší odborná škola, Příbram I, Na Příkopech 104",
+""
+],
+[
+49.687617,
+14.019258,
+"Vyšší odborná škola",
+"Střední průmyslová škola a Vyšší odborná škola, Příbram II, Hrabákova 271",
+""
+],
+[
+49.690059,
+14.012814,
+"Vyšší odborná škola",
+"Střední zdravotnická škola a Vyšší odborná škola zdravotnická, Příbram I, Jiráskovy sady 113",
+""
+],
+[
+49.689377,
+14.009938,
+"Zdravotnické potřeby",
+"Helena Karkanová, výdejna zdravotnických prostředků",
+""
+],
+[
+49.668543,
+13.992847,
+"Zdravotnické potřeby",
+"MSM, spol. s r.o.",
+""
+],
+[
+49.689641,
+14.009872,
+"Zdravotní služby",
+"Advantis Medical s.r.o.",
+"Všeobecná sestra"
+],
+[
+49.688795,
+14.008343,
+"Zdravotní služby",
+"Amber Plasma a.s.",
+"hematologie a transfúzní lékařství"
+],
+[
+49.651857,
+13.995136,
+"Zdravotní služby",
+"Asociace dobrovolných záchranářů ČR z.s.",
+""
+],
+[
+49.673275,
+13.992733,
+"Zdravotní služby",
+"Bc. Novotná Lenka",
+""
+],
+[
+49.673092,
+13.989718,
+"Zdravotní služby",
+"Centrum Sociálních A Zdravotních Služeb Města PŘÍBRAM, záchytná stanice",
+""
+],
+[
+49.678044,
+13.988162,
+"Zdravotní služby",
+"Centrum Sociálních A Zdravotních Služeb Města Příbram",
+""
+],
+[
+49.681791,
+13.989797,
+"Zdravotní služby",
+"Centrum Sociálních A Zdravotních Služeb Města Příbram",
+""
+],
+[
+49.690629,
+14.014676,
+"Zdravotní služby",
+"Charita Příbram",
+"Všeobecná sestra"
+],
+[
+49.669461,
+13.9962,
+"Zdravotní služby",
+"Domov MAJÁK, o.p.s.",
+""
+],
+[
+49.66917,
+13.99134,
+"Zdravotní služby",
+"Domácí péče Včelka Praha s.r.o.",
+"Všeobecná sestra"
+],
+[
+49.673092,
+13.989718,
+"Zdravotní služby",
+"Fresenius Medical Care - DS, s.r.o., Příbram",
+"nefrologie"
+],
+[
+49.689612,
+14.014598,
+"Zdravotní služby",
+"Lomikámen, z.ú.",
+"Klinický psycholog, psychiatrie, Sestra pro péči v psychiatrii"
+],
+[
+49.677599,
+13.987847,
+"Zdravotní služby",
+"Magdaléna, o.p.s.",
+"Adiktolog"
+],
+[
+49.687881,
+14.011906,
+"Zdravotní služby",
+"SESTŘIČKA.CZ - Domácí Péče Příbramsko s.r.o.",
+""
+],
+[
+49.67404,
+13.999177,
+"Zdravotní služby",
+"Zdravotnická záchranná služba Středočeského kraje, příspěvková organizace",
+""
+],
+[
+49.67572,
+14.00046,
+"Zdravotní služby",
+"Zdravotní ústav se sídlem v Ústí nad Labem",
+"hygiena a epidemiologie"
+],
+[
+49.68296,
+13.991674,
+"Zubař",
+"Carident s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"Doktor TKALYCH, s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"KADentist s.r.o.",
+""
+],
+[
+49.683013,
+14.005307,
+"Zubař",
+"Kisel Dental s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MDDr. Adéla Janátová",
+""
+],
+[
+49.675581,
+13.998112,
+"Zubař",
+"MDDr. Hedvika Kaplánová",
+""
+],
+[
+49.673092,
+13.989718,
+"Zubař",
+"MDDr. Jana Roušalová",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MDDr. Kateřina Kočí",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MDDr. Petra Dědinová",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MDDr. Roman Jícha",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MDDr. Tomáš Pavrovský",
+""
+],
+[
+49.68736,
+14.010806,
+"Zubař",
+"MUDr. Daniela Plzáková",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. František Hauser",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Hana Švingrová",
+""
+],
+[
+49.688285,
+14.012711,
+"Zubař",
+"MUDr. Iva Doležalová",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Jiří Doležal",
+""
+],
+[
+49.67568,
+13.99826,
+"Zubař",
+"MUDr. Jiří Hrabák",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Marie Čapková",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Miroslav Eisenreich",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Pavla Škochová",
+""
+],
+[
+49.676364,
+13.994243,
+"Zubař",
+"MUDr. Tomáš Brůna",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"MUDr. Zbyněk Mach",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"NeoPanKlinik s.r.o.",
+""
+],
+[
+49.689641,
+14.009872,
+"Zubař",
+"Partners Dental s.r.o",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"Profistar Dental spol. s r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"TarasDental s.r.o.",
+""
+],
+[
+49.67572,
+14.00046,
+"Zubař",
+"Zhanna Melnyk",
+""
+],
+[
+49.673092,
+13.989718,
+"Zubař",
+"Zubní ordinace MDDr. Simona Šebestová s.r.o.",
+""
+],
+[
+49.685319,
+14.011036,
+"Základní umělecká škola",
+"Základní umělecká škola Antonína Dvořáka, Příbram",
+""
+],
+[
+49.689136,
+14.01747,
+"Základní umělecká škola",
+"Základní umělecká škola Antonína Dvořáka, Příbram",
+""
+],
+[
+49.686604,
+14.010236,
+"Základní umělecká škola",
+"Základní umělecká škola Antonína Dvořáka, Příbram",
+""
+],
+[
+49.687821,
+14.008715,
+"Základní umělecká škola",
+"Základní umělecká škola, Příbram I, nám. T. G. Masaryka 155",
+""
+],
+[
+49.68805,
+14.012838,
+"Základní umělecká škola",
+"Základní umělecká škola, Příbram I, nám. T. G. Masaryka 155",
+""
+],
+[
+49.683203,
+14.007627,
+"Základní škola",
+"All Stars School - mateřská škola a základní škola, s.r.o.",
+""
+],
+[
+49.685034,
+13.998428,
+"Základní škola",
+"Odborné učiliště, Praktická škola, Základní škola a Mateřská škola Příbram IV, příspěvková organizace",
+""
+],
+[
+49.689136,
+14.01747,
+"Základní škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.686604,
+14.010236,
+"Základní škola",
+"Waldorfská škola Příbram - mateřská škola, základní škola a střední škola",
+""
+],
+[
+49.688692,
+14.018603,
+"Základní škola",
+"Základní škola pod Svatou Horou, Příbram",
+""
+],
+[
+49.683579,
+13.990159,
+"Základní škola",
+"Základní škola, Příbram - Březové Hory, Prokopská 337",
+""
+],
+[
+49.683809,
+13.990464,
+"Základní škola",
+"Základní škola, Příbram - Březové Hory, Prokopská 337",
+""
+],
+[
+49.681743,
+13.990284,
+"Základní škola",
+"Základní škola, Příbram - Březové Hory, Prokopská 337",
+""
+],
+[
+49.682668,
+13.989979,
+"Základní škola",
+"Základní škola, Příbram - Březové Hory, Prokopská 337",
+""
+],
+[
+49.684075,
+13.990846,
+"Základní škola",
+"Základní škola, Příbram - Březové Hory, Prokopská 337",
+""
+],
+[
+49.690316,
+14.013669,
+"Základní škola",
+"Základní škola, Příbram II, Jiráskovy sady 273",
+""
+],
+[
+49.681531,
+13.996681,
+"Základní škola",
+"Základní škola, Příbram VII, 28. října 1",
+""
+],
+[
+49.676747,
+13.99718,
+"Základní škola",
+"Základní škola, Příbram VII, Bratří Čapků 279, příspěvková organizace",
+""
+],
+[
+49.671928,
+13.996237,
+"Základní škola",
+"Základní škola, Příbram VIII, Školní 75",
+""
+]
+]
+}

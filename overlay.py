@@ -134,6 +134,28 @@ def merge_parts(bs):
 
 chunks = [c for c in CHUNKS if os.path.exists(f'{chunk_dir(c)}/info_src.json')]
 CKEY = {c: f'c{c[0]}_{c[1]}' for c in chunks}
+
+# služby z otevřených registrů (nastroje/sluzby.py -> assets/sluzby.json: [lat, lon, kategorie, název, podrobnost]):
+# k budově, v jejímž půdorysu bod leží (lékaři, školy… i do 8 m od budovy), v kartě budovy „V budově“;
+# Balíkovna boxy, dobíjecí stanice a služby mimo budovy kreslí prohlížeč jako značky (overlay.json "sluzby"). Vypnout: "sluzby": false v mesto.json.
+SL_ZNACKA = {'Balíkovna box', 'Dobíjecí stanice'}
+SL_B, SL_VOLNE = {}, []
+if os.path.exists('assets/sluzby.json') and MESTO.get('sluzby', True) is not False:
+    _sp, _sk = [], []
+    for _c in chunks:
+        _o = chunk_center(_c)
+        for _b in merge_parts(json.load(open(f'{chunk_dir(_c)}/info_src.json'))['buildings']):
+            _g = shapely.geometry.Polygon([(x + _o[0], y + _o[1]) for x, y in _b['ring']])
+            if _g.is_valid and _g.area > 0: _sp.append(_g); _sk.append((_c, _b['id']))
+    _st = shapely.STRtree(_sp)
+    for _s in json.load(open('assets/sluzby.json', encoding='utf-8'))['sluzby']:
+        _P = shapely.geometry.Point(*to_local(_s[1], _s[0]))
+        _h = [] if _s[2] in SL_ZNACKA else [int(i) for i in _st.query(_P, predicate='intersects')]
+        if not _h and _s[2] not in SL_ZNACKA:
+            _j = int(_st.nearest(_P)); _h = [_j] if _sp[_j].distance(_P) < 8 else []
+        if _h: SL_B.setdefault(_sk[_h[0]], []).append(_s[2:])
+        else: SL_VOLNE.append(_s)
+    print('služby: v budovách', sum(map(len, SL_B.values())), 'budov', len(SL_B), 'značek', len(SL_VOLNE))
 streets, grounds, addr_index = [], [], []
 per_chunk = {}
 water = {}
@@ -215,8 +237,10 @@ for chunk in chunks:
         for a in b['addr']:
             addr_index.append([a, K, cxi, cyi, len(buildings)])
         if name: addr_index.append([name, K, cxi, cyi, len(buildings), 'budova'])
+        sl = SL_B.get((chunk, b['id']), [])
+        for kat, nz, _d in sl: addr_index.append([nz, K, cxi, cyi, len(buildings), kat.lower()])
         buildings.append({k: v for k, v in {
-            'pl': pl,
+            'pl': pl, 'sl': sl,
             'id': f"{K}:{b['id']}", 'oid': b.get('oid'), 'hull': [[round(x), round(y)] for x, y in list(hull.exterior.coords)[:-1]], 'd': d, 'dm': dm, 'fb': fb,
             'name': name, 'text': text, 'cls': b['cls'], 'floors': b['floors'], 'h': None if church else b['h'], 'roof': b['roof'], 'addr': b['addr'],
             'lon': b['lon'], 'lat': b['lat'], 'k': K,
@@ -476,7 +500,7 @@ def _plugin_xy(a, b, is_world=False):
     global OFF; OFF = (0.0, 0.0); x, y = (float(a), float(b)) if is_world else to_local(float(b), float(a)); return list(px(float(x), float(y), gz(x, y))[:2])
 _doplnky = _plugins.load_and_run_plugins(MESTO, {**cam, 'w': W, 'h': H}, _plugin_xy)
 json.dump({'w': W, 'h': H, 'cam': cam, 'districts': districts, 'needs': needs, 'xmas': nam, 'chunks': {CKEY[c]: CHUNKS[c] for c in chunks}, 'bus': bus_route, 'trams': trams, 'decks': decks,
-           'streets': streets, 'places': places, 'neighbors': neighbors, **({'signals': signals} if signals else {}), **({'doplnky': _doplnky} if _doplnky else {})},
+           'streets': streets, 'places': places, 'neighbors': neighbors, **({'signals': signals} if signals else {}), **({'sluzby': SL_VOLNE} if SL_VOLNE else {}), **({'doplnky': _doplnky} if _doplnky else {})},
           open(f'{SITE}/overlay.json', 'w'), separators=(',', ':'), ensure_ascii=False)
 json.dump(addr_index, open(f'{SITE}/search.json', 'w'), separators=(',', ':'), ensure_ascii=False)   # adresy pro hledání, načte se až při psaní
 print('čtverců', len(chunks), 'budov', sum(len(v['buildings']) for v in per_chunk.values()), 'adres', len(addr_index),
