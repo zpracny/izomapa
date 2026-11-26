@@ -13,7 +13,7 @@
     const dpr = SLOW ? Math.min(1.5, window.devicePixelRatio || 1) : (window.devicePixelRatio || 1);   // mobil: efekty v 1,5× místo 3×, 4× méně pixelů (pixel art, plátno se zvětší bez rozmazání)
     const cw = fx.clientWidth, ch = fx.clientHeight;
     if (fx.width !== Math.round(cw * dpr) || fx.height !== Math.round(ch * dpr)) { fx.width = Math.round(cw * dpr); fx.height = Math.round(ch * dpr); }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, cw, ch); ctx.imageSmoothingEnabled = false;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, cw, ch); ctx.imageSmoothingEnabled = false; VOZ_OCC.length = 0;
     const vp = viewer.viewport;
     const p0 = vp.pixelFromPoint(new OpenSeadragon.Point(0, 0), true), p1 = vp.pixelFromPoint(new OpenSeadragon.Point(1, 0), true);
     const sx = (p1.x - p0.x) / W, ox = p0.x, oy = p0.y;
@@ -122,13 +122,9 @@
           const shown_ = typ === 0 ? drawVehicle(o, 15, 2.5, 't3', sx, ox, oy, night, 2) : typ === 2 ? drawTrain(trip, el + (now / 1000 - ns), line, sx, ox, oy, night) : drawVehicle(o, 12, 2.5, '#e9e6dc', sx, ox, oy, night, true);
           if (shown_) for (const q of typ === 2 ? drawTrain.pts : [o]) MHD.drawn.push([Math.round(ox + q.ix * sx), Math.round(oy + q.iy * sx) - Math.round(8 * sx), i]);
           if (shown_ && (sx > 0.55 || i === MHD.follow)) {     // číslo linky nad vozidlem
-            const h = gz(o.x, o.y), [tx, ty] = toImg(o.x, o.y, h + 6), X_ = Math.round(ox + tx * sx), Y_ = Math.round(oy + ty * sx);
+            const h = gz(o.x, o.y), [tx, ty] = toImg(o.x, o.y, h + 6);
             const dz_ = mhdDelay(i), lab = dz_ >= 60 ? `${line} +${Math.round(dz_ / 60)}` : line;   // zpoždění v minutách
-            ctx.font = '700 13px "Atkinson Hyperlegible", system-ui, sans-serif'; const tw = Math.ceil(ctx.measureText(lab).width) + 10;
-            ctx.fillStyle = '#16191f'; ctx.fillRect(X_ - tw / 2 - 1, Y_ - 10, tw + 2, 19);
-            ctx.fillStyle = typ === 0 ? '#c4352b' : typ === 2 ? '#2f7d4f' : '#1f6fb2'; ctx.fillRect(X_ - tw / 2, Y_ - 9, tw, 17);
-            if (i === MHD.follow) { ctx.strokeStyle = '#f2c66d'; ctx.lineWidth = 2; ctx.strokeRect(X_ - tw / 2 - 2, Y_ - 11, tw + 4, 21); }
-            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(lab, X_, Y_); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+            cisloLinky(Math.round(ox + tx * sx), Math.round(oy + ty * sx), lab, typ, i === MHD.follow);
           }
         }
       }
@@ -204,6 +200,7 @@
         const hidden = (x, y, h, ip) => {
           const dp = depth(x, y, h);
           if (occluded(ip[0], ip[1], dp) || occluded(ip[0], ip[1] - hpx * 1.2, dp)) return true;
+          if (VOZ_OCC.length && (vozZakryje(ip[0], ip[1], dp) || vozZakryje(ip[0], ip[1] - hpx * 1.2, dp))) return true;   // za autobusem, tramvají, kamionem
           for (const q of treeShapes(x, y, h, [ip[0] - 1, ip[1] - 9, ip[0] + 1, ip[1]]))
             if (q[0] === 2 ? stromPixel(q, ip[0], ip[1] - 4) || stromPixel(q, ip[0], ip[1] - 1) : q[0] === 1 ? ((ip[0] - q[1][0]) / q[2]) ** 2 + ((ip[1] - 4 - q[1][1]) / q[3]) ** 2 < 1 : ip[1] - 4 > q[1][1] && ip[1] - 4 < q[2][1] && Math.abs(ip[0] - q[1][0]) < q[3] * (ip[1] - 4 - q[1][1]) / (q[2][1] - q[1][1])) return true;
           return false;
@@ -374,19 +371,17 @@
     {
       const fadeD = Math.max(0, Math.min(1, (0.22 - sx) / 0.14));
       if (fadeD > 0 && $('l-labels').checked) {
-        ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = fadeD * 0.9;   // hotové obrázky názvů (nazev v 84-kresleni-vozidel.js) na celé pixely
         const boxes = [];
         for (const d of DISTRICTS) {                      // od největší čtvrti; překrývající se menší popisek vynechat
           const x = ox + d.xy[0] * sx, y = oy + d.xy[1] * sx;
           if (x < -200 || y < -60 || x > cw + 200 || y > ch + 60) continue;
           const big = d.k === 'obec' ? 1.15 : d.k === 'cast' ? 0.72 : d.a > 3 ? 1 : 0.82;   // obec větší, místní část menší
-          ctx.font = `${d.k === 'obec' ? 700 : 500} ${Math.round(15 * big)}px ${DISPLAY_FONT}`;
-          const tw = ctx.measureText(d.name.toUpperCase()).width / 2 + 6, th = 11 * big;
+          const n = nazev(d.name.toUpperCase(), `${d.k === 'obec' ? 700 : 500} ${Math.round(15 * big)}px ${DISPLAY_FONT}`, dpr), tw = n.tw, th = 11 * big;
           if (boxes.some(([bx, by, bw]) => Math.abs(bx - x) < bw + tw && Math.abs(by - y) < th * 2)) continue;
           boxes.push([x, y, tw]);
-          ctx.globalAlpha = fadeD * 0.9;
-          ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(20,26,40,0.75)'; ctx.strokeText(d.name.toUpperCase(), x, y);
-          ctx.fillStyle = '#f3efe2'; ctx.fillText(d.name.toUpperCase(), x, y);
+          const X = Math.round(x * dpr), Y = Math.round(y * dpr);
+          for (const q of [n.s, n.f]) if (q) ctx.drawImage(q[0], X + q[1], Y + q[2]);
         }
         ctx.restore(); ctx.globalAlpha = 1;
       }
