@@ -491,6 +491,11 @@ FOOT = {'footway', 'path', 'cycleway', 'steps', 'pedestrian', 'bridleway', 'trac
 GRADE = {'road': 0.06, 'rail': 0.03, 'foot': 0.08}
 roads = [(a_, l_, c_, w_, n_) for a_, g_, c_, w_, n_ in roads for l_ in lines(g_)]
 _under = shapely.STRtree([g for _, g, c, w, _n in roads])
+# podchod: pěší cesta pod úrovní terénu (tunel nebo vrstva < 0) vede v zářezu, most nad ní zůstává na terénu (bez podjezdné výšky)
+def _sunk(r):
+    lv = r.get('level_rules'); lv = list(lv) if isinstance(lv, (list, np.ndarray)) else []
+    return any('is_tunnel' in list(f.get('values')) for f in seg_flags(r)) or any((q.get('value') or 0) < 0 for q in lv)
+_SUNK = shapely.unary_union([r.geom for _, r in seg.iterrows() if r['class'] in FOOT and r.subtype != 'rail' and _sunk(r)] or [Point(1e9, 1e9)]).buffer(0.5)
 _water = shapely.unary_union([r.geom.buffer(4) for _, r in wat.iterrows()] or [Point(1e9, 1e9)])
 _rused, _rcut = set(), {}                 # cesty nájezdů tohoto mostu; index -> odříznuté úseky [(a, b)]
 def _approach(pt, dv, kind):
@@ -565,7 +570,8 @@ for g0, r in bridge_segs:
         span = (d >= ds0 - 0.01) & (d <= ds1 + 0.01)
         req = gz + 0.15
         ends = l.boundary.buffer(1.5)
-        cross = [_under.geometries[j] for j in _under.query(l) if _under.geometries[j].intersects(l) and not _under.geometries[j].intersects(ends)]
+        cross = [_under.geometries[j] for j in _under.query(l) if _under.geometries[j].intersects(l) and not _under.geometries[j].intersects(ends)
+                 and not (roads[j][2] in FOOT and _SUNK.contains(_under.geometries[j].intersection(l)))]
         cross = shapely.unary_union(cross).buffer(w / 2 + 3) if cross else None     # cesty a tratě, které vedou pod mostem
         for i, (x, y) in enumerate(xy):
             if not span[i]: continue
@@ -622,7 +628,7 @@ for _, g, c, w, _n in roads:
                 while d < ol.length:
                     piece = shapely.ops.substring(ol, d, min(d + 6, ol.length))
                     mid = piece.interpolate(0.5, normalized=True)
-                    fi = foot_tree.query(mid.buffer(3.0)); bi = bld_early.query(mid.buffer(0.9))
+                    fi = foot_tree.query(mid.buffer(3.0), predicate='intersects'); bi = bld_early.query(mid.buffer(0.9), predicate='intersects')   # bez predikátu jen obálky: šikmý chodník by zrušil chodník v celém svém obdélníku
                     if len(fi) == 0 and len(bi) == 0 and piece.length > 0.5:
                         line(piece, C['footway'], 1.7, block=True)
                     d += 6

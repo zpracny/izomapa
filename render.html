@@ -683,8 +683,16 @@ function pamModely(W, R, X) {
       }
       // strojovny výtahů a větrání na plochých střechách paneláků
       if ((b.s === 1 || b.fx) && !rot) {
-        let best = 0, ang = 0;
-        for (let i = 0; i < ring.length; i++) { const [x0, y0] = ring[i], [x1, y1] = ring[(i + 1) % ring.length]; const l = Math.hypot(x1 - x0, y1 - y0); if (l > best) { best = l; ang = Math.atan2(y1 - y0, x1 - x0); } }
+        // podél delší osy nejmenšího opsaného obdélníku (u bodového domu se zalomenými rohy nemusí jít podél nejdelší hrany)
+        let best = 1e18, ang = 0;
+        for (let i = 0; i < ring.length; i++) {
+          const [x0, y0] = ring[i], [x1, y1] = ring[(i + 1) % ring.length]; if (Math.hypot(x1 - x0, y1 - y0) < 0.5) continue;
+          const a = Math.atan2(y1 - y0, x1 - x0), c = Math.cos(a), s = Math.sin(a);
+          let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+          for (const [x, y] of ring) { const u = x * c + y * s, v = -x * s + y * c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+          const ar = (u1 - u0) * (v1 - v0);
+          if (ar < best - 1e-6) { best = ar; ang = u1 - u0 >= v1 - v0 ? a : a + Math.PI / 2; }
+        }
         const ca = Math.cos(ang), sa = Math.sin(ang);
         let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9;
         for (const [x, y] of ring) { const s_ = x * ca + y * sa, t_ = -x * sa + y * ca; s0 = Math.min(s0, s_); s1 = Math.max(s1, s_); t0 = Math.min(t0, t_); t1 = Math.max(t1, t_); }
