@@ -154,8 +154,14 @@ def main():
             kw = v.get(ckw, ''); kw = f'{float(kw):g} kW' if re.match(r'^[\d.]+$', kw or '') else ''
             body = v.get(cbody, '') if cbody else ''
             add('Dobíjecí stanice', v.get(cop, '') or 'Dobíjecí stanice', ', '.join(filter(None, [kw, f'{body} nabíjecí body' if body else ''])), lon, lat)
+    # 6 ruční doplňky města (assets/sluzby_doplnky.json: sportoviště, sběrný dvůr…), stejný formát [lat, lon, kategorie, název, podrobnost]
+    zdroje = list(ZDROJE)
+    if os.path.exists('assets/sluzby_doplnky.json'):
+        dop = json.load(open('assets/sluzby_doplnky.json', encoding='utf-8'))
+        for la, lo, kat, nz, dt in dop.get('sluzby', []): add(kat, nz, dt, lo, la)
+        zdroje += dop.get('zdroje', [])
     out.sort(key=lambda s: (s[2], s[3]))
-    json.dump({'zdroje': ZDROJE, 'sluzby': out}, open('assets/sluzby.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+    json.dump({'zdroje': zdroje, 'sluzby': out}, open('assets/sluzby.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     from collections import Counter
     print('služeb na mapě', len(out)); [print(f'  {n:4} {k}') for k, n in Counter(s[2] for s in out).most_common()]
 

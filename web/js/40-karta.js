@@ -80,7 +80,7 @@
     const nm = pl ? pl.name : b.name;
     const story = (pl && pl.text) || b.text || (nm && placeByName[nm] ? placeByName[nm].text : null);
     const slT = !nm && (b.sl || []).find((s) => SL_TITUL.test(s[0]));      // budova bez názvu: škola, pošta… z registru
-    const title = nm || (slT && slT[1]) || b.cls[0].toUpperCase() + b.cls.slice(1);
+    const title = nm || (slT && slT[1].split(' - ')[0]) || b.cls[0].toUpperCase() + b.cls.slice(1);
     showCard({ title, text: story, lon: b.lon, lat: b.lat, k: b.k, rows: [
       ['Adresa', (b.addr || []).join(', ')], ['Typ', nm || slT ? b.cls : null],
     ] });

@@ -23,6 +23,7 @@
     index.push({ label: n.name, kind: 'soused', k: n.k, n: norm(n.name), go: () => { goTo(n.xy[0], n.xy[1], 1.4); showCard({ title: n.name, text: n.text || 'Sousední izometrická mapa.', lon: n.lon, lat: n.lat, k: n.k, link: neighborHref(n), linkText: `Přejít na mapu ${n.name} ↗`, target: n.target, rows: [['Sousední mapa', n.name]] }); } });
   }
   for (const p of OV.places) index.push({ label: p.name, kind: 'místo', k: p.k, n: norm(p.name), go: () => { goTo(p.xy[0], p.xy[1], 1.4); showCard({ title: p.name, text: p.text, lon: p.lon, lat: p.lat, k: p.k, rows: [] }); } });
+  for (const r of SLZ) if (r.kat !== 'Balíkovna box') index.push({ label: r.n, kind: r.kat.toLowerCase(), n: norm(r.n + ' ' + r.kat), go: () => { goTo(r.ix, r.iy, 2); showSl(r); } });   // značky služeb (47-sluzby.js)
   for (const s of OV.streets) index.push({ label: s.name, kind: 'ulice', k: s.k, n: norm(s.name), go: () => goTo(s.xy[0], s.xy[1], 0.9) });
   // adresy celé mapy jsou ve zvláštním souboru, načtou se při prvním psaní do hledání
   let addrLoad = null;

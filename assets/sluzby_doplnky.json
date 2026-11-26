@@ -1,0 +1,680 @@
+{
+"_pozn": "Ruční doplňky služeb (nastroje/sluzby.py je přidá do assets/sluzby.json): [lat, lon, kategorie, název, podrobnost]. Sportoviště ze seznamu sport.pribram.eu (Město Příbram), poloha přes adresu RÚIAN nebo jednoznačnou sportovní plochu OSM u ulice; sběrný dvůr podle OSM a ts-pb.cz.",
+"zdroje": [
+{
+"nazev": "Město Příbram, Sportovní zařízení",
+"url": "https://sport.pribram.eu/sportovni-zarizeni"
+},
+{
+"nazev": "Technické služby města Příbrami, Sběrný dvůr",
+"url": "https://www.ts-pb.cz/sberny-dvur/"
+}
+],
+"sluzby": [
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"ADVENTURE GOLF Nový rybník - Minigolf",
+"minigolf"
+],
+[
+49.679988,
+14.002661,
+"Sportoviště",
+"Aquapark Příbram - Bazén venkovní",
+"plavecké sporty"
+],
+[
+49.679988,
+14.002661,
+"Sportoviště",
+"Aquapark Příbram - Bazén vnitřní",
+"plavecké sporty"
+],
+[
+49.679988,
+14.002661,
+"Sportoviště",
+"Aquapark Příbram - Volejbalové kurty",
+"volejbal"
+],
+[
+49.668166,
+13.999169,
+"Sportoviště",
+"Atletický stadion TJ Baník Příbram - Atletické hřiště",
+"atletika, jiná odvětví, americký fotbal"
+],
+[
+49.686306,
+14.008639,
+"Sportoviště",
+"BeFit energy club - Fitness sál",
+"jóga, aerobic, jiná odvětví, volnočasový a rekreační sport"
+],
+[
+49.686306,
+14.008639,
+"Sportoviště",
+"BeFit energy club - Posilovna",
+"jóga, aerobic, volnočasový a rekreační sport"
+],
+[
+49.686306,
+14.008639,
+"Sportoviště",
+"BeFit energy club - Spinning",
+"cyklistika"
+],
+[
+49.669383,
+13.995082,
+"Sportoviště",
+"Bowling Fialka - Bowlingová dráha",
+"kuželky/bowling"
+],
+[
+49.684443,
+14.002131,
+"Sportoviště",
+"Bowling Chmelnice - Bowlingová dráha",
+"kuželky/bowling"
+],
+[
+49.682695,
+13.994437,
+"Sportoviště",
+"Bowling Simona - Bowlingová dráha",
+"kuželky/bowling"
+],
+[
+49.689847,
+14.00839,
+"Sportoviště",
+"DŮM JÓGY PŘÍBRAM - Sál 1 - Dům jógy",
+"jóga"
+],
+[
+49.689847,
+14.00839,
+"Sportoviště",
+"DŮM JÓGY PŘÍBRAM - Sál 2 - Dům jógy",
+"jóga"
+],
+[
+49.67572,
+14.00046,
+"Sportoviště",
+"Fitness Ježek - Posilovna",
+"ostatní formy bojových umění, volnočasový a rekreační sport"
+],
+[
+49.664336,
+13.995663,
+"Sportoviště",
+"Golf driving - Golfové odpaliště",
+"golf"
+],
+[
+49.680833,
+13.989154,
+"Sportoviště",
+"Hřiště - Cvična - Plácek",
+"volnočasový a rekreační sport, fotbal"
+],
+[
+49.684017,
+13.998766,
+"Sportoviště",
+"Hřiště - DDM Příbram - Plácek",
+"fotbal"
+],
+[
+49.673933,
+13.986675,
+"Sportoviště",
+"Hřiště - Družstevní - Plácek - volejbalový kurt",
+"volejbal, nohejbal"
+],
+[
+49.691185,
+14.006541,
+"Sportoviště",
+"Hřiště - Riegrova - Plácek",
+"volejbal, nohejbal, volnočasový a rekreační sport, jiná odvětví"
+],
+[
+49.686132,
+14.007365,
+"Sportoviště",
+"Hřiště - Ryneček - Plácek",
+"volnočasový a rekreační sport, fotbal"
+],
+[
+49.689136,
+14.01747,
+"Sportoviště",
+"Hřiště - Waldorf - Hřiště",
+"basketbal, volnočasový a rekreační sport, jiná odvětví"
+],
+[
+49.673933,
+13.986675,
+"Sportoviště",
+"Hřiště - Za nemocnicí - Plácek",
+"volnočasový a rekreační sport, basketbal"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Hřiště pod Novákem - Plácek",
+"jiná odvětví, volnočasový a rekreační sport, fotbal"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Hřiště za Sokolovnou - Hřiště",
+"jiná odvětví"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"In-line dráha na Nováku - In-line dráha",
+"kolečkové brusle"
+],
+[
+49.681295,
+14.000846,
+"Sportoviště",
+"Kulturní dům Příbram - Estrádní sál",
+"taneční sporty"
+],
+[
+49.681295,
+14.000846,
+"Sportoviště",
+"Kulturní dům Příbram - Zrcadlový sál",
+"taneční sporty"
+],
+[
+49.677599,
+13.987847,
+"Sportoviště",
+"Pankration Gym - Boxérna",
+"ostatní formy bojových umění"
+],
+[
+49.690353,
+14.011685,
+"Sportoviště",
+"Posilovna ISŠ HPOS Příbram - Posilovna",
+"volnočasový a rekreační sport"
+],
+[
+49.687867,
+14.005854,
+"Sportoviště",
+"RS Fitness - Fitness sál",
+"jóga, ostatní formy bojových umění, jiná odvětví, cyklistika, volnočasový a rekreační sport"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Skatepark Příbram - Skatepark",
+"extrémní sporty, jiná odvětví"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Gymnastický sál",
+"gymnastika"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Klubovna",
+"šachy"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Klubovna II",
+"šachy"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Sál",
+"gymnastika, taneční sporty, volejbal, jiná odvětví, aerobic, jóga"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Sokolík",
+"jiná odvětví"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Tělocvična",
+"gymnastika, stolní tenis, volejbal, basketbal, florbal, futsal, jiná odvětví"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Zrcadlový sál",
+"aerobic, jóga, taneční sporty"
+],
+[
+49.690794,
+14.011489,
+"Sportoviště",
+"Sokolovna Příbram - Zrcadlový sál II",
+"taneční sporty, aerobic, jóga"
+],
+[
+49.678822,
+13.99217,
+"Sportoviště",
+"Sport studio Takis - Posilovna",
+"volnočasový a rekreační sport"
+],
+[
+49.675172,
+14.001372,
+"Sportoviště",
+"Sportklub Oxygen - Fitness sál",
+"volnočasový a rekreační sport, ostatní formy bojových umění, jóga, aerobic"
+],
+[
+49.675172,
+14.001372,
+"Sportoviště",
+"Sportklub Oxygen - Posilovna",
+"volnočasový a rekreační sport"
+],
+[
+49.675172,
+14.001372,
+"Sportoviště",
+"Sportklub Oxygen - Spinning",
+"jiná odvětví, cyklistika"
+],
+[
+49.675172,
+14.001372,
+"Sportoviště",
+"Sportklub Oxygen - Squashové kurty",
+"squash"
+],
+[
+49.687309,
+14.021041,
+"Sportoviště",
+"Sportovní areál pod Svatou Horou - Tenisové kurty",
+"tenis, nohejbal"
+],
+[
+49.687309,
+14.021041,
+"Sportoviště",
+"Sportovní areál pod Svatou Horou - Víceúčelové hřiště",
+"fotbal, jiná odvětví, volnočasový a rekreační sport, volejbal, basketbal, házená"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Sportovní hala Příbram - Sportovní hala",
+"volejbal, badminton, házená, florbal, nohejbal, volnočasový a rekreační sport, futsal"
+],
+[
+49.676047,
+13.97617,
+"Sportoviště",
+"Stadion Na Litavce - Fortuna:liga - Fotbalové hřiště",
+"fotbal"
+],
+[
+49.676047,
+13.97617,
+"Sportoviště",
+"Stadion Na Litavce - hřiště č. 2 - Fotbalové hřiště",
+"fotbal"
+],
+[
+49.676047,
+13.97617,
+"Sportoviště",
+"Stadion Na Litavce - hřiště č. 3 - Fotbalové hřiště",
+"fotbal"
+],
+[
+49.690131,
+14.024449,
+"Sportoviště",
+"Stadion SK SPARTAK - Fotbalové hřiště",
+"fotbal"
+],
+[
+49.690131,
+14.024449,
+"Sportoviště",
+"Stadion SK SPARTAK - STUDIOBÁRA3P",
+"ostatní formy bojových umění, volnočasový a rekreační sport, jóga, jiná odvětví, aerobic"
+],
+[
+49.676747,
+13.99718,
+"Sportoviště",
+"Školní hřiště 6. ZŠ Příbram - Nádvoří",
+"basketbal, stolní tenis"
+],
+[
+49.676747,
+13.99718,
+"Sportoviště",
+"Školní hřiště 6. ZŠ Příbram - Školní hřiště",
+"basketbal, házená, fotbal, volnočasový a rekreační sport, nohejbal, atletika, tenis"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Školní hříště 7. ZŠ Příbram - Školní hřiště s tartanem",
+"basketbal, nohejbal, jiná odvětví, volejbal"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Školní hříště 7. ZŠ Příbram - Školní hřiště s tenisovými stoly",
+"basketbal, jiná odvětví, stolní tenis"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Školní hříště 7. ZŠ Příbram - Školní hřiště s UMT",
+"jiná odvětví, fotbal"
+],
+[
+49.690316,
+14.013669,
+"Sportoviště",
+"Tělocvična 4. ZŠ Příbram - Jiráskovy sady - Aula",
+"taneční sporty"
+],
+[
+49.690316,
+14.013669,
+"Sportoviště",
+"Tělocvična 4. ZŠ Příbram - Jiráskovy sady - Tělocvična",
+"jiná odvětví, horolezectví, ostatní formy bojových umění, jóga, aerobic, nohejbal, florbal, gymnastika, volejbal, cheerleaders, judo, basketbal"
+],
+[
+49.677599,
+13.987847,
+"Sportoviště",
+"Tělocvična 8. ZŠ Příbram - Tělocvična",
+"judo, ostatní formy bojových umění"
+],
+[
+49.67404,
+13.999177,
+"Sportoviště",
+"Tělocvična HZS Příbram - Tělocvična",
+"jiná odvětví, basketbal"
+],
+[
+49.690353,
+14.011685,
+"Sportoviště",
+"Tělocvična ISŠ HPOS Příbram - Tělocvična",
+"basketbal, volejbal, volnočasový a rekreační sport"
+],
+[
+49.685034,
+13.998428,
+"Sportoviště",
+"Tělocvična Pod Šachtami - Tělocvična",
+"futsal, americký fotbal, frisbee, házená"
+],
+[
+49.687617,
+14.019258,
+"Sportoviště",
+"Tělocvična SPŠ Příbram - Tělocvična",
+"nohejbal, volejbal, florbal, futsal"
+],
+[
+49.689136,
+14.01747,
+"Sportoviště",
+"Tělocvična Waldorf - Tělocvična",
+"basketbal, nohejbal, volnočasový a rekreační sport, jiná odvětví"
+],
+[
+49.688692,
+14.018603,
+"Sportoviště",
+"Tělocvičny 1. ZŠ Příbram pod Svatou Horou - Tělocvičná malá",
+"volejbal, universitní sport, basketbal, florbal, nohejbal"
+],
+[
+49.688692,
+14.018603,
+"Sportoviště",
+"Tělocvičny 1. ZŠ Příbram pod Svatou Horou - Tělocvična velká",
+"volejbal, florbal, universitní sport, basketbal, nohejbal"
+],
+[
+49.683809,
+13.990464,
+"Sportoviště",
+"Tělocvičny 3. ZŠ Příbram - Březové Hory - Tělocvična malá",
+"jiná odvětví, stolní tenis"
+],
+[
+49.683809,
+13.990464,
+"Sportoviště",
+"Tělocvičny 3. ZŠ Příbram - Březové Hory - Tělocvična mini",
+"ostatní formy bojových umění"
+],
+[
+49.683809,
+13.990464,
+"Sportoviště",
+"Tělocvičny 3. ZŠ Příbram - Březové Hory - Tělocvična velká",
+"futsal, basketbal, volejbal, nohejbal"
+],
+[
+49.676747,
+13.99718,
+"Sportoviště",
+"Tělocvičny 6. ZŠ Bratří Čapků - Aula",
+"taneční sporty"
+],
+[
+49.676747,
+13.99718,
+"Sportoviště",
+"Tělocvičny 6. ZŠ Bratří Čapků - Tělocvična malá",
+"nohejbal, volejbal, ostatní formy bojových umění, volnočasový a rekreační sport, judo, gymnastika, florbal, badminton, basketbal, jiná odvětví"
+],
+[
+49.676747,
+13.99718,
+"Sportoviště",
+"Tělocvičny 6. ZŠ Bratří Čapků - Tělocvična velká",
+"florbal, volejbal, basketbal, volnočasový a rekreační sport, judo, gymnastika, aerobic, badminton, jiná odvětví"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Tělocvičny 7. ZŠ Příbram - Atletický tunel",
+"atletika"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Tělocvičny 7. ZŠ Příbram - Tělocvična malá",
+"basketbal"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Tělocvičny 7. ZŠ Příbram - Tělocvična velká",
+"stolní tenis, volejbal, basketbal"
+],
+[
+49.671928,
+13.996237,
+"Sportoviště",
+"Tělocvičny 7. ZŠ Příbram - Tělocvična velká II",
+"volejbal"
+],
+[
+49.686679,
+14.047506,
+"Sportoviště",
+"Telocvičny Dubno - Tělocvična",
+"futsal, jiná odvětví, volejbal, nohejbal, házená, basketbal"
+],
+[
+49.686679,
+14.047506,
+"Sportoviště",
+"Telocvičny Dubno - Úpolová tělocvična",
+"judo, ostatní formy bojových umění"
+],
+[
+49.68248,
+14.003101,
+"Sportoviště",
+"Tělocvičny Gymnázia Příbram - Posilovna",
+"volnočasový a rekreační sport"
+],
+[
+49.68248,
+14.003101,
+"Sportoviště",
+"Tělocvičny Gymnázia Příbram - Tělocvična malá",
+"volnočasový a rekreační sport"
+],
+[
+49.68248,
+14.003101,
+"Sportoviště",
+"Tělocvičny Gymnázia Příbram - Tělocvična velká",
+"volnočasový a rekreační sport"
+],
+[
+49.668166,
+13.999169,
+"Sportoviště",
+"Tenisová hala TK ROJA - Tenisová hala",
+"tenis"
+],
+[
+49.676047,
+13.97617,
+"Sportoviště",
+"Tenisová hala u Litavky - Tenisová hala",
+"tenis"
+],
+[
+49.668166,
+13.999169,
+"Sportoviště",
+"Tenisové kurty TK ROJA - Tenisové kurty",
+"tenis"
+],
+[
+49.676047,
+13.97617,
+"Sportoviště",
+"Tenisové kurty u Litavky - Tenisové kurty",
+"tenis"
+],
+[
+49.668166,
+13.999169,
+"Sportoviště",
+"Tréninkové hřiště TK ROJA - Travnaté hřiště",
+"jiná odvětví"
+],
+[
+49.687695,
+14.048247,
+"Sportoviště",
+"Víceúčelové hřiště Dubno - Víceúčelové hřiště",
+"volejbal, tenis, nohejbal, fotbal, házená, basketbal"
+],
+[
+49.68248,
+14.003101,
+"Sportoviště",
+"Víceúčelové hřiště Gymnázia Příbram - Atletický ovál",
+"atletika"
+],
+[
+49.68248,
+14.003101,
+"Sportoviště",
+"Víceúčelové hřiště Gymnázia Příbram - Víceúčelové hřiště",
+"házená, basketbal, fotbal"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Volnočasové hřiště Nový rybník - Hřiště",
+"fotbal, volejbal, házená, nohejbal, basketbal, volnočasový a rekreační sport, jiná odvětví"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Volnočasové hřiště Nový rybník - Workoutové hřiště",
+"volnočasový a rekreační sport"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Zimní stadion Příbram - Malá hala",
+"krasobruslení, lední hokej, kolečkové brusle"
+],
+[
+49.6787,
+14.002538,
+"Sportoviště",
+"Zimní stadion Příbram - Velká hala",
+"krasobruslení, lední hokej"
+],
+[
+49.703523,
+14.007995,
+"Sběrný dvůr",
+"Sběrný dvůr, kompostárna a Re-use centrum",
+"Mlynářská, Příbram I. Sběrný dvůr a kompostárna Po–Pá 8–17, So 9–13; Re-use centrum Út, Čt, Pá 13–17, So 9–13 (Technické služby města Příbrami, ts-pb.cz)"
+]
+]
+}

@@ -3,12 +3,12 @@
   const SL_PORADI = ['Nemocnice', 'Poliklinika', 'Praktický lékař', 'Dětský lékař', 'Zubař', 'Dentální hygiena', 'Gynekologie', 'Lékař specialista',
     'Fyzioterapie', 'Logopedie', 'Odběrové místo', 'Lékárna', 'Zdravotnické potřeby', 'Oční optika', 'Zdravotní služby', 'Záchranná služba',
     'Mateřská škola', 'Základní škola', 'Základní umělecká škola', 'Střední škola', 'Vyšší odborná škola', 'Dům dětí a mládeže', 'Domov mládeže',
-    'Pošta', 'Balíkovna', 'Balíkovna box', 'Dobíjecí stanice'];
+    'Pošta', 'Balíkovna', 'Balíkovna box', 'Sportoviště', 'Sběrný dvůr', 'Dobíjecí stanice'];
   const SL_MN = { 'Praktický lékař': 'Praktičtí lékaři', 'Dětský lékař': 'Dětští lékaři', 'Zubař': 'Zubaři', 'Lékař specialista': 'Lékaři specialisté',
     'Lékárna': 'Lékárny', 'Oční optika': 'Oční optiky', 'Odběrové místo': 'Odběrová místa', 'Mateřská škola': 'Mateřské školy', 'Základní škola': 'Základní školy',
     'Střední škola': 'Střední školy', 'Pošta': 'Pošty', 'Balíkovna': 'Balíkovny', 'Balíkovna box': 'Balíkovna boxy', 'Dobíjecí stanice': 'Dobíjecí stanice' };
   const slPor = (k) => { const i = SL_PORADI.indexOf(k); return i < 0 ? 99 : i; };
-  const SL_TITUL = /škola|Nemocnice|Poliklinika|Pošta|Dům dětí|Domov mládeže/;
+  const SL_TITUL = /škola|Nemocnice|Poliklinika|Pošta|Dům dětí|Domov mládeže|Sportoviště/;
   function renderSluzby(sl) {
     const box = $('cardSl'); box.replaceChildren(); box.hidden = !(sl && sl.length);
     if (box.hidden) return;
@@ -33,7 +33,7 @@
     const x = (lon - cam.lon0) * cam.kx, y = (lat - cam.lat0) * cam.ky, g = gz(x, y), [ix, iy] = toImg(x, y, g);
     return { lat, lon, kat, n, dt, ix, iy, x, y, d: depth(x, y, g), h: (iy - toImg(x, y, g + 2.2)[1]) };
   }).filter((r) => cam.grounds.some((q) => Math.abs(r.x - q.cx) <= cam.half && Math.abs(r.y - q.cy) <= cam.half));
-  const SL_ZN = { 'Dobíjecí stanice': ['#2f9e5b', '⚡'], 'Balíkovna box': ['#f2b705', 'B'], 'Balíkovna': ['#f2b705', 'B'], 'Pošta': ['#f2b705', 'P'] };
+  const SL_ZN = { 'Dobíjecí stanice': ['#2f9e5b', '⚡'], 'Balíkovna box': ['#f2b705', 'B'], 'Balíkovna': ['#f2b705', 'B'], 'Pošta': ['#f2b705', 'P'], 'Sportoviště': ['#d9622b', 'S'], 'Sběrný dvůr': ['#4f8a3c', '♻'] };
   const slAt = (ix, iy) => {                                // značka pod kurzorem (do ~16 px na obrazovce)
     const scr = viewer.viewport.getContainerSize().x / (viewer.viewport.getBounds(true).width * W);
     if (scr < 0.35) return null;

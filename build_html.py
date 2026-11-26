@@ -110,9 +110,9 @@ def postav_stranku(M, html_out='site/index.html', og_cesta='og.jpg', je_obec=Fal
         'RYBNIKY': json.dumps([{'nazev': r['nazev'], 'lat': r['lat'], 'lon': r['lon']} for r in M.get('rybniky') or []], ensure_ascii=False),
         'OBEC': json.dumps(M.get('nazev') if je_obec else None, ensure_ascii=False),
         'VLAK': json.dumps({'vychozi': (M.get('vlak') or {}).get('vychozi', 'regionova') if isinstance(M.get('vlak'), dict) else M.get('vlak', 'regionova'), 'linky': M['vlak'].get('linky', {}) if isinstance(M.get('vlak'), dict) else {}}),
-        'SLUZBY_ZDROJ': (', služby v budovách: zdravotnická zařízení © <a href="https://nrpzs.uzis.cz/" target="_blank" rel="noopener">ÚZIS ČR</a> (NRPZS; Zelinková H., Klimeš D., Šnábl I., Májek T., Jarkovský J., Klika P., Vičar M., Jochcová M., Komenda M., Dušek L.; CC BY 4.0)'
-                         ', školy © MŠMT (Rejstřík škol a školských zařízení), lékárny © <a href="https://opendata.sukl.gov.cz/podminky-uziti-otevrenych-dat" target="_blank" rel="noopener">SÚKL</a>'
-                         ', pošty a Balíkovny © Česká pošta, dobíjecí stanice © MPO') if os.path.exists('assets/sluzby.json') and M.get('sluzby', True) is not False else '',   # nastroje/sluzby.py
+        'SLUZBY_ZDROJ': (', služby v budovách: ' + ', '.join(
+            f'<a href="{E(z["url"])}" target="_blank" rel="noopener">{E(z["nazev"])}</a>' + (f' ({E("; ".join(filter(None, [z.get("autori"), z.get("licence")])))})' if z.get('autori') or z.get('licence') else '')
+            for z in json.load(open('assets/sluzby.json', encoding='utf-8')).get('zdroje', []))) if os.path.exists('assets/sluzby.json') and M.get('sluzby', True) is not False else '',   # nastroje/sluzby.py
         'DOPRAVA_ZDROJ': ', intenzity dopravy © <a href="https://www.rsd.cz/silnice-a-dalnice/scitani-dopravy" target="_blank" rel="noopener">ŘSD ČR</a> (Celostátní sčítání dopravy)' if M.get('doprava') else '',
         'RUIAN_ZDROJ': ', typy budov z RÚIAN' if os.path.exists('assets/ruian_budovy.json') else '',
         'VITR_ZDROJ': ', ' + ('počasí a vítr' if M.get('pocasi') and M.get('vitr') else 'počasí' if M.get('pocasi') else 'vítr') + ' © <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)' if M.get('vitr') or M.get('pocasi') else '',

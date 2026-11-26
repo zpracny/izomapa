@@ -138,7 +138,8 @@ CKEY = {c: f'c{c[0]}_{c[1]}' for c in chunks}
 # služby z otevřených registrů (nastroje/sluzby.py -> assets/sluzby.json: [lat, lon, kategorie, název, podrobnost]):
 # k budově, v jejímž půdorysu bod leží (lékaři, školy… i do 8 m od budovy), v kartě budovy „V budově“;
 # Balíkovna boxy, dobíjecí stanice a služby mimo budovy kreslí prohlížeč jako značky (overlay.json "sluzby"). Vypnout: "sluzby": false v mesto.json.
-SL_ZNACKA = {'Balíkovna box', 'Dobíjecí stanice'}
+SL_ZNACKA = {'Balíkovna box', 'Dobíjecí stanice', 'Sběrný dvůr'}   # vždy značka
+SL_UVNITR = {'Sportoviště'}                                         # do budovy jen bod přímo v půdorysu (hřiště vedle domu zůstane značkou)
 SL_B, SL_VOLNE = {}, []
 if os.path.exists('assets/sluzby.json') and MESTO.get('sluzby', True) is not False:
     _sp, _sk = [], []
@@ -151,10 +152,17 @@ if os.path.exists('assets/sluzby.json') and MESTO.get('sluzby', True) is not Fal
     for _s in json.load(open('assets/sluzby.json', encoding='utf-8'))['sluzby']:
         _P = shapely.geometry.Point(*to_local(_s[1], _s[0]))
         _h = [] if _s[2] in SL_ZNACKA else [int(i) for i in _st.query(_P, predicate='intersects')]
-        if not _h and _s[2] not in SL_ZNACKA:
+        if not _h and _s[2] not in SL_ZNACKA | SL_UVNITR:
             _j = int(_st.nearest(_P)); _h = [_j] if _sp[_j].distance(_P) < 8 else []
         if _h: SL_B.setdefault(_sk[_h[0]], []).append(_s[2:])
         else: SL_VOLNE.append(_s)
+    _g = {}
+    for _s in SL_VOLNE: _g.setdefault((_s[0], _s[1], _s[2]), []).append(_s)
+    SL_VOLNE = []
+    for (_la, _lo, _k), _v in _g.items():
+        if len(_v) == 1: SL_VOLNE.append(_v[0]); continue
+        _n = [s[3].split(' - ')[0] for s in _v]
+        SL_VOLNE.append([_la, _lo, _k, _n[0] if len(set(_n)) == 1 else ', '.join(dict.fromkeys(_n)), '; '.join(' - '.join(s[3].split(' - ')[1:]) + (f' ({s[4]})' if s[4] else '') for s in _v)])
     print('služby: v budovách', sum(map(len, SL_B.values())), 'budov', len(SL_B), 'značek', len(SL_VOLNE))
 streets, grounds, addr_index = [], [], []
 per_chunk = {}
