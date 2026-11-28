@@ -1,5 +1,5 @@
 {
-  "_pozn": "Vánoční výzdoba (samostatná vrstva mapy). od/do = měsíc-den zapnutí a vypnutí. Po změně: ./vanoce.sh svetla = světelná socha z řetězů (fontána s koulí): lat, lon, r poloměr m, h výška m.",
+  "_pozn": "Vánoční výzdoba (samostatná vrstva mapy). od/do = měsíc-den zapnutí a vypnutí. Po změně: ./vanoce.sh svetla = světelná socha z řetězů: bez typ fontána s koulí (lat, lon, r poloměr m, h výška m); typ koule | labut | venec | zahon z nastroje/svetla_tvar.py (a natočení °, z0 výška podstavce m, koule r, věnec r, záhon d × s m).",
   "od": "11-11",
   "do": "01-06",
   "stromy": [
@@ -43,6 +43,40 @@
       "lon": 13.99615,
       "r": 4,
       "h": 6
+    },
+    {
+      "pozn": "nám. T. G. Masaryka, zakrytá kašna s modrými světýlky (hlášení č. 66, poloha z ortofota ČÚZK)",
+      "typ": "zahon",
+      "lat": 49.688065,
+      "lon": 14.009423,
+      "d": 8.2,
+      "s": 3.4,
+      "a": 46,
+      "z0": 0.45
+    },
+    {
+      "pozn": "nám. T. G. Masaryka, světelná koule (hlášení č. 66)",
+      "typ": "koule",
+      "lat": 49.688052,
+      "lon": 14.009392,
+      "r": 1.5,
+      "z0": 0.5
+    },
+    {
+      "pozn": "nám. T. G. Masaryka, světelná labuť (hlášení č. 66)",
+      "typ": "labut",
+      "lat": 49.688076,
+      "lon": 14.009451,
+      "a": 316,
+      "z0": 0.5,
+      "s": 1.15
+    },
+    {
+      "pozn": "kruhový objezd Obecnická / Čs. armády, adventní věnec (hlášení č. 65; místo na trávníku odhadem, volná tráva jižně od keřů)",
+      "typ": "venec",
+      "lat": 49.692255,
+      "lon": 14.003651,
+      "r": 2.0
     }
   ]
 }

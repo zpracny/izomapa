@@ -284,6 +284,13 @@
     // světelná socha: večer modrá záře v kašně, bílomodrá světýlka po řetězech a zářící koule
     if (xm && night > 0.25 && sx > 0.15) for (const G of glowsX) if (vis(G.c[0], G.c[1], 80)) {
       const a = Math.min(1, (night - 0.25) / 0.35), k = Math.max(1, Math.round(sx * 1.1));
+      if (G.cary) {                                                // socha z čar: světýlka v barvě čáry, občas pomrkávají
+        G.pts.forEach(([px, py, col], i) => {
+          ctx.globalAlpha = a * ((Math.floor(t * 2.5) + i * 7) % 6 ? 0.95 : 0.45); ctx.fillStyle = col;
+          ctx.fillRect(Math.round(ox + px * sx - k / 2), Math.round(oy + py * sx - k / 2), k, k);
+        });
+        ctx.globalAlpha = 1; continue;
+      }
       ctx.globalAlpha = a * 0.45; ctx.fillStyle = '#3a6cff'; ctx.beginPath();
       G.pool.forEach(([px, py], i) => (i ? ctx.lineTo(ox + px * sx, oy + py * sx) : ctx.moveTo(ox + px * sx, oy + py * sx))); ctx.closePath(); ctx.fill();
       G.pts.forEach(([px, py], i) => {

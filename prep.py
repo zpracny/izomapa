@@ -2071,11 +2071,16 @@ for _k in geo.MESTO.get('vanocni_stanky') or []:
     for _i in range(_n):
         _s = (_i - (_n - 1) / 2) * (_w + _m); _sx, _sy = _x + math.cos(_a) * _s, _y + math.sin(_a) * _s
         if AREA.contains(Point(_sx, _sy)): stalls.append([round(float(_sx), 2), round(float(_sy), 2), round(float(ground(_sx, _sy)), 2), round(_a, 4), _w, _i])
-# světelné sochy (assets/vanoce.json "svetla": [{lat, lon, r: poloměr m, h: výška m}]): "fontána" ze světelných řetězů, např. na kašně
+# světelné sochy (assets/vanoce.json "svetla": [{lat, lon, r: poloměr m, h: výška m}]): "fontána" ze světelných řetězů, např. na kašně;
+# s "typ" koule | labut | venec | zahon (+ "a" natočení °, "z0" výška podstavce) čáry z nastroje/svetla_tvar.py
+from nastroje import svetla_tvar
 glows = []
 for _k in geo.MESTO.get('vanocni_svetla') or []:
     _x, _y = to_local(_k['lon'], _k['lat'])
-    if AREA.contains(Point(_x, _y)): glows.append([round(float(_x), 2), round(float(_y), 2), round(float(ground(_x, _y)), 2), _k.get('r', 3.2), _k.get('h', 5.5)])
+    if not AREA.contains(Point(_x, _y)): continue
+    _cary = svetla_tvar.tvar(_k)                              # labuť, koule, adventní věnec, záhon: čáry z nastroje/svetla_tvar.py
+    _r, _h = svetla_tvar.rozmer(_cary) if _cary else (_k.get('r', 3.2), _k.get('h', 5.5))
+    glows.append([round(float(_x), 2), round(float(_y), 2), round(float(ground(_x, _y)), 2), round(_r, 2), round(_h, 2)] + ([[[c['c'], c['w'], c['p']] for c in _cary]] if _cary else []))
 # zamrzlé rybníky (mesto.json "rybniky": [{nazev, lat, lon}]): plocha rybníka (vodní polygon s bodem uvnitř) pro vrstvu led;
 # zapíná se ručně v administraci (hlaseni/worker.js, /api/stav)
 ice = []

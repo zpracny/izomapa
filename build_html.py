@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 from PIL import Image
 import geo
 from geo import MESTO
+from nastroje import svetla_tvar
 
 
 def og_obrazek(out='site/og.jpg', W=1200, H=630, dolu=None, latlon=None):
@@ -102,7 +103,7 @@ def postav_stranku(M, html_out='site/index.html', og_cesta='og.jpg', je_obec=Fal
         'XMAS_LL': json.dumps((lambda v: v if v and isinstance(v[0], list) else [v] if v else [])(M.get('vanocni_strom'))),   # vánoční stromy [[lat, lon], ...]
         'KLUZISTE': json.dumps(M.get('kluziste') or []),
         'STANKY': json.dumps(M.get('vanocni_stanky') or []),
-        'SVETLA': json.dumps(M.get('vanocni_svetla') or []),
+        'SVETLA': json.dumps([{**k, 'cary': [[c['l'], c['p']] for c in svetla_tvar.tvar(k) or [] if c['l']]} for k in M.get('vanocni_svetla') or []]),   # světelné sochy, čáry z nastroje/svetla_tvar.py
         'ROZCESTNIKY': json.dumps(json.load(open('assets/rozcestniky.json', encoding='utf-8')) if os.path.exists('assets/rozcestniky.json') else [], ensure_ascii=False),   # turistické rozcestníky (nastroje/rozcestniky.py)
         'PREJEZDY_INFO': json.dumps(json.load(open('assets/prejezdy_info.json')) if os.path.exists('assets/prejezdy_info.json') else {}),   # závory a přechody pro pěší přes trať
         'POLOHY': 'true' if M.get('polohy') and M.get('hlaseni') else 'false',   # zpoždění MHD v reálném čase přes worker (/api/polohy, Golemio)

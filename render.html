@@ -1549,8 +1549,21 @@ function pamModely(W, R, X) {
       }
     }
     // světelná socha ze řetězů (fontána s koulí): profil musí odpovídat web/app.html (glowProfile)
-    for (const [x, y, g, r, h] of scene.glows || []) {
+    for (const [x, y, g, r, h, cary] of scene.glows || []) {
       const f = frameAt(x, y, g, 0), col = [0.88, 0.94, 1.0], N = 26;
+      if (cary) {                                                  // socha z čar (nastroje/svetla_tvar.py): každý úsek jako dvě zkřížené pásky
+        for (const [c, w, p] of cary) if (!w) for (let i = 1; i + 1 < p.length; i++) pushTri(V, f(...p[0]), f(...p[i]), f(...p[i + 1]), c, W0);   // vyplněná plocha
+        for (const [c, w, p] of cary) if (w) for (let i = 0; i + 1 < p.length; i++) {
+          const [x0, y0, z0] = p[i], [x1, y1, z1] = p[i + 1], dx = x1 - x0, dy = y1 - y0, dz = z1 - z0, L = Math.hypot(dx, dy, dz) || 1;
+          let ux = dy, uy = -dx, uz = 0, ul = Math.hypot(ux, uy); if (ul < 1e-3 * L) { ux = 1; uy = 0; ul = 1; }
+          ux /= ul; uy /= ul;
+          let vx = (dy * uz - dz * uy) / L, vy = (dz * ux - dx * uz) / L, vz = (dx * uy - dy * ux) / L;
+          const h2 = w / 2;
+          for (const [ax, ay, az] of [[ux * h2, uy * h2, uz * h2], [vx * h2, vy * h2, vz * h2]])
+            pushQuad(V, f(x0 - ax, y0 - ay, z0 - az), f(x0 + ax, y0 + ay, z0 + az), f(x1 + ax, y1 + ay, z1 + az), f(x1 - ax, y1 - ay, z1 - az), c, W0);
+        }
+        continue;
+      }
       const prof = [[[0.35, h - 1.0], [1.5, h - 1.6], [1.5, 0.5]], [[1.5, h - 1.9], [r * 0.75, h - 1.8], [r, h - 2.6], [r, 0.5]]];
       for (let k = 0; k < N; k++) {
         const th = (k / N) * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), dx = -s * 0.15, dy = c * 0.15;

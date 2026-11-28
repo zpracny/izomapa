@@ -141,9 +141,24 @@
     }
   }
   // světelné sochy (assets/vanoce.json "svetla"): socha je ve vrstvě výzdoby (render.html mode=xmas), tady světýlka na řetězech
+  // (u soch s "typ" podél čar z build_html.py, jinak fontána)
   // a modrá záře v kašně. Profil řetězů musí odpovídat render.html.
   const glowsX = ({{SVETLA}} || []).map((k, n) => {
     const x = (k.lon - cam.lon0) * cam.kx, y = (k.lat - cam.lat0) * cam.ky, g = gz(x, y), r = k.r || 3.2, h = k.h || 5.5, pts = [];
+    if (k.cary && k.cary.length) {                               // labuť, koule, věnec, záhon (nastroje/svetla_tvar.py): světýlka po 0,3 m podél čar
+      const cx = Math.cos(CAM_ANG), cy = Math.sin(CAM_ANG), R = k.typ === 'koule' ? (k.r || 1.5) : 0;
+      let hz = 0;
+      for (const [col, p] of k.cary) if (col) for (let i = 0; i + 1 < p.length; i++) {   // plochy (bez barvy světýlek) se přeskočí
+        const [x0, y0, z0] = p[i], [x1, y1, z1] = p[i + 1], m = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0, z1 - z0) / 0.3));
+        for (let u = 0; u < m; u++) {
+          const q = u / m, dx = x0 + (x1 - x0) * q, dy = y0 + (y1 - y0) * q, dz = z0 + (z1 - z0) * q; hz = Math.max(hz, dz);
+          if (R && dx * cx + dy * cy < -0.25 * R) continue;          // zadní strana koule je za ní
+          const [ix, iy] = toImg(x + dx, y + dy, g + dz); pts.push([ix, iy, col]);
+        }
+      }
+      const kr = R ? { s: toImg(x, y, g + (k.z0 || 0) + R), r: (toImg(x, y, g)[1] - toImg(x, y, g + R)[1]) * 1.05 } : null;
+      return { c: toImg(x, y, g + hz / 2), pts, n, cary: true, kr };
+    }
     const prof = [[[0.35, h - 1.0], [1.5, h - 1.6], [1.5, 0.5]], [[1.5, h - 1.9], [r * 0.75, h - 1.8], [r, h - 2.6], [r, 0.5]]];
     for (let j = 0; j < 26; j++) {
       const th = (j / 26) * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
@@ -156,6 +171,8 @@
     const pool = Array.from({ length: 16 }, (_, j) => toImg(x + Math.cos(j / 8 * Math.PI) * (r + 0.6), y + Math.sin(j / 8 * Math.PI) * (r + 0.6), g + 0.45));
     return { c: toImg(x, y, g + h / 2), ball: toImg(x, y, g + h - 0.5), pts, pool, n };
   });
+  for (const K of glowsX) if (K.kr) for (const G of glowsX) if (G !== K && G.cary && !G.kr)   // co je za koulí (záhon pod ní), zakryje koule
+    G.pts = G.pts.filter(([px, py]) => Math.hypot(px - K.kr.s[0], py - K.kr.s[1]) > K.kr.r);
   // bruslaři na zamrzlých rybnících (mesto.json "rybniky", zapíná administrace): elipsy uvnitř vodní plochy rybníka
   const pondSk = {};                                            // název rybníka -> bruslaři [cx, cy, rx, ph, v, col, hat] v pixelech obrázku
   const skH = toImg(0, 0, 1.7)[1] - toImg(0, 0, 0)[1];          // výška postavy 1,7 m v pixelech obrázku (záporná)
